@@ -13,59 +13,69 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import datetime
-from zoneinfo import ZoneInfo
+import os
+from pathlib import Path
+import sys
 
+from dotenv import load_dotenv
 from google.adk.agents import Agent
 from google.adk.apps import App
 from google.adk.models import Gemini
+from google.adk.tools import McpToolset
+from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
 from google.genai import types
+from mcp import StdioServerParameters
 
+load_dotenv()
 
 MODEL = "gemini-3.6-flash"
 
+# Path to the mlit-dpf-mcp repository
+MLIT_MCP_DIR = Path(
+    os.getenv(
+        "MLIT_MCP_DIR",
+        str(Path(__file__).resolve().parents[2] / "mlit-dpf-mcp"),
+    )
+)
+mcp_python = MLIT_MCP_DIR / ".venv" / "bin" / "python"
+mcp_server = MLIT_MCP_DIR / "src" / "server.py"
 
-def get_weather(query: str) -> str:
-    """Simulates a web search. Use it get information on weather.
+python_executable = (
+    str(mcp_python) if mcp_python.exists() else sys.executable
+)
 
-    Args:
-        query: A string containing the location to get weather information for.
-
-    Returns:
-        A string with the simulated weather information for the queried location.
-    """
-    if "sf" in query.lower() or "san francisco" in query.lower():
-        return "It's 60 degrees and foggy."
-    return "It's 90 degrees and sunny."
-
-
-def get_current_time(query: str) -> str:
-    """Simulates getting the current time for a city.
-
-    Args:
-        city: The name of the city to get the current time for.
-
-    Returns:
-        A string with the current time information.
-    """
-    if "sf" in query.lower() or "san francisco" in query.lower():
-        tz_identifier = "America/Los_Angeles"
-    else:
-        return f"Sorry, I don't have timezone information for query: {query}."
-
-    tz = ZoneInfo(tz_identifier)
-    now = datetime.datetime.now(tz)
-    return f"The current time for query {query} is {now.strftime('%Y-%m-%d %H:%M:%S %Z%z')}"
-
+mlit_mcp_toolset = McpToolset(
+    connection_params=StdioConnectionParams(
+        server_params=StdioServerParameters(
+            command=python_executable,
+            args=[str(mcp_server)],
+            env={
+                **os.environ,
+                "MLIT_API_KEY": os.getenv("MLIT_API_KEY", ""),
+                "MLIT_BASE_URL": os.getenv(
+                    "MLIT_BASE_URL", "https://data-platform.mlit.go.jp/api/v1/"
+                ),
+            },
+        )
+    ),
+    tool_filter=["search"],
+)
 
 root_agent = Agent(
-    name="root_agent",
+    name="mlit_dpf_agent",
     model=Gemini(
         model=MODEL,
         retry_options=types.HttpRetryOptions(attempts=3),
     ),
-    instruction="You are a helpful AI assistant designed to provide accurate and useful information.",
-    tools=[get_weather, get_current_time],
+    instruction=(
+        "You are an AI assistant designed to search and retrieve data from the "
+        "MLIT (Ministry of Land, Infrastructure, Transport and Tourism) Data Platform.\n\n"
+        "When a user asks for geospatial, infrastructure, transportation, or disaster prevention data, "
+        "use the `search` tool to query the platform.\n"
+        "Present the search results clearly in markdown, highlighting relevant fields such as dataset title, "
+        "data ID, description, and source."
+    ),
+    tools=[mlit_mcp_toolset],
 )
 
 app = App(
