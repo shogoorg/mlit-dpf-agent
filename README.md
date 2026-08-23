@@ -1,7 +1,7 @@
 # mlit-dpf-agent
 
-An AI agent for searching and retrieving data from the [MLIT Data Platform](https://data-platform.mlit.go.jp/) using natural language.  
-Built with Google ADK (Agent Development Kit), it integrates with [mlit-dpf-mcp](https://github.com/MLIT-DATA-PLATFORM/mlit-dpf-mcp) to interact with the MLIT Data Platform API.
+An AI agent for searching and retrieving geospatial, disaster prevention, and evacuation facility data from the [MLIT Data Platform](https://data-platform.mlit.go.jp/) using natural language.  
+Built with Google ADK (Agent Development Kit), it integrates the **MLIT Data Platform** (via [mlit-dpf-mcp](https://github.com/MLIT-DATA-PLATFORM/mlit-dpf-mcp)) with **Google Maps Grounding**, outputting comprehensive shelter attributes alongside 4 spatial viewer links (PlateauView 3D, GSI Hazard Overlay Map, Google Earth 3D, and Google Maps).
 
 Simple ReAct agent  
 Agent generated with `agents-cli` version `1.4.0`
@@ -9,10 +9,12 @@ Agent generated with `agents-cli` version `1.4.0`
 ## Overview & Architecture
 
 ```
-[ User ] ⇄ [ mlit-dpf-agent (ADK / Gemini) ] ⇄ [ mlit-dpf-mcp (MCP Server) ] ⇄ [ MLIT Data Platform API ]
+[ User ] ⇄ [ mlit-dpf-agent (ADK / Gemini) ]
+                  ├── [ mlit-dpf-mcp ] ⇄ [ MLIT Data Platform API ]
+                  └── [ Google Maps Grounding ] ⇄ [ Google Maps API ]
 ```
 
-- **mlit-dpf-agent**: An ADK agent that understands user queries, invokes MCP tools, and provides categorized summaries of geospatial and infrastructure datasets.
+- **mlit-dpf-agent**: An ADK agent that understands user queries, invokes MLIT DPF MCP tools and Google Maps Grounding, and presents structured facility details with 4 spatial viewer links (PlateauView, GSI Hazard Map, Google Earth, Google Maps).
 - **mlit-dpf-mcp**: The MCP server providing search and retrieval tools. For setup instructions and MCP server details, please refer to the [mlit-dpf-mcp README](https://github.com/MLIT-DATA-PLATFORM/mlit-dpf-mcp#readme).
 
 ## Project Structure
