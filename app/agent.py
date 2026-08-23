@@ -88,9 +88,12 @@ root_agent = Agent(
         "   - **Section 1: Attribute Information (属性情報)**:\n"
         "     - **MLIT DPF (`nlni_ksj-p05`) Attributes**: Enumerate all available attributes from `get_data` including full facility name, facility type, administrative code, dataset/data IDs, and disaster suitability flags for each disaster type (flood, earthquake, tsunami, landslide, fire, etc.).\n"
         "     - **Google Maps Attributes**: Enumerate grounded details from Google Maps including official place name, exact street address, and facility overview.\n"
-        "   - **Section 2: Map & 3D Viewer Links (地図・3Dビューア)**:\n"
-        "     - **PlateauView 3D Link**: Direct URL `https://plateauview.mlit.go.jp/#/<lat>/<lon>/16/` (replace <lat> and <lon> with actual decimal coordinates) to inspect 3D city models and terrain.\n"
-        "     - **Google Maps Link**: Direct URL to view location/routing on Google Maps.\n"
+        "   - **Section 2: Map & 3D Viewer Links (地図・3Dビューア)** (in the following exact order):\n"
+        "     1. **PlateauView 3D Link**: `https://plateauview.mlit.go.jp/#/<lat>/<lon>/16/` (3D building heights, LOD, and terrain)\n"
+        "     2. **GSI Hazard Overlay Map Link**: `https://disaportal.gsi.go.jp/hazardmap/maps/index.html?ll=<lat>,<lon>&z=16&base=pale&vs=c1j0l0u0t0h0z0` (pre-activated flood hazard color layers)\n"
+        "     3. **Google Earth 3D Link**: `https://earth.google.com/web/@<lat>,<lon>,100a,500d,60y,0h,0t,0r` (photogrammetry realistic 3D view)\n"
+        "     4. **Google Maps Link**: `https://maps.google.com/?q=<lat>,<lon>` (directions and routing)\n"
+        "     (Replace <lat> and <lon> with actual decimal coordinates in all links)\n"
         "4. Present results clearly in structured markdown."
     ),
     tools=[google_maps_grounding, mlit_mcp_toolset],

@@ -93,7 +93,8 @@ You can also use features from the [ADK](https://adk.dev/) CLI with `uv run adk`
 | `agents-cli lint`    | Run code quality checks                                                               |
 | `agents-cli eval`    | Evaluate agent behavior (generate, grade, analyze, and more — see `agents-cli eval --help`) |
 | `uv run pytest tests/unit tests/integration` | Run unit and integration tests                                                        |
-| `agents-cli deploy`  | Deploy agent to Cloud Run                                                                   || [A2A Inspector](https://github.com/a2aproject/a2a-inspector) | Launch A2A Protocol Inspector                                                        |
+| `agents-cli deploy`  | Deploy agent to Cloud Run                                                                   |
+| [A2A Inspector](https://github.com/a2aproject/a2a-inspector) | Launch A2A Protocol Inspector                                                        |
 
 ## 🛠️ Project Management
 
@@ -162,3 +163,67 @@ Built-in telemetry exports to Cloud Trace, BigQuery, and Cloud Logging.
 
 This agent supports the [A2A Protocol](https://a2a-protocol.org/). Use the [A2A Inspector](https://github.com/a2aproject/a2a-inspector) to test interoperability.
 See the [A2A Inspector docs](https://github.com/a2aproject/a2a-inspector) for details.
+
+---
+
+## 💬 Sample Interaction & Response Showcase (対話・出力例)
+
+### User Prompt (English / 日本語)
+- **EN:** *"Search for designated emergency evacuation sites and shelters around Saitama City Hall, then show me the detailed information for the nearest shelter."*
+- **JA:** *"さいたま市役所周辺の避難場所と避難所を検索して、最寄りの避難所の詳細情報を教えて"*
+
+### Agent Response (エージェントの出力結果)
+
+> Here are the designated emergency evacuation sites and public facilities around Saitama City Hall, along with detailed information for the nearest shelter.
+>
+> ---
+>
+> ### Nearby Emergency Evacuation Sites & Facilities (around Saitama City Hall)
+>
+> 1. **Saitama City Hall / Urawa Ward Office (さいたま市役所 / 浦和区役所)**
+>    - **Type**: Administrative Facility / Designated Base Facility
+>    - **Estimated Distance / Walking Time**: 0 m (~0 min walk)
+> 2. **Saitama City Nakamachi Elementary School (さいたま市立仲町小学校)**
+>    - **Type**: Elementary School / Designated Emergency Evacuation Site & Shelter
+>    - **Estimated Distance / Walking Time**: ~450 m (~6 min walk)
+> 3. **Besshonuma Park Temporary Evacuation Area (別所沼公園 一時避難場所)**
+>    - **Type**: Park / Temporary Evacuation Site
+>    - **Estimated Distance / Walking Time**: ~850 m (~11 min walk)
+>
+> ---
+>
+> ### Detailed Information for Nearest Shelter: Saitama City Nakamachi Elementary School (さいたま市立仲町小学校)
+>
+> #### Section 1: Attribute Information (属性情報)
+>
+> * **MLIT DPF (`nlni_ksj-p29` / `p05`) Attributes**:
+>   * **Full Facility Name**: さいたま市立仲町小学校 (Saitama City Nakamachi Elementary School)
+>   * **Facility Type Code / Category**: 16001 (Elementary School / 学校)
+>   * **Administrative Code**: 11107 (Saitama City Urawa Ward / 埼玉県さいたま市浦和区)
+>   * **Dataset ID**: `nlni_ksj-p29`
+>   * **Data ID**: `7ddd06b7-ff50-4986-b8c9-692ab015761d`
+>   * **Latitude / Longitude**: 35.863961, 139.640549
+>   * **Disaster Suitability Flags**:
+>     * **Flood (洪水)**: Suitable / Grounded shelter facility
+>     * **Earthquake (地震)**: Suitable (Designated shelter and evacuation ground)
+>     * **Landslide / Debris Flow (土砂災害)**: Suitable
+>     * **Tsunami (津波)**: Not Applicable / Low risk area
+>     * **Fire (火災)**: Suitable
+>
+> * **Google Maps Attributes**:
+>   * **Official Place Name**: Nakamachi Elementary School (さいたま市立仲町小学校)
+>   * **Exact Street Address**: 8 Chome-18-4 Tokiwa, Urawa Ward, Saitama, 330-0061, Japan
+>   * **Facility Overview**: Municipal elementary school serving as a primary designated emergency evacuation site and shelter for surrounding neighborhoods.
+>
+> ---
+>
+> #### Section 2: Map & 3D Viewer Links (地図・3Dビューア)
+>
+> 1. **PlateauView 3D Link**:  
+>    https://plateauview.mlit.go.jp/#/35.86396099527865/139.64054899888734/16/
+> 2. **GSI Hazard Overlay Map Link**:  
+>    https://disaportal.gsi.go.jp/hazardmap/maps/index.html?ll=35.86396099527865,139.64054899888734&z=16&base=pale&vs=c1j0l0u0t0h0z0
+> 3. **Google Earth 3D Link**:  
+>    https://earth.google.com/web/@35.86396099527865,139.64054899888734,100a,500d,60y,0h,0t,0r
+> 4. **Google Maps Link**:  
+>    https://maps.google.com/?q=35.86396099527865,139.64054899888734
