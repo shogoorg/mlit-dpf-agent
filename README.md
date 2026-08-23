@@ -1,7 +1,9 @@
 # mlit-dpf-agent
 
-An AI agent for searching and retrieving geospatial, disaster prevention, and evacuation facility data from the [MLIT Data Platform](https://data-platform.mlit.go.jp/) using natural language.  
-Built with Google ADK (Agent Development Kit), it integrates the **MLIT Data Platform** (via [mlit-dpf-mcp](https://github.com/MLIT-DATA-PLATFORM/mlit-dpf-mcp)) with **Google Maps Grounding**, outputting comprehensive shelter attributes alongside 4 spatial viewer links (PlateauView 3D, GSI Hazard Overlay Map, Google Earth 3D, and Google Maps).
+An **unofficial** AI agent for searching and retrieving geospatial, urban infrastructure, public facility, and disaster prevention data from the [MLIT Data Platform](https://data-platform.mlit.go.jp/) using natural language.  
+Built with Google ADK (Agent Development Kit), it integrates the **MLIT Data Platform** (via [mlit-dpf-mcp](https://github.com/MLIT-DATA-PLATFORM/mlit-dpf-mcp)) with **Google Maps Grounding**, outputting comprehensive asset attributes alongside multi-perspective spatial viewer links (PlateauView 3D, GSI Hazard Overlay Map, Google Earth 3D, and Google Maps).
+
+> ⚠️ **Disclaimer:** This is an unofficial community project and is not officially affiliated with or endorsed by the Ministry of Land, Infrastructure, Transport and Tourism (MLIT).
 
 Simple ReAct agent  
 Agent generated with `agents-cli` version `1.4.0`
@@ -14,7 +16,7 @@ Agent generated with `agents-cli` version `1.4.0`
                   └── [ Google Maps Grounding ] ⇄ [ Google Maps API ]
 ```
 
-- **mlit-dpf-agent**: An ADK agent that understands user queries, invokes MLIT DPF MCP tools and Google Maps Grounding, and presents structured facility details with 4 spatial viewer links (PlateauView, GSI Hazard Map, Google Earth, Google Maps).
+- **mlit-dpf-agent**: An ADK agent that understands user queries, invokes MLIT DPF MCP tools and Google Maps Grounding, and presents structured facility and infrastructure details with 4 spatial viewer links (PlateauView, GSI Hazard Map, Google Earth, Google Maps).
 - **mlit-dpf-mcp**: The MCP server providing search and retrieval tools. For setup instructions and MCP server details, please refer to the [mlit-dpf-mcp README](https://github.com/MLIT-DATA-PLATFORM/mlit-dpf-mcp#readme).
 
 ## Project Structure
