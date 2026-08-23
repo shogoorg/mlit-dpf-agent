@@ -44,8 +44,9 @@ python_executable = (
     str(mcp_python) if mcp_python.exists() else sys.executable
 )
 
-mlit_mcp_toolset = McpToolset(
-    connection_params=StdioConnectionParams(
+# Common connection configuration for mlit-dpf-mcp
+def create_mcp_connection_params() -> StdioConnectionParams:
+    return StdioConnectionParams(
         server_params=StdioServerParameters(
             command=python_executable,
             args=[str(mcp_server)],
@@ -57,8 +58,13 @@ mlit_mcp_toolset = McpToolset(
                 ),
             },
         )
-    ),
-    tool_filter=["search"],
+    )
+
+
+# MLIT DPF MCP Toolset providing search and data retrieval tools
+mlit_mcp_toolset = McpToolset(
+    connection_params=create_mcp_connection_params(),
+    tool_filter=["search", "get_data"],
 )
 
 root_agent = Agent(
@@ -70,10 +76,13 @@ root_agent = Agent(
     instruction=(
         "You are an AI assistant designed to search and retrieve data from the "
         "MLIT (Ministry of Land, Infrastructure, Transport and Tourism) Data Platform.\n\n"
-        "When a user asks for geospatial, infrastructure, transportation, or disaster prevention data, "
-        "use the `search` tool to query the platform.\n"
-        "Present the search results clearly in markdown, highlighting relevant fields such as dataset title, "
-        "data ID, description, and source."
+        "Available Tools:\n"
+        "- `search`: Query datasets by keywords to discover relevant data items, dataset IDs, and data IDs.\n"
+        "- `get_data`: Fetch comprehensive attributes, details, and metadata for a specific item using `dataset_id` and `data_id`.\n\n"
+        "Workflow:\n"
+        "1. When the user asks for data or searches for locations/topics, call `search` to identify relevant records.\n"
+        "2. When detailed attribute values, file schemas, or in-depth metadata are requested for a specific dataset or item, call `get_data`.\n"
+        "3. Present results clearly in structured markdown."
     ),
     tools=[mlit_mcp_toolset],
 )

@@ -72,8 +72,15 @@ agents-cli playground
 ```
 
 Try asking queries in the playground, such as:
-- *"Search for data related to Saitama City Hall"*
-- *"さいたま市役所のデータを検索して"*
+- **Search (`search`):**
+  - *"Search for data related to Saitama City Hall"*
+  - *"さいたま市役所のデータを検索して"*
+- **Get Data directly (`get_data`):**
+  - *"Get detailed information for data ID `21a45b8d-0922-4f28-bfdc-0ae57961c6b5` in dataset `nlni_ksj-p02`"*
+  - *"データセット `nlni_ksj-p02`、データID `21a45b8d-0922-4f28-bfdc-0ae57961c6b5` の詳細情報を取得して"*
+- **Combined Workflow (`search` → `get_data`):**
+  - *"Search for public facilities in Saitama City, then show me the detailed attributes for Saitama City Hall"*
+  - *"さいたま市役所の公共施設データを検索して、その詳細属性（住所、コード、年度等）を教えて"*
 
 You can also use features from the [ADK](https://adk.dev/) CLI with `uv run adk`.
 
