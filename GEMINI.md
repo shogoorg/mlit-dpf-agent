@@ -59,3 +59,19 @@ Ask the user: Option A (simple single-project) or Option B (full CI/CD pipeline 
 - **Run Python with `uv`**: `uv run python script.py`. Run `agents-cli install` first.
 - **Stop on repeated errors**: If the same error appears 3+ times, fix the root cause instead of retrying.
 - **Terraform conflicts** (Error 409): Use `terraform import` instead of retrying creation.
+
+---
+
+## Strict Project Rules for AI Agent
+
+1. **Language Requirement**:
+   - All source code, docstrings, comments, documentation (`README.md`, docs), and Git commit messages **MUST be written in English**.
+
+2. **Explicit Instruction Required for Modifications**:
+   - **DO NOT** modify source code or documentation files automatically during exploratory discussions. Propose and explain the planned changes first, and only modify files when explicitly instructed by the user.
+
+3. **Explicit Instruction Required for Git Commit and Push**:
+   - **DO NOT** execute `git commit` or `git push` automatically. Always wait for the user's explicit command before committing or pushing changes to remote.
+
+4. **Explicit Instruction Required for Verification and Test Execution**:
+   - **DO NOT** execute verification scripts, test suites, or terminal execution commands automatically without explicit instruction from the user. Propose and explain test plans first, and only run them when requested.

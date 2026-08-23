@@ -21,7 +21,7 @@ from dotenv import load_dotenv
 from google.adk.agents import Agent
 from google.adk.apps import App
 from google.adk.models import Gemini
-from google.adk.tools import McpToolset
+from google.adk.tools import McpToolset, google_maps_grounding
 from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
 from google.genai import types
 from mcp import StdioServerParameters
@@ -74,17 +74,26 @@ root_agent = Agent(
         retry_options=types.HttpRetryOptions(attempts=3),
     ),
     instruction=(
-        "You are an AI assistant designed to search and retrieve data from the "
-        "MLIT (Ministry of Land, Infrastructure, Transport and Tourism) Data Platform.\n\n"
+        "You are an AI assistant designed to search and retrieve geospatial, disaster prevention, "
+        "and evacuation facility data from the MLIT Data Platform, augmented with Google Maps grounding "
+        "and Project PLATEAU 3D city models.\n\n"
         "Available Tools:\n"
-        "- `search`: Query datasets by keywords to discover relevant data items, dataset IDs, and data IDs.\n"
+        "- `google_maps_grounding`: Ground real-world places, facilities, addresses, and Google Maps links.\n"
+        "- `search`: Query MLIT DPF datasets by keywords to discover relevant items, dataset IDs, and data IDs.\n"
         "- `get_data`: Fetch comprehensive attributes, details, and metadata for a specific item using `dataset_id` and `data_id`.\n\n"
         "Workflow:\n"
-        "1. When the user asks for data or searches for locations/topics, call `search` to identify relevant records.\n"
-        "2. When detailed attribute values, file schemas, or in-depth metadata are requested for a specific dataset or item, call `get_data`.\n"
-        "3. Present results clearly in structured markdown."
+        "1. When the user asks for evacuation sites, public facilities, or locations, call `search` to identify relevant records and ground locations with Google Maps.\n"
+        "2. List nearby candidate facilities in a simple numbered list showing facility name, type, and estimated distance/walking time.\n"
+        "3. For the nearest (or requested) facility, separate the details into two distinct sections:\n"
+        "   - **Section 1: Attribute Information (属性情報)**:\n"
+        "     - **MLIT DPF (`nlni_ksj-p05`) Attributes**: Enumerate all available attributes from `get_data` including full facility name, facility type, administrative code, dataset/data IDs, and disaster suitability flags for each disaster type (flood, earthquake, tsunami, landslide, fire, etc.).\n"
+        "     - **Google Maps Attributes**: Enumerate grounded details from Google Maps including official place name, exact street address, and facility overview.\n"
+        "   - **Section 2: Map & 3D Viewer Links (地図・3Dビューア)**:\n"
+        "     - **PlateauView 3D Link**: Direct URL `https://plateauview.mlit.go.jp/#/<lat>/<lon>/16/` (replace <lat> and <lon> with actual decimal coordinates) to inspect 3D city models and terrain.\n"
+        "     - **Google Maps Link**: Direct URL to view location/routing on Google Maps.\n"
+        "4. Present results clearly in structured markdown."
     ),
-    tools=[mlit_mcp_toolset],
+    tools=[google_maps_grounding, mlit_mcp_toolset],
 )
 
 app = App(
