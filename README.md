@@ -168,11 +168,12 @@ See the [A2A Inspector docs](https://github.com/a2aproject/a2a-inspector) for de
 
 ## 💬 Sample Interaction & Response Showcase (対話・出力例)
 
-### User Prompt (English / 日本語)
-- **EN:** *"Search for designated emergency evacuation sites and shelters around Saitama City Hall, then show me the detailed information for the nearest shelter."*
-- **JA:** *"さいたま市役所周辺の避難場所と避難所を検索して、最寄りの避難所の詳細情報を教えて"*
+### 1. English (英語での対話例)
 
-### Agent Response (エージェントの出力結果)
+#### Prompt:
+> *"Search for designated emergency evacuation sites and shelters around Saitama City Hall, then show me the detailed information for the nearest shelter."*
+
+#### Agent Response:
 
 > Here are the designated emergency evacuation sites and public facilities around Saitama City Hall, along with detailed information for the nearest shelter.
 >
@@ -227,3 +228,74 @@ See the [A2A Inspector docs](https://github.com/a2aproject/a2a-inspector) for de
 >    https://earth.google.com/web/@35.86396099527865,139.64054899888734,100a,500d,60y,0h,0t,0r
 > 4. **Google Maps Link**:  
 >    https://maps.google.com/?q=35.86396099527865,139.64054899888734
+
+---
+
+### 2. Japanese (日本語での対話例)
+
+#### プロンプト:
+> *"さいたま市役所周辺の避難場所と避難所を検索して、最寄りの避難所の詳細情報を教えて"*
+
+#### エージェントの回答例:
+
+> さいたま市役所（埼玉県さいたま市浦和区常盤6丁目4-4）周辺の避難場所・避難所の検索結果および最寄り避難所の詳細情報をお伝えします。
+>
+> ---
+>
+> ### さいたま市役所周辺の避難場所・避難所一覧
+>
+> 1. **埼玉大学教育学部附属小学校**
+>    - **種別**: 避難場所 / 指定避難所
+>    - **さいたま市役所からの直線距離・徒歩目安**: 約200m（徒歩約3分）
+> 2. **仲町公民館**
+>    - **種別**: 避難場所 / 指定避難所
+>    - **さいたま市役所からの直線距離・徒歩目安**: 約450m（徒歩約6分）
+> 3. **常盤公園**
+>    - **種別**: 広域避難場所
+>    - **さいたま市役所からの直線距離・徒歩目安**: 約500m（徒歩約7分）
+> 4. **さいたま市立仲町小学校**
+>    - **種別**: 避難場所 / 指定避難所
+>    - **さいたま市役所からの直線距離・徒歩目安**: 約550m（徒歩約7分）
+> 5. **さいたま市立常盤小学校**
+>    - **種別**: 避難場所 / 指定避難所
+>    - **さいたま市役所からの直線距離・徒歩目安**: 約800m（徒歩約10分）
+>
+> ---
+>
+> ### 最寄り避難所「埼玉大学教育学部附属小学校」の詳細情報
+>
+> #### Section 1: Attribute Information (属性情報)
+>
+> ##### MLIT DPF (`nlni_ksj-p20` / `p05`) Attributes
+> * **施設名称 (meishou)**: 埼玉大学教育学部附属小学校
+> * **施設の種類 (shisetsu_no_shurui)**: 避難場所
+> * **住所 (juusho)**: 埼玉県さいたま市浦和区常盤6-9-44
+> * **行政区域コード (gyousei_kuiki)**: 11107（さいたま市浦和区）
+> * **データセットID (dataset_id)**: `nlni_ksj-p20`
+> * **データID (id)**: `1acba7b6-2534-4a66-b596-a433132e6e06`
+> * **緯度・経度 (latitude, longitude)**: 35.862267, 139.643132
+> * **災害別対応フラグ**:
+>   * 洪水 (suigai): 0（指定なし/非対応区分）
+>   * 地震災害 (jishin_saigai): 0
+>   * 津波災害 (tsunami_saigai): 0
+>   * 火山災害 (kazan_saigai): 0
+>   * 指定なし (shitei_nashi): 1（汎用指定避難場所）
+>   * 収容人数 (shuuyou_ninzuu): 未設定 (-1)
+>
+> ##### Google Maps Attributes
+> * **正式名称 (Title)**: 埼玉大学教育学部附属小学校 (Saitama University Elementary School)
+> * **所在地 (Address)**: 〒330-0061 埼玉県さいたま市浦和区常盤6丁目9-44
+> * **施設概要・バリアフリー**: 車椅子対応出入口あり。国立大学法人埼玉大学の附属小学校で、地域防災計画における避難所に指定されています。
+>
+> ---
+>
+> #### Section 2: Map & 3D Viewer Links (地図・3Dビューア)
+>
+> 1. **PlateauView 3D Link**:  
+>    https://plateauview.mlit.go.jp/#/35.8622669991/139.643132/16/
+> 2. **GSI Hazard Overlay Map Link**:  
+>    https://disaportal.gsi.go.jp/hazardmap/maps/index.html?ll=35.8622669991,139.643132&z=16&base=pale&vs=c1j0l0u0t0h0z0
+> 3. **Google Earth 3D Link**:  
+>    https://earth.google.com/web/@35.8622669991,139.643132,100a,500d,60y,0h,0t,0r
+> 4. **Google Maps Link**:  
+>    https://maps.google.com/?q=35.8622669991,139.643132
