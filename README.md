@@ -1,7 +1,7 @@
 # mlit-dpf-agent
 
-An **unofficial** AI agent for searching and retrieving geospatial, urban infrastructure, public facility, and disaster prevention data from the [MLIT Data Platform](https://data-platform.mlit.go.jp/) using natural language.  
-Built with Google ADK (Agent Development Kit), it integrates the **MLIT Data Platform** (via [mlit-dpf-mcp](https://github.com/MLIT-DATA-PLATFORM/mlit-dpf-mcp)) with **Google Maps Grounding**, outputting comprehensive asset attributes alongside multi-perspective spatial viewer links (PlateauView 3D, GSI Hazard Overlay Map, Google Earth 3D, and Google Maps).
+An **unofficial** AI agent for searching and retrieving geospatial, urban infrastructure, and public data from the [MLIT Data Platform](https://data-platform.mlit.go.jp/) alongside global real-world places and routes via Google Maps.  
+Built with Google ADK (Agent Development Kit), it combines the **MLIT Data Platform** (via [mlit-dpf-mcp](https://github.com/MLIT-DATA-PLATFORM/mlit-dpf-mcp)) with **Google Maps Grounding**, outputting dual-perspective responses with **PlateauView 3D** links for Japanese public assets and **Google Maps** links for global locations and navigation.
 
 > ⚠️ **Disclaimer:** This is an unofficial community project and is not officially affiliated with or endorsed by the Ministry of Land, Infrastructure, Transport and Tourism (MLIT).
 
@@ -11,22 +11,27 @@ Agent generated with `agents-cli` version `1.4.0`
 ## Overview & Architecture
 
 ```
-[ User ] ⇄ [ mlit-dpf-agent (ADK / Gemini) ]
-                  ├── [ mlit-dpf-mcp ] ⇄ [ MLIT Data Platform API ]
-                  └── [ Google Maps Grounding ] ⇄ [ Google Maps API ]
+[ User Query ] ⇄ [ mlit-dpf-agent (ADK / Gemini) ]
+                         ├── [ mlit-dpf-mcp ] ⇄ [ MLIT Data Platform API ] ➔ [ PlateauView 3D ]
+                         └── [ Google Maps Grounding ] ⇄ [ Google Maps API ] ➔ [ Google Maps ]
 ```
 
-- **mlit-dpf-agent**: An ADK agent that understands user queries, invokes MLIT DPF MCP tools and Google Maps Grounding, and presents structured facility and infrastructure details with 4 spatial viewer links (PlateauView, GSI Hazard Map, Google Earth, Google Maps).
-- **mlit-dpf-mcp**: The MCP server providing search and retrieval tools. For setup instructions and MCP server details, please refer to the [mlit-dpf-mcp README](https://github.com/MLIT-DATA-PLATFORM/mlit-dpf-mcp#readme).
+- **mlit-dpf-agent**: An ADK agent that performs dual searches across both MLIT DPF (for public infrastructure, shelters, and 3D urban data in Japan) and Google Maps Grounding (for worldwide POIs, businesses, and routes).
+- **Multi-language Support**: Seamlessly processes and responds in Japanese, English, and other languages.
+- **mlit-dpf-mcp**: The MCP server providing search and retrieval tools. For details, refer to the [mlit-dpf-mcp README](https://github.com/MLIT-DATA-PLATFORM/mlit-dpf-mcp#readme).
 
 ## Project Structure
 
 ```
 mlit-dpf-agent/
-├── app/         # Core agent code
+├── app/                       # Core agent code
 │   ├── agent.py               # Main agent logic
 │   ├── fast_api_app.py        # FastAPI Backend server
 │   └── app_utils/             # App utilities and helpers
+├── skills/                    # Agent Skills (ADK & MLIT DPF)
+│   ├── README.md              # Skills catalog
+│   ├── adk/                   # Google Maps Grounding skill
+│   └── mlit-data-plathome/    # MLIT DPF MCP skill
 ├── tests/                     # Unit, integration, and load tests
 ├── GEMINI.md                  # AI-assisted development guide
 └── pyproject.toml             # Project dependencies
@@ -76,15 +81,22 @@ agents-cli playground
 ```
 
 Try asking queries in the playground, such as:
-- **Search (`search`):**
-  - *"Search for evacuation sites and shelters around Saitama City Hall"*
-  - *"さいたま市役所周辺の避難場所と避難所を検索して"*
-- **Get Data directly (`get_data`):**
-  - *"Get detailed information for data ID `21a45b8d-0922-4f28-bfdc-0ae57961c6b5` in dataset `nlni_ksj-p05`"*
-  - *"データセット `nlni_ksj-p05`、データID `21a45b8d-0922-4f28-bfdc-0ae57961c6b5` の詳細情報を取得して"*
-- **Combined Workflow (`search` → `get_data`):**
-  - *"Search for evacuation sites and shelters around Saitama City Hall, then show me the detailed information for the nearest shelter"*
-  - *"さいたま市役所周辺の避難場所と避難所を検索して、最寄りの避難所の詳細情報を教えて"*
+
+### 1. Places & Facilities (場所・施設検索)
+- **Japanese**: *"さいたま市役所近くの避難所。"*  
+  **English**: *"Evacuation shelters near Saitama City Hall."*
+
+### 2. Routes & Directions (経路・行き方)
+- **Japanese**: *"さいたま市役所からさいたま市立常盤公民館に行くにはどうすればよいですか？"*  
+  **English**: *"How do I get from Saitama City Hall to Saitama City Tokiwa Community Center?"*
+
+### 3. Distance & Proximity (距離・近接計算)
+- **Japanese**: *"さいたま市役所から駅までの距離。"*  
+  **English**: *"Distances from Saitama City Hall to nearby train stations."*
+
+### 4. Transit & En-route Stations (広域移動・経由駅検索)
+- **Japanese**: *"さいたま市役所から足立区役所に行くまでの駅を探してください。"*  
+  **English**: *"Find train stations along the route from Saitama City Hall to Adachi City Hall."*
 
 You can also use features from the [ADK](https://adk.dev/) CLI with `uv run adk`.
 
@@ -172,134 +184,86 @@ See the [A2A Inspector docs](https://github.com/a2aproject/a2a-inspector) for de
 
 ## 💬 Sample Interaction & Response Showcase (対話・出力例)
 
-### 1. English (英語での対話例)
-
-#### Prompt:
-> *"Search for designated emergency evacuation sites and shelters around Saitama City Hall, then show me the detailed information for the nearest shelter."*
-
-#### Agent Response:
-
-> Here are the designated emergency evacuation sites and public facilities around Saitama City Hall, along with detailed information for the nearest shelter.
->
-> ---
->
-> ### Nearby Emergency Evacuation Sites & Facilities (around Saitama City Hall)
->
-> 1. **Saitama City Hall / Urawa Ward Office (さいたま市役所 / 浦和区役所)**
->    - **Type**: Administrative Facility / Designated Base Facility
->    - **Estimated Distance / Walking Time**: 0 m (~0 min walk)
-> 2. **Saitama City Nakamachi Elementary School (さいたま市立仲町小学校)**
->    - **Type**: Elementary School / Designated Emergency Evacuation Site & Shelter
->    - **Estimated Distance / Walking Time**: ~450 m (~6 min walk)
-> 3. **Besshonuma Park Temporary Evacuation Area (別所沼公園 一時避難場所)**
->    - **Type**: Park / Temporary Evacuation Site
->    - **Estimated Distance / Walking Time**: ~850 m (~11 min walk)
->
-> ---
->
-> ### Detailed Information for Nearest Shelter: Saitama City Nakamachi Elementary School (さいたま市立仲町小学校)
->
-> #### Section 1: Attribute Information (属性情報)
->
-> * **MLIT DPF (`nlni_ksj-p29` / `p05`) Attributes**:
->   * **Full Facility Name**: さいたま市立仲町小学校 (Saitama City Nakamachi Elementary School)
->   * **Facility Type Code / Category**: 16001 (Elementary School / 学校)
->   * **Administrative Code**: 11107 (Saitama City Urawa Ward / 埼玉県さいたま市浦和区)
->   * **Dataset ID**: `nlni_ksj-p29`
->   * **Data ID**: `7ddd06b7-ff50-4986-b8c9-692ab015761d`
->   * **Latitude / Longitude**: 35.863961, 139.640549
->   * **Disaster Suitability Flags**:
->     * **Flood (洪水)**: Suitable / Grounded shelter facility
->     * **Earthquake (地震)**: Suitable (Designated shelter and evacuation ground)
->     * **Landslide / Debris Flow (土砂災害)**: Suitable
->     * **Tsunami (津波)**: Not Applicable / Low risk area
->     * **Fire (火災)**: Suitable
->
-> * **Google Maps Attributes**:
->   * **Official Place Name**: Nakamachi Elementary School (さいたま市立仲町小学校)
->   * **Exact Street Address**: 8 Chome-18-4 Tokiwa, Urawa Ward, Saitama, 330-0061, Japan
->   * **Facility Overview**: Municipal elementary school serving as a primary designated emergency evacuation site and shelter for surrounding neighborhoods.
->
-> ---
->
-> #### Section 2: Map & 3D Viewer Links (地図・3Dビューア)
->
-> 1. **PlateauView 3D Link**:  
->    https://plateauview.mlit.go.jp/#/35.86396099527865/139.64054899888734/16/
-> 2. **GSI Hazard Overlay Map Link**:  
->    https://disaportal.gsi.go.jp/hazardmap/maps/index.html?ll=35.86396099527865,139.64054899888734&z=16&base=pale&vs=c1j0l0u0t0h0z0
-> 3. **Google Earth 3D Link**:  
->    https://earth.google.com/web/@35.86396099527865,139.64054899888734,100a,500d,60y,0h,0t,0r
-> 4. **Google Maps Link**:  
->    https://maps.google.com/?q=35.86396099527865,139.64054899888734
-
----
-
-### 2. Japanese (日本語での対話例)
+### 1. Japanese (日本語での対話例: 広域移動・経由駅検索)
 
 #### プロンプト:
-> *"さいたま市役所周辺の避難場所と避難所を検索して、最寄りの避難所の詳細情報を教えて"*
+> *"さいたま市役所から足立区役所に行くまでの駅を探してください。"*
 
 #### エージェントの回答例:
 
-> さいたま市役所（埼玉県さいたま市浦和区常盤6丁目4-4）周辺の避難場所・避難所の検索結果および最寄り避難所の詳細情報をお伝えします。
+> さいたま市役所から足立区役所へ移動する際の主な最寄り駅および経由駅・乗換駅の情報は以下の通りです。
 >
 > ---
 >
-> ### さいたま市役所周辺の避難場所・避難所一覧
+> ### 1. MLIT DPF (PlateauView 3D)
 >
-> 1. **埼玉大学教育学部附属小学校**
->    - **種別**: 避難場所 / 指定避難所
->    - **さいたま市役所からの直線距離・徒歩目安**: 約200m（徒歩約3分）
-> 2. **仲町公民館**
->    - **種別**: 避難場所 / 指定避難所
->    - **さいたま市役所からの直線距離・徒歩目安**: 約450m（徒歩約6分）
-> 3. **常盤公園**
->    - **種別**: 広域避難場所
->    - **さいたま市役所からの直線距離・徒歩目安**: 約500m（徒歩約7分）
-> 4. **さいたま市立仲町小学校**
->    - **種別**: 避難場所 / 指定避難所
->    - **さいたま市役所からの直線距離・徒歩目安**: 約550m（徒歩約7分）
-> 5. **さいたま市立常盤小学校**
->    - **種別**: 避難場所 / 指定避難所
->    - **さいたま市役所からの直線距離・徒歩目安**: 約800m（徒歩約10分）
+> MLIT DPFには、経路検索・乗換・経由駅等の交通ルートデータは含まれていないため、該当するデータは見つかりませんでした。
 >
 > ---
 >
-> ### 最寄り避難所「埼玉大学教育学部附属小学校」の詳細情報
+> ### 2. Google Maps (Google Maps Grounding)
 >
-> #### Section 1: Attribute Information (属性情報)
->
-> ##### MLIT DPF (`nlni_ksj-p20` / `p05`) Attributes
-> * **施設名称 (meishou)**: 埼玉大学教育学部附属小学校
-> * **施設の種類 (shisetsu_no_shurui)**: 避難場所
-> * **住所 (juusho)**: 埼玉県さいたま市浦和区常盤6-9-44
-> * **行政区域コード (gyousei_kuiki)**: 11107（さいたま市浦和区）
-> * **データセットID (dataset_id)**: `nlni_ksj-p20`
-> * **データID (id)**: `1acba7b6-2534-4a66-b596-a433132e6e06`
-> * **緯度・経度 (latitude, longitude)**: 35.862267, 139.643132
-> * **災害別対応フラグ**:
->   * 洪水 (suigai): 0（指定なし/非対応区分）
->   * 地震災害 (jishin_saigai): 0
->   * 津波災害 (tsunami_saigai): 0
->   * 火山災害 (kazan_saigai): 0
->   * 指定なし (shitei_nashi): 1（汎用指定避難場所）
->   * 収容人数 (shuuyou_ninzuu): 未設定 (-1)
->
-> ##### Google Maps Attributes
-> * **正式名称 (Title)**: 埼玉大学教育学部附属小学校 (Saitama University Elementary School)
-> * **所在地 (Address)**: 〒330-0061 埼玉県さいたま市浦和区常盤6丁目9-44
-> * **施設概要・バリアフリー**: 車椅子対応出入口あり。国立大学法人埼玉大学の附属小学校で、地域防災計画における避難所に指定されています。
+> #### 1. 出発地・目的地の最寄り駅
+> * **さいたま市役所側の最寄り駅**:
+>   * **浦和駅**（JR京浜東北線・宇都宮線・高崎線・湘南新宿ライン）
+> * **足立区役所側の最寄り駅**:
+>   * **梅島駅**（東武スカイツリーライン） - 徒歩約12〜15分
+>   * **五反野駅**（東武スカイツリーライン） - 徒歩約15分
 >
 > ---
 >
-> #### Section 2: Map & 3D Viewer Links (地図・3Dビューア)
+> #### 2. 代表的な移動ルートと経由・乗換駅
 >
-> 1. **PlateauView 3D Link**:  
->    https://plateauview.mlit.go.jp/#/35.8622669991/139.643132/16/
-> 2. **GSI Hazard Overlay Map Link**:  
->    https://disaportal.gsi.go.jp/hazardmap/maps/index.html?ll=35.8622669991,139.643132&z=16&base=pale&vs=c1j0l0u0t0h0z0
-> 3. **Google Earth 3D Link**:  
->    https://earth.google.com/web/@35.8622669991,139.643132,100a,500d,60y,0h,0t,0r
-> 4. **Google Maps Link**:  
->    https://maps.google.com/?q=35.8622669991,139.643132
+> * **ルートA：上野・北千住経由（電車のみ）**
+>   1. **浦和駅**（JR宇都宮線・高崎線または京浜東北線）
+>   2. **上野駅** または **赤羽駅**（乗換・経由）
+>   3. **北千住駅**（JR・東京メトロ・東武スカイツリーライン等）
+>   4. **梅島駅** または **五反野駅**（足立区役所最寄り駅）
+>
+> * **ルートB：武蔵野線・東武線経由**
+>   1. **浦和駅**（JR京浜東北線）
+>   2. **南浦和駅**（JR武蔵野線へ乗り換え）
+>   3. **南越谷駅 / 新越谷駅**（東武スカイツリーラインへ乗り換え）
+>   4. **梅島駅**（足立区役所最寄り駅）
+>
+> * **ルートC：赤羽駅からバスを利用するルート**
+>   1. **浦和駅**（JR京浜東北線等）
+>   2. **赤羽駅**
+>   3. 赤羽駅東口から足立区役所行きの路線バスを利用して直行移動
+>
+> * **ルート案内リンク**: [さいたま市役所 ➔ 足立区役所のルートを開く](https://www.google.com/maps/dir/?api=1&origin=さいたま市役所&destination=足立区役所)
+
+---
+
+### 2. English (英語での対話例: Transit & En-route Stations)
+
+#### Prompt:
+> *"Find train stations along the route from Saitama City Hall to Adachi City Hall."*
+
+#### Agent Response:
+
+> ### 1. MLIT DPF (PlateauView 3D)
+> No relevant routing or transit data was found in the MLIT Data Platform for this query, as route navigation and en-route transit analysis are handled outside of the DPF dataset.
+>
+> ---
+>
+> ### 2. Google Maps (Google Maps Grounding)
+>
+> Below is an overview of key train stations along the transit routes connecting **Saitama City Hall** and **Adachi City Office (Hall)**.
+>
+> #### 🚆 Origin / Departure Stations (Near Saitama City Hall)
+> - **Kita-Urawa Station** (JR Keihin-Tohoku Line) - ~1.1 km from Saitama City Hall
+> - **Urawa Station** (JR Keihin-Tohoku, Utsunomiya, Takasaki, Shonan-Shinjuku Lines) - ~1.5 km
+>
+> #### 🔄 Major Intermediate & Transfer Stations
+> 1. **Route via Akabane & Kita-Senju**:
+>    - **Minami-Urawa Station** (JR Keihin-Tohoku Line / JR Musashino Line)
+>    - **Akabane Station** (JR Lines)
+>    - **Kita-Senju Station** (JR Joban Line, Tobu Skytree Line, Tokyo Metro Hibiya/Chiyoda Lines, Tsukuba Express)
+> 2. **Route via Tobu Skytree Line**:
+>    - **Nishiarai Station** (Tobu Skytree Line, Tobu Daishi Line)
+>
+> #### 🏁 Arrival / Destination Stations (Near Adachi City Hall)
+> - **Umejima Station** (Tobu Skytree Line) - ~1.1 km to Adachi City Office (~12–15 min walk)
+> - **Gotanno Station** (Tobu Skytree Line) - ~1.2 km to Adachi City Office (~15 min walk)
+
