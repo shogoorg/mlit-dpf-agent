@@ -191,47 +191,31 @@ See the [A2A Inspector docs](https://github.com/a2aproject/a2a-inspector) for de
 
 #### エージェントの回答例:
 
-> さいたま市役所から足立区役所へ移動する際の主な最寄り駅および経由駅・乗換駅の情報は以下の通りです。
->
-> ---
->
 > ### 1. MLIT DPF (PlateauView 3D)
->
-> MLIT DPFには、経路検索・乗換・経由駅等の交通ルートデータは含まれていないため、該当するデータは見つかりませんでした。
+> 経路検索および乗り換え・経由駅に関するデータはMLIT DPF（国土交通省データプラットフォーム）に含まれないため、該当するデータは見つかりませんでした。
 >
 > ---
 >
 > ### 2. Google Maps (Google Maps Grounding)
+> [さいたま市役所](https://maps.google.com/?q=Saitama+City+Hall) から [足立区役所](https://maps.google.com/?q=Adachi+City+Office) へ向かう際の主な移動手段・経由駅をご案内します。
 >
-> #### 1. 出発地・目的地の最寄り駅
-> * **さいたま市役所側の最寄り駅**:
->   * **浦和駅**（JR京浜東北線・宇都宮線・高崎線・湘南新宿ライン）
-> * **足立区役所側の最寄り駅**:
->   * **梅島駅**（東武スカイツリーライン） - 徒歩約12〜15分
->   * **五反野駅**（東武スカイツリーライン） - 徒歩約15分
+> #### 🗺️ おすすめの電車ルートと主な経由駅
 >
-> ---
+> 1. **赤羽・北千住経由（標準的なルート）**
+>    * **徒歩/バス**：[さいたま市役所](https://maps.google.com/?q=Saitama+City+Hall) ➔ [浦和駅](https://maps.google.com/?q=Urawa+Station)（または [北浦和駅](https://maps.google.com/?q=Kita-Urawa+Station)）
+>    * **JR線**：[浦和駅](https://maps.google.com/?q=Urawa+Station) ➔ **[赤羽駅](https://maps.google.com/?q=Akabane+Station)** で乗り換え
+>    * **JR常磐線/千代田線**：[赤羽駅](https://maps.google.com/?q=Akabane+Station) ➔ **[北千住駅](https://maps.google.com/?q=Kita-Senju+Station)**
+>    * **東武スカイツリーライン**：[北千住駅](https://maps.google.com/?q=Kita-Senju+Station) ➔ **[梅島駅](https://maps.google.com/?q=Umejima+Station)**（または [五反野駅](https://maps.google.com/?q=Gotanno+Station)）
+>    * **徒歩**：[梅島駅](https://maps.google.com/?q=Umejima+Station)（徒歩約12分）➔ [足立区役所](https://maps.google.com/?q=Adachi+City+Office)
 >
-> #### 2. 代表的な移動ルートと経由・乗換駅
+> 2. **武蔵野線・東武スカイツリーライン経由**
+>    * **乗車**：[北浦和駅](https://maps.google.com/?q=Kita-Urawa+Station)（JR京浜東北線）
+>    * **乗り換え駅1**：**[南浦和駅](https://maps.google.com/?q=Minami-Urawa+Station)**（JR武蔵野線へ乗り換え）
+>    * **乗り換え駅2**：**[南越谷駅](https://maps.google.com/?q=Minami-Koshigaya+Station) / [新越谷駅](https://maps.google.com/?q=Shin-Koshigaya+Station)**（東武スカイツリーラインへ乗り換え）
+>    * **降車駅**：**[梅島駅](https://maps.google.com/?q=Umejima+Station)** ➔ [足立区役所](https://maps.google.com/?q=Adachi+City+Office)
 >
-> * **ルートA：上野・北千住経由（電車のみ）**
->   1. **浦和駅**（JR宇都宮線・高崎線または京浜東北線）
->   2. **上野駅** または **赤羽駅**（乗換・経由）
->   3. **北千住駅**（JR・東京メトロ・東武スカイツリーライン等）
->   4. **梅島駅** または **五反野駅**（足立区役所最寄り駅）
->
-> * **ルートB：武蔵野線・東武線経由**
->   1. **浦和駅**（JR京浜東北線）
->   2. **南浦和駅**（JR武蔵野線へ乗り換え）
->   3. **南越谷駅 / 新越谷駅**（東武スカイツリーラインへ乗り換え）
->   4. **梅島駅**（足立区役所最寄り駅）
->
-> * **ルートC：赤羽駅からバスを利用するルート**
->   1. **浦和駅**（JR京浜東北線等）
->   2. **赤羽駅**
->   3. 赤羽駅東口から足立区役所行きの路線バスを利用して直行移動
->
-> * **ルート案内リンク**: [さいたま市役所 ➔ 足立区役所のルートを開く](https://www.google.com/maps/dir/?api=1&origin=さいたま市役所&destination=足立区役所)
+> #### 📍 関連リンク
+> * [さいたま市役所から足立区役所へのGoogle マップルート案内](https://www.google.com/maps/dir/?api=1&origin=%E3%81%95%E3%81%84%E3%81%9F%E3%81%BE%E5%B8%82%E1%B9%B9%E6%89%80&destination=%E8%B6%B3%E7%AB%8B%E5%8C%BA%E1%B9%B9%E6%89%80)
 
 ---
 
@@ -243,27 +227,43 @@ See the [A2A Inspector docs](https://github.com/a2aproject/a2a-inspector) for de
 #### Agent Response:
 
 > ### 1. MLIT DPF (PlateauView 3D)
-> No relevant routing or transit data was found in the MLIT Data Platform for this query, as route navigation and en-route transit analysis are handled outside of the DPF dataset.
+>
+> No relevant routing, transit, or en-route station data was found in the MLIT Data Platform (DPF) dataset. Transit routes and en-route facility queries are not available in DPF.
 >
 > ---
 >
 > ### 2. Google Maps (Google Maps Grounding)
 >
-> Below is an overview of key train stations along the transit routes connecting **Saitama City Hall** and **Adachi City Office (Hall)**.
+> To travel from **Saitama City Hall** to **Adachi City Hall**, you can take the following primary transit routes and key train stations along the way:
 >
-> #### 🚆 Origin / Departure Stations (Near Saitama City Hall)
-> - **Kita-Urawa Station** (JR Keihin-Tohoku Line) - ~1.1 km from Saitama City Hall
-> - **Urawa Station** (JR Keihin-Tohoku, Utsunomiya, Takasaki, Shonan-Shinjuku Lines) - ~1.5 km
+> #### Route 1: via JR Keihin-Tohoku Line & Tobu Skytree Line (Southbound via Tokyo / Kita-Senju)
+> 1. **Departure Point:** Near [Saitama City Hall](https://maps.google.com/?q=Saitama+City+Hall) (walk or bus to **Urawa Station**).
+> 2. **Board Train:** **[Urawa Station](https://maps.google.com/maps?cid=125955762729017677)** via JR Keihin-Tohoku Line or JR Utsunomiya/Takasaki Line southbound.
+> 3. **Key Stations En-Route (JR Lines):**
+>    - **[Kawaguchi Station](https://maps.google.com/maps?cid=2380321002154070180)**
+>    - **Akabane Station** / **Nishi-Nippori Station**
+>    - **[Kita-Senju Station](https://maps.google.com/maps?cid=916455017776921353)** *(Transfer Station)*
+> 4. **Transfer:** At **Kita-Senju Station** to the **Tobu Skytree Line** (Local) northbound.
+> 5. **Key Stations En-Route (Tobu Skytree Line):**
+>    - **[Gotanno Station](https://maps.google.com/maps?cid=15577551084652085718)**
+>    - **[Umejima Station](https://maps.google.com/maps?cid=2645490550474442010)** *(Closest station to Adachi City Hall)*
+>    - **[Nishiarai Station](https://maps.google.com/maps?cid=11784116996624238944)**
+> 6. **Destination:** **[Adachi City Hall](https://maps.google.com/maps?cid=11715761257836572232)** (approx. 10-12 min walk from Umejima Station).
 >
-> #### 🔄 Major Intermediate & Transfer Stations
-> 1. **Route via Akabane & Kita-Senju**:
->    - **Minami-Urawa Station** (JR Keihin-Tohoku Line / JR Musashino Line)
->    - **Akabane Station** (JR Lines)
->    - **Kita-Senju Station** (JR Joban Line, Tobu Skytree Line, Tokyo Metro Hibiya/Chiyoda Lines, Tsukuba Express)
-> 2. **Route via Tobu Skytree Line**:
->    - **Nishiarai Station** (Tobu Skytree Line, Tobu Daishi Line)
+> ---
 >
-> #### 🏁 Arrival / Destination Stations (Near Adachi City Hall)
-> - **Umejima Station** (Tobu Skytree Line) - ~1.1 km to Adachi City Office (~12–15 min walk)
-> - **Gotanno Station** (Tobu Skytree Line) - ~1.2 km to Adachi City Office (~15 min walk)
+> #### Route 2: via JR Musashino Line & Tobu Skytree Line (Eastbound via Koshigaya / Soka)
+> 1. **Board Train:** From **Minami-Urawa Station** via JR Musashino Line eastbound.
+> 2. **Transfer:** At **Minami-Koshigaya / Shin-Koshigaya Station** to the **Tobu Skytree Line** southbound.
+> 3. **Key Stations En-Route (Tobu Skytree Line):**
+>    - **[Soka Station](https://maps.google.com/maps?cid=15530497514608140943)**
+>    - **[Takenotsuka Station](https://maps.google.com/maps?cid=5644149346570210508)**
+>    - **[Nishiarai Station](https://maps.google.com/maps?cid=11784116996624238944)**
+>    - **[Umejima Station](https://maps.google.com/maps?cid=2645490550474442010)**
+> 4. **Destination:** Walk to **[Adachi City Hall](https://maps.google.com/maps?cid=11715761257836572232)**.
+>
+> ---
+>
+> 🗺️ **Direct Route & Navigation:**
+> - [Google Maps Directions: Saitama City Hall to Adachi City Hall](https://www.google.com/maps/dir/?api=1&origin=Saitama+City+Hall&destination=Adachi+City+Hall)
 

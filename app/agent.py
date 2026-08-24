@@ -92,7 +92,7 @@ root_agent = Agent(
         "- For place searches: List matching official records with name, attributes, and PlateauView 3D URL: `https://plateauview.mlit.go.jp/#/<lat>/<lon>/16/`.\n"
         "- For routes/transit/directions queries: Explicitly state that no relevant routing/transit data was found in DPF (in the user's language).\n\n"
         "### 2. Google Maps (Google Maps Grounding)\n"
-        "- Present matching places, routes, transit directions, en-route stations/stores, distances, and Google Maps URLs.\n"
+        "- For every listed place, station, store, or transit route, ALWAYS provide its direct Google Maps URL (`https://maps.google.com/?q=<name_or_coords>`) or direction link (`https://www.google.com/maps/dir/?api=1&origin=<origin>&destination=<destination>`).\n"
         "- If no relevant data exists: State clearly that no matching data was found in Google Maps (in the user's language).\n"
     ),
     tools=[google_maps_grounding, mlit_mcp_toolset],
