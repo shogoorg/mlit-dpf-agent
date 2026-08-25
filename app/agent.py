@@ -21,8 +21,12 @@ from dotenv import load_dotenv
 from google.adk.agents import Agent
 from google.adk.apps import App
 from google.adk.models import Gemini
-from google.adk.tools import McpToolset, google_maps_grounding
-from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
+from google.adk.tools import McpToolset
+from google.adk.tools.mcp_tool.mcp_session_manager import (
+    SseConnectionParams,
+    StdioConnectionParams,
+    StreamableHTTPConnectionParams,
+)
 from google.genai import types
 from mcp import StdioServerParameters
 
@@ -67,6 +71,14 @@ mlit_mcp_toolset = McpToolset(
     tool_filter=["search", "get_data"],
 )
 
+# Google Maps Grounding Lite MCP Toolset
+maps_grounding_lite_toolset = McpToolset(
+    connection_params=StreamableHTTPConnectionParams(
+        url="https://mapstools.googleapis.com/mcp",
+        headers={"X-Goog-Api-Key": os.getenv("GOOGLE_MAPS_API_KEY", "")},
+    )
+)
+
 root_agent = Agent(
     name="mlit_dpf_agent",
     model=Gemini(
@@ -74,31 +86,23 @@ root_agent = Agent(
         retry_options=types.HttpRetryOptions(attempts=3),
     ),
     instruction=(
-        "You are an intelligent geospatial AI assistant. For EVERY user query, evaluate both MLIT Data Platform (DPF) and Google Maps Grounding, presenting findings in two distinct sections.\n\n"
-        "Available Tools:\n"
-        "- `search`: Query MLIT DPF datasets in Japan.\n"
-        "- `get_data`: Fetch detailed attributes and coordinates for MLIT DPF items.\n"
-        "- `google_maps_grounding`: Ground real-world places, businesses, addresses, routes, directions, transit, and coordinates globally.\n\n"
-        "Query Routing & Handling Rules:\n"
-        "1. **Routes, Transit & En-route Searches (経路・行き方・経由駅・道中検索)**:\n"
-        "   - Handled SOLELY by `google_maps_grounding` (providing routes, transit steps, en-route stations/stores, distances, and direction links).\n"
-        "   - In the MLIT DPF section, DO NOT search or list intermediate stations or facilities; explicitly output that no matching data was found in DPF (in the user's language).\n"
-        "2. **Places & Facility Searches (場所・施設検索)**:\n"
-        "   - Search both MLIT DPF (for official records/PlateauView 3D) and Google Maps Grounding concurrently.\n\n"
-        "Language & Response Policy:\n"
-        "- Respond in the same language as the user's query (supporting Japanese, English, and other languages seamlessly).\n\n"
-        "Strict Output Format (Two Sections):\n\n"
-        "### 1. MLIT DPF (PlateauView 3D)\n"
-        "- For place searches: List matching official records with name, attributes, and PlateauView 3D URL: `https://plateauview.mlit.go.jp/#/<lat>/<lon>/16/`.\n"
-        "- For routes/transit/directions queries: Explicitly state that no relevant routing/transit data was found in DPF (in the user's language).\n\n"
-        "### 2. Google Maps (Google Maps Grounding)\n"
-        "- For every listed place, station, store, or transit route, ALWAYS provide its direct Google Maps URL (`https://maps.google.com/?q=<name_or_coords>`) or direction link (`https://www.google.com/maps/dir/?api=1&origin=<origin>&destination=<destination>`).\n"
-        "- If no relevant data exists: State clearly that no matching data was found in Google Maps (in the user's language).\n"
+        "You are an intelligent geospatial AI assistant answering user queries in the user's language.\n\n"
+        "Output Guidelines:\n"
+        "- **Places & Datasets**: Present findings in two distinct sections:\n"
+        "  ### 1. MLIT DPF (PlateauView 3D)\n"
+        "  - Official Japanese records with name, category, coordinates, and PlateauView 3D URL: `https://plateauview.mlit.go.jp/#/<lat>/<lon>/16/`.\n"
+        "  ### 2. Google Maps (Grounding Lite)\n"
+        "  - Real-world places, verified addresses, and direct Google Maps URLs.\n"
+        "- **Routes, Transit & Weather**:\n"
+        "  - Provide route/distance details (`compute_routes`), directions links, or weather (`lookup_weather`) directly from Google Maps. Omit the MLIT DPF section entirely."
     ),
-    tools=[google_maps_grounding, mlit_mcp_toolset],
+    tools=[mlit_mcp_toolset, maps_grounding_lite_toolset],
 )
 
 app = App(
     root_agent=root_agent,
     name="app",
 )
+
+
+
