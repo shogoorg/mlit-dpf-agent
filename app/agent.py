@@ -34,13 +34,15 @@ load_dotenv()
 
 MODEL = "gemini-3.6-flash"
 
-# Path to the mlit-dpf-mcp repository
-MLIT_MCP_DIR = Path(
-    os.getenv(
-        "MLIT_MCP_DIR",
-        str(Path(__file__).resolve().parents[2] / "mlit-dpf-mcp"),
-    )
+# Path to the mlit-dpf-mcp repository or bundled mcp_server
+BUNDLED_MCP_DIR = Path(__file__).resolve().parent / "mcp_server"
+DEFAULT_MCP_DIR = (
+    BUNDLED_MCP_DIR
+    if BUNDLED_MCP_DIR.exists()
+    else Path(__file__).resolve().parents[2] / "mlit-dpf-mcp"
 )
+
+MLIT_MCP_DIR = Path(os.getenv("MLIT_MCP_DIR", str(DEFAULT_MCP_DIR)))
 mcp_python = MLIT_MCP_DIR / ".venv" / "bin" / "python"
 mcp_server = MLIT_MCP_DIR / "src" / "server.py"
 
