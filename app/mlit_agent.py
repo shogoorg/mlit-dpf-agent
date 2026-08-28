@@ -26,9 +26,7 @@ load_dotenv()
 MODEL = "gemini-3.6-flash"
 
 # MLIT DPF MCP Toolset connecting to standalone MCP server via SSE
-MLIT_MCP_SERVER_URL = os.getenv(
-    "MLIT_MCP_SERVER_URL", "http://localhost:8000/sse"
-)
+MLIT_MCP_SERVER_URL = os.getenv("MLIT_MCP_SERVER_URL", "http://localhost:8000/sse")
 
 mlit_mcp_toolset = McpToolset(
     connection_params=SseConnectionParams(
@@ -68,6 +66,3 @@ mlit_agent = Agent(
     ),
     tools=[mlit_mcp_toolset],
 )
-
-
-
