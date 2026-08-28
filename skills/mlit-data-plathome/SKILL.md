@@ -23,33 +23,20 @@ This skill explains how to connect to and use the **`mlit-dpf-mcp`** Model Conte
 |---|---|---|
 | `MLIT_API_KEY` | API Key for MLIT Data Platform | `""` |
 | `MLIT_BASE_URL` | Base API endpoint | `https://data-platform.mlit.go.jp/api/v1/` |
-| `MLIT_MCP_DIR` | Local path to the `mlit-dpf-mcp` repository | `../mlit-dpf-mcp` |
+| `MLIT_MCP_SERVER_URL` | URL of the standalone MLIT MCP server | `http://localhost:8000/sse` |
 
 ## MCP Connection Setup
 
-Configure `McpToolset` in Google ADK to run the `mlit-dpf-mcp` server:
+Configure `McpToolset` in Google ADK to connect to the standalone `mlit-dpf-mcp` server:
 
 ```python
 import os
-import sys
-from pathlib import Path
 from google.adk.tools import McpToolset
-from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
-from mcp import StdioServerParameters
-
-mcp_server = Path("../mlit-dpf-mcp/src/server.py").resolve()
+from google.adk.tools.mcp_tool.mcp_session_manager import SseConnectionParams
 
 mlit_mcp_toolset = McpToolset(
-    connection_params=StdioConnectionParams(
-        server_params=StdioServerParameters(
-            command=sys.executable,
-            args=[str(mcp_server)],
-            env={
-                **os.environ,
-                "MLIT_API_KEY": os.getenv("MLIT_API_KEY", ""),
-                "MLIT_BASE_URL": os.getenv("MLIT_BASE_URL", "https://data-platform.mlit.go.jp/api/v1/"),
-            },
-        )
+    connection_params=SseConnectionParams(
+        url=os.getenv("MLIT_MCP_SERVER_URL", "http://localhost:8000/sse"),
     ),
     tool_filter=["search", "get_data"],
 )

@@ -6,7 +6,6 @@ Agent skills for the MLIT Data Platform (DPF) agent, compatible with [Agent Skil
 
 | Skill | Description |
 |---|---|
-| [`adk`](./adk/SKILL.md) | Guide for using the built-in `google_maps_grounding` tool in Google ADK |
 | [`mlit-data-plathome`](./mlit-data-plathome/SKILL.md) | MCP connection and tool reference (`search`, `get_data`) for `mlit-dpf-mcp` |
 
 ## Structure

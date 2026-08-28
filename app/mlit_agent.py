@@ -14,55 +14,26 @@
 # limitations under the License.
 
 import os
-from pathlib import Path
-import sys
-
 from dotenv import load_dotenv
 from google.adk.agents import Agent
 from google.adk.models import Gemini
 from google.adk.tools import McpToolset
-from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
+from google.adk.tools.mcp_tool.mcp_session_manager import SseConnectionParams
 from google.genai import types
-from mcp import StdioServerParameters
 
 load_dotenv()
 
 MODEL = "gemini-3.6-flash"
 
-# Path to the mlit-dpf-mcp repository or bundled mcp_server
-BUNDLED_MCP_DIR = Path(__file__).resolve().parent / "mcp_server"
-DEFAULT_MCP_DIR = (
-    BUNDLED_MCP_DIR
-    if BUNDLED_MCP_DIR.exists()
-    else Path(__file__).resolve().parents[2] / "mlit-dpf-mcp"
+# MLIT DPF MCP Toolset connecting to standalone MCP server via SSE
+MLIT_MCP_SERVER_URL = os.getenv(
+    "MLIT_MCP_SERVER_URL", "http://localhost:8000/sse"
 )
 
-MLIT_MCP_DIR = Path(os.getenv("MLIT_MCP_DIR", str(DEFAULT_MCP_DIR)))
-mcp_python = MLIT_MCP_DIR / ".venv" / "bin" / "python"
-mcp_server = MLIT_MCP_DIR / "src" / "server.py"
-
-python_executable = (
-    str(mcp_python) if mcp_python.exists() else sys.executable
-)
-
-def create_mcp_connection_params() -> StdioConnectionParams:
-    return StdioConnectionParams(
-        server_params=StdioServerParameters(
-            command=python_executable,
-            args=[str(mcp_server)],
-            env={
-                **os.environ,
-                "MLIT_API_KEY": os.getenv("MLIT_API_KEY", ""),
-                "MLIT_BASE_URL": os.getenv(
-                    "MLIT_BASE_URL", "https://data-platform.mlit.go.jp/api/v1/"
-                ),
-            },
-        )
-    )
-
-# MLIT DPF MCP Toolset providing full MLIT Data Platform tools
 mlit_mcp_toolset = McpToolset(
-    connection_params=create_mcp_connection_params(),
+    connection_params=SseConnectionParams(
+        url=MLIT_MCP_SERVER_URL,
+    ),
 )
 
 mlit_agent = Agent(
