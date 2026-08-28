@@ -110,6 +110,11 @@ def _default_capabilities() -> AgentCapabilities:
                 uri=_ADK_AGENT_EXECUTOR_EXTENSION_URI,
                 description=("Ability to use the new agent executor implementation"),
             ),
+            AgentExtension(
+                uri="https://a2ui.org/a2a-extension/a2ui/v0.9",
+                description="Provides agent driven UI using the A2UI JSON format.",
+                params={"supportedCatalogIds": ["a2ui://maps-agentic-ui-catalog.json"]},
+            ),
         ],
     )
 

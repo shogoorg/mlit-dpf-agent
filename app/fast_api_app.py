@@ -25,9 +25,11 @@ from google.adk.runners import Runner
 from app.app_utils import services
 from app.app_utils.a2a import attach_a2a_routes
 
+from starlette.middleware.cors import CORSMiddleware
+
 load_dotenv()
 allow_origins = (
-    os.getenv("ALLOW_ORIGINS", "").split(",") if os.getenv("ALLOW_ORIGINS") else None
+    os.getenv("ALLOW_ORIGINS", "").split(",") if os.getenv("ALLOW_ORIGINS") else ["*"]
 )
 
 AGENT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
