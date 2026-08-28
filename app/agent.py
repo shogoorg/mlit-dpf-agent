@@ -20,7 +20,6 @@ from google.adk.models import Gemini
 from google.adk.tools import AgentTool
 from google.genai import types
 
-from app.maps_agent import maps_agent
 from app.mlit_agent import mlit_agent
 
 load_dotenv()
@@ -34,19 +33,14 @@ root_agent = Agent(
         retry_options=types.HttpRetryOptions(attempts=3),
     ),
     instruction=(
-        "You are an intelligent geospatial orchestrator assistant answering user queries in the user's language.\n"
-        "For all user queries, you MUST call BOTH `mlit_agent` and `maps_agent` tools to gather comprehensive geospatial intelligence.\n\n"
-        "Always present your final response in TWO distinct sections:\n"
-        "### 1. MLIT DPF (PlateauView 3D)\n"
+        "You are an intelligent geospatial assistant answering user queries in the user's language.\n"
+        "For all user queries, call `mlit_agent` to gather geospatial intelligence from Japan's MLIT Data Platform.\n\n"
+        "Present your response with:\n"
         "- Official Japanese records, category, coordinates, and PlateauView 3D URL (`https://plateauview.mlit.go.jp/#/<lat>/<lon>/16/`).\n"
-        "- If no data is found, clearly state that no official MLIT records were found on the platform.\n\n"
-        "### 2. Google Maps (Grounding Lite)\n"
-        "- Verified places, current addresses, direct Google Maps links, routes, or weather.\n"
-        "- If no data is found, clearly state that no matching information was found on Google Maps."
+        "- If no data is found, clearly state that no official MLIT records were found on the platform."
     ),
     tools=[
         AgentTool(agent=mlit_agent),
-        AgentTool(agent=maps_agent),
     ],
 )
 
