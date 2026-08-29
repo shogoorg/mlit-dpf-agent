@@ -64,15 +64,24 @@ app: FastAPI = get_fast_api_app(
     artifact_service_uri=services.ARTIFACT_SERVICE_URI,
     allow_origins=allow_origins,
     session_service_uri=services.SESSION_SERVICE_URI,
-    otel_to_cloud=True,
+    otel_to_cloud=False,
     lifespan=lifespan,
 )
 app.title = "mlit-dpf-agent"
 app.description = "API for interacting with the Agent mlit-dpf-agent"
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 # Main execution
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=8080)
+

@@ -21,14 +21,10 @@ function App() {
   const importDialogRef = useRef<HTMLDialogElement>(null);
   const [lastResponseJson, setLastResponseJson] = useState('');
 
-  // --- A2UI Integration Refs ---
-  // RobustA2UIClient handles communication with the A2A agent strictly using VITE_A2A_SERVER_URL from .env
-  const serverUrl = import.meta.env.VITE_A2A_SERVER_URL;
-  if (!serverUrl) {
-    throw new Error(
-      'Missing VITE_A2A_SERVER_URL environment variable. Please define it in client/web/react/.env',
-    );
-  }
+  // RobustA2UIClient handles communication with the A2A agent
+  const serverUrl =
+    import.meta.env.VITE_A2A_SERVER_URL ||
+    'https://mlit-dpf-agent-h3ix2jg73a-uw.a.run.app/a2a/app';
   const clientRef = useRef(new RobustA2UIClient(serverUrl));
   // A2UIRenderer manages the local state of A2UI surfaces and message processing
   const rendererRef = useRef(new A2UIRenderer());

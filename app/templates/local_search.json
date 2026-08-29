@@ -44,8 +44,14 @@
         },
         {
           "id": "place-card",
-          "component": "PlaceDetailsCompact",
-          "placeId": { "path": "placeId" }
+          "component": "Card",
+          "child": "card-content"
+        },
+        {
+          "id": "card-content",
+          "component": "Text",
+          "variant": "body",
+          "text": { "path": "cardText" }
         }
       ]
     }

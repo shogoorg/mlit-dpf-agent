@@ -108,8 +108,14 @@ NEVER omit the `<a2ui-json>` block. If omitted, the user's interactive map and c
         },
         {
           "id": "place-card",
-          "component": "PlaceDetailsCompact",
-          "placeId": { "path": "placeId" }
+          "component": "Card",
+          "child": "card-content"
+        },
+        {
+          "id": "card-content",
+          "component": "Text",
+          "variant": "body",
+          "text": { "path": "cardText" }
         }
       ]
     }
@@ -122,9 +128,7 @@ NEVER omit the `<a2ui-json>` block. If omitted, the user's interactive map and c
       "value": {
         "places": [
           {
-            "placeId": "<Unique ID or Name 1>",
-            "name": "<Facility 1 Name>",
-            "address": "<Facility 1 Address>",
+            "cardText": "### <Facility 1 Name> `ID: <MLIT ID 1>`\n📍 所在地: <Facility 1 Address>\n🏢 種別: <Facility 1 Type / Category>\n🗺️ [Google マップで確認](https://www.google.com/maps/search/?api=1&query=<lat>,<lng>) ｜ 🌐 [PlateauView 3D](https://plateauview.mlit.go.jp/)（※「<Facility 1 Address>」で検索)\n*出典: 国土数値情報（国土交通省）*",
             "lat": <Latitude float>,
             "lng": <Longitude float>
           }
