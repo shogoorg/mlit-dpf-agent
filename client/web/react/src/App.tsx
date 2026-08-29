@@ -3,9 +3,59 @@ import {
   type TimelineItem,
   themeStyleSheet,
 } from '@googlemaps/a2ui/lit';
+import MarkdownIt from 'markdown-it';
 import {useEffect, useRef, useState} from 'react';
 import './App.css';
 import {RobustA2UIClient} from './a2ui_client';
+
+const md = new MarkdownIt({
+  html: true,
+  linkify: true,
+  breaks: true,
+});
+
+// Configure markdown-it to open all links in a new tab
+const defaultLinkRender =
+  md.renderer.rules.link_open ||
+  function (tokens: any[], idx: number, options: any, _env: any, self: any) {
+    return self.renderToken(tokens, idx, options);
+  };
+
+md.renderer.rules.link_open = function (tokens: any[], idx: number, options: any, env: any, self: any) {
+  tokens[idx].attrSet('target', '_blank');
+  tokens[idx].attrSet('rel', 'noopener noreferrer');
+  return defaultLinkRender(tokens, idx, options, env, self);
+};
+
+/**
+ * Custom Dark Theme overrides for A2UI Lit Custom Elements (Shadow DOM)
+ */
+const customDarkThemeStyleSheet = new CSSStyleSheet();
+customDarkThemeStyleSheet.replaceSync(`
+:root {
+  --a2ui-column-gap: 12px;
+
+  /* Card Dark Theme Overrides */
+  --a2ui-card-background: #18181b;
+  --a2ui-card-border: 1px solid #27272a;
+  --a2ui-card-border-radius: 16px;
+  --a2ui-card-padding: 12px 16px;
+  --a2ui-card-box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+
+  /* Link & Text Overrides */
+  --a2ui-text-color: #f4f4f5;
+  --a2ui-text-a-color: #38bdf8;
+  --a2ui-text-a-font-weight: 500;
+  --a2ui-text-a-text-decoration: underline;
+
+  /* Material Tokens */
+  --md-sys-color-surface: #18181b;
+  --md-sys-color-on-surface: #f4f4f5;
+  --md-sys-color-on-surface-variant: #a1a1aa;
+  --md-sys-color-outline: #27272a;
+  --md-sys-color-primary: #38bdf8;
+}
+`);
 
 /**
  * Main Application component that demonstrates A2UI integration in a React environment.
@@ -17,9 +67,6 @@ function App() {
   const [timeline, setTimeline] = useState<TimelineItem[]>([]);
   const [input, setInput] = useState('');
   const [isRequesting, setIsRequesting] = useState(false);
-  const [importJson, setImportJson] = useState('');
-  const importDialogRef = useRef<HTMLDialogElement>(null);
-  const [lastResponseJson, setLastResponseJson] = useState('');
 
   // RobustA2UIClient handles communication with the A2A agent
   const serverUrl =
@@ -39,28 +86,36 @@ function App() {
   }, [timeline]);
 
   useEffect(() => {
-    if (!document.adoptedStyleSheets.includes(themeStyleSheet)) {
-      document.adoptedStyleSheets = [
-        ...document.adoptedStyleSheets,
-        themeStyleSheet,
-      ];
-    }
+    document.adoptedStyleSheets = [
+      ...document.adoptedStyleSheets.filter(
+        (s) => s !== themeStyleSheet && s !== customDarkThemeStyleSheet,
+      ),
+      themeStyleSheet,
+      customDarkThemeStyleSheet,
+    ];
   }, []);
 
-  const handleImport = () => {
-    try {
-      const messages = JSON.parse(importJson);
-      rendererRef.current = new A2UIRenderer();
-      rendererRef.current.processResponse(
-        messages.map((msg: any) => ({type: 'a2ui', message: msg})),
-      );
-      setTimeline([...rendererRef.current.timeline]);
-      importDialogRef.current?.close();
-      setImportJson('');
-    } catch (e) {
-      alert('Failed to parse JSON: ' + e);
-    }
-  };
+  // Intercept all link clicks across light DOM and Shadow DOM (A2UI cards) to always open in a new tab
+  useEffect(() => {
+    const handleGlobalLinkClick = (e: MouseEvent) => {
+      const path = e.composedPath();
+      for (const el of path) {
+        if (el instanceof HTMLAnchorElement && el.href) {
+          if (el.href.startsWith('http://') || el.href.startsWith('https://')) {
+            e.preventDefault();
+            e.stopPropagation();
+            window.open(el.href, '_blank', 'noopener,noreferrer');
+            return;
+          }
+        }
+      }
+    };
+
+    window.addEventListener('click', handleGlobalLinkClick, true);
+    return () => {
+      window.removeEventListener('click', handleGlobalLinkClick, true);
+    };
+  }, []);
 
   /**
    * Handles sending a text message from the user.
@@ -84,14 +139,6 @@ function App() {
       // 3. Process the response (which contains parsed text and A2UI surface data)
       rendererRef.current.processResponse(response);
 
-      // Update last response JSON
-      const uiMessages = response
-        .filter((p: any) => p.type === 'a2ui')
-        .map((p: any) => p.message);
-      if (uiMessages.length > 0) {
-        setLastResponseJson(JSON.stringify(uiMessages, null, 2));
-      }
-
       // 4. Synchronize the React state with the renderer's updated timeline
       setTimeline([...rendererRef.current.timeline]);
     } catch (error) {
@@ -110,7 +157,7 @@ function App() {
 
   return (
     <div className="app-container">
-      {/* --- Main Content Panel --- */}
+      {/* --- Main Content Panel (PlateauView 3D) --- */}
       <main className="main-panel">
         {!isChatOpen && (
           <button
@@ -119,9 +166,12 @@ function App() {
             Open Chat
           </button>
         )}
-        <div className="main-panel-content">
-          <h1>Main content</h1>
-        </div>
+        <iframe
+          className="plateauview-iframe"
+          src="https://plateauview.mlit.go.jp/"
+          title="PLATEAU VIEW 3D"
+          allow="geolocation; camera; microphone"
+        />
       </main>
 
       {/* --- Side Chat Panel --- */}
@@ -160,9 +210,11 @@ function App() {
                 );
               } else if (item.type === 'text') {
                 return (
-                  <div key={idx} className="bot-message">
-                    {item.text}
-                  </div>
+                  <div
+                    key={idx}
+                    className="bot-message"
+                    dangerouslySetInnerHTML={{__html: md.render(item.text)}}
+                  />
                 );
               } else if (item.type === 'surface') {
                 // Render an A2UI Surface containing multiple UI components
@@ -199,22 +251,6 @@ function App() {
             }}
             disabled={isRequesting}></textarea>
           <div className="chat-actions">
-            {lastResponseJson && <ResponseViewer json={lastResponseJson} />}
-            <button
-              className="import-btn-input"
-              onClick={() => importDialogRef.current?.showModal()}
-              style={{
-                background: 'transparent',
-                color: 'var(--accent, #1a73e8)',
-                border: '1px solid var(--accent, #1a73e8)',
-                padding: '10px 24px',
-                borderRadius: '9999px',
-                fontWeight: 500,
-                cursor: 'pointer',
-                marginRight: '8px',
-              }}>
-              Import JSON
-            </button>
             <button
               className="send-button"
               onClick={handleSend}
@@ -224,171 +260,7 @@ function App() {
           </div>
         </div>
       </aside>
-
-      <dialog
-        ref={importDialogRef}
-        onClick={(e) => {
-          if (e.target === importDialogRef.current)
-            importDialogRef.current.close();
-        }}
-        style={{
-          border: 'none',
-          borderRadius: '16px',
-          padding: '0',
-          width: '90%',
-          maxWidth: '600px',
-        }}>
-        <div
-          className="dialog-content"
-          style={{
-            background: 'white',
-            padding: '24px',
-            borderRadius: '16px',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '16px',
-          }}>
-          <h2 style={{margin: 0, fontSize: '1.25rem', fontWeight: 600}}>
-            Import A2UI JSON
-          </h2>
-          <textarea
-            placeholder='[ { "surfaceUpdate": { ... } }, ... ]'
-            value={importJson}
-            onChange={(e) => setImportJson(e.target.value)}
-            style={{
-              width: '100%',
-              minHeight: '200px',
-              fontFamily: 'monospace',
-              boxSizing: 'border-box',
-              padding: '12px',
-            }}></textarea>
-          <div
-            className="dialog-footer"
-            style={{
-              display: 'flex',
-              justifyContent: 'flex-end',
-              gap: '12px',
-              marginTop: '12px',
-            }}>
-            <button
-              className="cancel-btn"
-              onClick={() => importDialogRef.current?.close()}>
-              Cancel
-            </button>
-            <button
-              className="render-btn"
-              onClick={handleImport}
-              style={{
-                background: 'var(--p-40, #1a73e8)',
-                color: 'white',
-                border: 'none',
-                padding: '8px 16px',
-                borderRadius: '4px',
-                cursor: 'pointer',
-              }}>
-              Render A2UI
-            </button>
-          </div>
-        </div>
-      </dialog>
     </div>
-  );
-}
-
-function ResponseViewer({json}: {json: string}) {
-  const [copied, setCopied] = useState(false);
-  const dialogRef = useRef<HTMLDialogElement>(null);
-
-  const handleCopy = () => {
-    navigator.clipboard.writeText(json);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
-  return (
-    <>
-      <button
-        className="view-response-btn"
-        onClick={() => dialogRef.current?.showModal()}
-        style={{
-          background: 'transparent',
-          color: 'var(--accent, #1a73e8)',
-          border: '1px solid var(--accent, #1a73e8)',
-          padding: '10px 24px',
-          borderRadius: '9999px',
-          fontWeight: 500,
-          cursor: 'pointer',
-          marginRight: '8px',
-        }}>
-        View Last Response
-      </button>
-
-      <dialog
-        ref={dialogRef}
-        onClick={(e) => {
-          if (e.target === dialogRef.current) dialogRef.current.close();
-        }}
-        style={{
-          border: 'none',
-          borderRadius: '16px',
-          padding: '0',
-          width: '90%',
-          maxWidth: '600px',
-        }}>
-        <div
-          className="dialog-content"
-          style={{
-            background: 'white',
-            padding: '24px',
-            borderRadius: '16px',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '16px',
-          }}>
-          <h2 style={{margin: 0, fontSize: '1.25rem', fontWeight: 600}}>
-            Last A2UI Response
-          </h2>
-          <pre
-            style={{
-              background: 'rgba(0,0,0,0.05)',
-              padding: '12px',
-              borderRadius: '8px',
-              overflowX: 'auto',
-              maxHeight: '300px',
-              whiteSpace: 'pre-wrap',
-            }}>
-            {json || 'No response yet.'}
-          </pre>
-          <div
-            className="dialog-footer"
-            style={{display: 'flex', justifyContent: 'flex-end', gap: '12px'}}>
-            <button
-              onClick={() => dialogRef.current?.close()}
-              style={{
-                background: 'var(--n-90, #e0e0e0)',
-                border: 'none',
-                padding: '8px 16px',
-                borderRadius: '4px',
-                cursor: 'pointer',
-              }}>
-              Close
-            </button>
-            <button
-              onClick={handleCopy}
-              style={{
-                background: copied ? '#137333' : 'var(--p-40, #1a73e8)',
-                color: 'white',
-                border: 'none',
-                padding: '8px 16px',
-                borderRadius: '4px',
-                cursor: 'pointer',
-              }}>
-              {copied ? 'Copied!' : 'Copy JSON'}
-            </button>
-          </div>
-        </div>
-      </dialog>
-    </>
   );
 }
 

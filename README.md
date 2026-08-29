@@ -122,6 +122,39 @@ npm run dev
 
 ---
 
+## Commands
+
+| Command | Description |
+| :--- | :--- |
+| `agents-cli install` | Install dependencies using uv |
+| `agents-cli playground` | Launch local development environment (interactive UI) |
+| `uv run pytest tests/unit tests/integration` | Run unit, agent stream, and E2E integration tests |
+| `agents-cli lint` | Run code quality checks |
+| `agents-cli eval` | Run agent evaluation datasets and grade traces |
+| `agents-cli deploy` | Deploy agent to Cloud Run |
+
+---
+
+## Sample Queries
+
+Try asking queries in the playground, web client, or via API:
+
+### 1. Nearby Evacuation Shelter Search (🔍 周辺避難所検索)
+* *"Search for evacuation shelters near Saitama City Hall."*  
+  *(Japanese: `さいたま市役所周辺の避難所を検索して`)*
+* *"Find designated emergency evacuation sites in Urawa Ward, Saitama."*  
+  *(Japanese: `さいたま市浦和区の指定緊急避難場所を教えて`)*
+
+### 2. Walking Directions (🚶 徒歩経路案内)
+* *"Give me walking directions from Saitama City Hall to Junior High School Attached to the Faculty of Education, Saitama University."*  
+  *(Japanese: `さいたま市役所から埼玉大学教育学部附属中学校への徒歩ルート（経路）を教えて`)*
+
+### 3. Facility Details (🏢 施設詳細情報)
+* *"Tell me detailed information about Junior High School Attached to the Faculty of Education, Saitama University."*  
+  *(Japanese: `埼玉大学教育学部附属中学校の詳細情報をおしえて`)*
+
+---
+
 ## Production Deployment (Cloud Run 本番デプロイ)
 
 The production deployment consists of 3 standalone Cloud Run services:

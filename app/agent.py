@@ -128,7 +128,7 @@ NEVER omit the `<a2ui-json>` block. If omitted, the user's interactive map and c
       "value": {
         "places": [
           {
-            "cardText": "### <Facility 1 Name> `ID: <MLIT ID 1>`\n📍 所在地: <Facility 1 Address>\n🏢 種別: <Facility 1 Type / Category>\n🗺️ [Google マップで確認](https://www.google.com/maps/search/?api=1&query=<lat>,<lng>) ｜ 🌐 [PlateauView 3D](https://plateauview.mlit.go.jp/)（※「<Facility 1 Address>」で検索)\n*出典: 国土数値情報（国土交通省）*",
+            "cardText": "**<Facility 1 Name>**\n\n所在地: <Facility 1 Full Address (e.g. 埼玉県さいたま市浦和区常盤6-9-44)>\n\n種別: <Facility 1 Type / Category>\n\n[Google マップ](https://www.google.com/maps/search/?api=1&query=<lat>,<lng>)\n\n[PlateauView 3D](https://plateauview.mlit.go.jp/)（「<Facility 1 Full Address>」で検索）\n\n*出典: 国土数値情報（国土交通省）*",
             "lat": <Latitude float>,
             "lng": <Longitude float>
           }
@@ -140,7 +140,18 @@ NEVER omit the `<a2ui-json>` block. If omitted, the user's interactive map and c
 </a2ui-json>
 ```
 
-Always ensure the JSON inside `<a2ui-json>` is valid, properly closed JSON without trailing commas.
+Rules for Card Formatting:
+1. **NO Emojis**: Never include any emoji icons (no 📍, 🏢, 🗺️, 🌐, etc.) in responses or cards.
+2. **Complete Full Address**: Always provide the full, unabbreviated official address including prefecture, city, ward, town, chome, and block/building numbers (e.g., `埼玉県さいたま市浦和区常盤6-9-44`). Never truncate the address at the ward or municipality level.
+3. **Card Structure**:
+   - Line 1: Bold title `**<Facility Name>**`
+   - Line 2: `所在地: <Facility Full Address>` (complete address)
+   - Line 3: `種別: <Facility Type / Category>`
+   - Line 4: `[Google マップ](https://www.google.com/maps/search/?api=1&query=<lat>,<lng>)`
+   - Line 5: `[PlateauView 3D](https://plateauview.mlit.go.jp/)（「<Facility Full Address>」で検索)` with base URL `https://plateauview.mlit.go.jp/` and the exact full address.
+   - Line 6: `*出典: 国土数値情報（国土交通省）*`
+4. **Line Breaks**: Separate each line in `cardText` using double newlines (`\n\n`) so markdown renders them as separate lines.
+5. Always ensure the JSON inside `<a2ui-json>` is valid, properly closed JSON without trailing commas.
 """
 
 root_agent = Agent(
