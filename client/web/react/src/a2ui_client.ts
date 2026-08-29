@@ -22,7 +22,19 @@ export class RobustA2UIClient {
             'https://a2ui.org/a2a-extension/a2ui/v0.9',
           );
           headers.set('A2A-Version', '0.3');
-          return fetch(url, {...init, headers});
+
+          let targetUrl = typeof url === 'string' ? url : url.toString();
+          // If the agent card advertised localhost but we are connecting to a remote server, rewrite to serverUrl
+          if (
+            targetUrl.includes('localhost:8080/a2a') &&
+            !this.serverUrl.includes('localhost:8080')
+          ) {
+            targetUrl = targetUrl.replace(
+              /https?:\/\/localhost:8080\/a2a\/[^/]+/,
+              this.serverUrl,
+            );
+          }
+          return fetch(targetUrl, {...init, headers});
         },
       });
     }
@@ -105,10 +117,8 @@ export class RobustA2UIClient {
           let lastIndex = 0;
           let match;
           while ((match = regex.exec(text)) !== null) {
-            const textBefore = text.slice(lastIndex, match.index).trim();
-            if (textBefore) {
-              orderedParts.push({type: 'text', text: textBefore});
-            }
+            // Note: Outer unbordered text before <a2ui-json> is intentionally omitted
+            // because A2UI's structured surface components already render the summary.
             try {
               const jsonContent = JSON.parse(match[1].trim());
               const rawMsgs = Array.isArray(jsonContent)

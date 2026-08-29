@@ -28,6 +28,16 @@ export default defineConfig(({ mode }) => {
 
   return {
     base: './',
+    server: {
+      port: 5173,
+      proxy: {
+        '/a2a/app': {
+          target: 'https://mlit-dpf-agent-607705566012.us-west1.run.app',
+          changeOrigin: true,
+          secure: false,
+        },
+      },
+    },
     plugins: [
       react(),
       {

@@ -6,6 +6,7 @@ import {
 import MarkdownIt from 'markdown-it';
 import {useEffect, useRef, useState} from 'react';
 import './App.css';
+import './gsi_map';
 import {RobustA2UIClient} from './a2ui_client';
 
 const md = new MarkdownIt({
@@ -70,8 +71,7 @@ function App() {
 
   // RobustA2UIClient handles communication with the A2A agent
   const serverUrl =
-    import.meta.env.VITE_A2A_SERVER_URL ||
-    'https://mlit-dpf-agent-h3ix2jg73a-uw.a.run.app/a2a/app';
+    import.meta.env.VITE_A2A_SERVER_URL || 'http://localhost:8080/a2a/app';
   const clientRef = useRef(new RobustA2UIClient(serverUrl));
   // A2UIRenderer manages the local state of A2UI surfaces and message processing
   const rendererRef = useRef(new A2UIRenderer());

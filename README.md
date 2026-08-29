@@ -151,7 +151,7 @@ Try asking queries in the playground, web client, or via API:
 
 ### 3. Facility Details (🏢 施設詳細情報)
 * *"Tell me detailed information about Junior High School Attached to the Faculty of Education, Saitama University."*  
-  *(Japanese: `埼玉大学教育学部附属中学校の詳細情報をおしえて`)*
+  *(Japanese: `さいたま市役所の詳細情報をおしえて`)*
 
 ---
 

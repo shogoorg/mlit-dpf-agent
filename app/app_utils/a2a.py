@@ -139,7 +139,8 @@ async def attach_a2a_routes(
     ``APP_URL``). Call once per app — typically in a FastAPI ``lifespan``, since
     the card is built asynchronously; repeated calls register duplicate routes.
     """
-    resolved_app_url = app_url or os.getenv("APP_URL", "http://localhost:8080")
+    cloud_run_url = f"https://{os.getenv('K_SERVICE')}-607705566012.us-west1.run.app" if os.getenv('K_SERVICE') else "http://localhost:8080"
+    resolved_app_url = app_url or os.getenv("APP_URL") or cloud_run_url
     resolved_agent_version = agent_version or os.getenv("AGENT_VERSION", "0.1.0")
     resolved_capabilities = capabilities or _default_capabilities()
 
