@@ -8,7 +8,6 @@ COPY . .
 
 # Explicit build environment variables
 ENV VITE_A2A_SERVER_URL="https://mlit-dpf-agent-h3ix2jg73a-uw.a.run.app/a2a/app"
-ENV VITE_GOOGLE_MAPS_API_KEY="AIzaSyCekxwAgPzkLzio8EHDyg4tFORWBmI9XSg"
 ENV NODE_ENV="production"
 
 RUN npm run build
