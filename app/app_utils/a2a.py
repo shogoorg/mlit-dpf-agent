@@ -110,6 +110,11 @@ def _default_capabilities() -> AgentCapabilities:
                 uri=_ADK_AGENT_EXECUTOR_EXTENSION_URI,
                 description=("Ability to use the new agent executor implementation"),
             ),
+            AgentExtension(
+                uri="https://a2ui.org/a2a-extension/a2ui/v0.9",
+                description="Provides agent driven UI using the A2UI JSON format.",
+                params={"supportedCatalogIds": ["a2ui://maps-agentic-ui-catalog.json"]},
+            ),
         ],
     )
 
@@ -134,7 +139,7 @@ async def attach_a2a_routes(
     ``APP_URL``). Call once per app — typically in a FastAPI ``lifespan``, since
     the card is built asynchronously; repeated calls register duplicate routes.
     """
-    resolved_app_url = app_url or os.getenv("APP_URL", "http://0.0.0.0:8000")
+    resolved_app_url = app_url or os.getenv("APP_URL", "http://localhost:8080")
     resolved_agent_version = agent_version or os.getenv("AGENT_VERSION", "0.1.0")
     resolved_capabilities = capabilities or _default_capabilities()
 

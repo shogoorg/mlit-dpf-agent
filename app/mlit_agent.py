@@ -26,9 +26,7 @@ load_dotenv()
 MODEL = "gemini-3.6-flash"
 
 # MLIT DPF MCP Toolset connecting to standalone MCP server via SSE
-MLIT_MCP_SERVER_URL = os.getenv(
-    "MLIT_MCP_SERVER_URL", "http://localhost:8000/sse"
-)
+MLIT_MCP_SERVER_URL = os.getenv("MLIT_MCP_SERVER_URL", "http://localhost:8000/sse")
 
 mlit_mcp_toolset = McpToolset(
     connection_params=SseConnectionParams(
@@ -61,13 +59,10 @@ mlit_agent = Agent(
         "4. **Data Retrieval (`get_data` / `get_data_summary`)**:\n"
         "   - Fetch full or summary records for retrieved data IDs.\n\n"
         "Output Guidelines:\n"
-        "- Format output clearly with Dataset/Record Name, Category, Coordinates, and PlateauView 3D URL.\n"
-        "- PlateauView 3D URL format: `https://plateauview.mlit.go.jp/#/<lat>/<lon>/16/` (substitute `<lat>` and `<lon>` with actual coordinates).\n"
+        "- Format output clearly with Dataset/Record Name, Category, Complete Full Address (including chome, block, building number), Coordinates, and PlateauView 3D URL.\n"
+        "- PlateauView 3D URL format: [PlateauView 3D](https://plateauview.mlit.go.jp/)（「<完全な所在地>」で検索）.\n"
         "- **No Data Fallback**: If no matching records are found, do NOT hallucinate or invent records. State clearly that no official MLIT records were found on the platform for the queried location.\n"
         "- Always respond in the user's language."
     ),
     tools=[mlit_mcp_toolset],
 )
-
-
-

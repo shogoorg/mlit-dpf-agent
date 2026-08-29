@@ -76,21 +76,49 @@ MLIT_MCP_SERVER_URL=http://localhost:8000/sse
 
 ---
 
-## Quick Start
+## Local Development (ローカル開発・実行)
 
-Install dependencies:
+To run the complete 3-tier system on your local machine:
+
+### 1. Step 1: Run MLIT DPF MCP Server (Local)
+In the MCP server repository, install dependencies and start the SSE server:
 
 ```bash
-agents-cli install
+cd ../mlit-dpf-mcp
+uv sync
+uv run python src/server.py
 ```
+* **Local SSE Endpoint**: `http://localhost:8000/sse`
 
-Launch the interactive local playground:
+---
+
+### 2. Step 2: Run ADK Agent (Local)
+In this repository (`mlit-dpf-agent`), set up your `.env` and start the interactive playground:
 
 ```bash
+# Configure environment
+cp .env.example .env
+
+# Install dependencies
+agents-cli install
+
+# Start local agent dev server
 agents-cli playground
 ```
+* **Local Dev UI**: `http://127.0.0.1:8080/dev-ui/?app=app`
+* **Local A2A RPC Endpoint**: `http://localhost:8080/a2a/app`
 
-Access the UI at `http://127.0.0.1:8080/dev-ui/?app=app`.
+---
+
+### 3. Step 3: Run React Web UI (Local)
+In the React frontend directory, install dependencies and launch the Vite dev server:
+
+```bash
+cd client/web/react
+npm install
+npm run dev
+```
+* **Local Web Client**: `http://localhost:5173/`
 
 ---
 
@@ -109,17 +137,32 @@ Access the UI at `http://127.0.0.1:8080/dev-ui/?app=app`.
 
 ## Sample Queries
 
-Try asking queries in the playground or via API:
+Try asking queries in the playground, web client, or via API:
 
-### Places & Public Facilities (MLIT DPF)
-* *"Tell me evacuation shelters near Saitama City Hall."*  
-  *(Japanese: "さいたま市役所周辺の避難所を教えて")*
+### 1. Nearby Evacuation Shelter Search (🔍 周辺避難所検索)
+* *"Search for evacuation shelters near Saitama City Hall."*  
+  *(Japanese: `さいたま市役所周辺の避難所を検索して`)*
 * *"Find designated emergency evacuation sites in Urawa Ward, Saitama."*  
-  *(Japanese: "さいたま市浦和区の指定緊急避難場所を教えて")*
+  *(Japanese: `さいたま市浦和区の指定緊急避難場所を教えて`)*
+
+### 2. Walking Directions (🚶 徒歩経路案内)
+* *"Give me walking directions from Saitama City Hall to Junior High School Attached to the Faculty of Education, Saitama University."*  
+  *(Japanese: `さいたま市役所から埼玉大学教育学部附属中学校への徒歩ルート（経路）を教えて`)*
+
+### 3. Facility Details (🏢 施設詳細情報)
+* *"Tell me detailed information about Junior High School Attached to the Faculty of Education, Saitama University."*  
+  *(Japanese: `埼玉大学教育学部附属中学校の詳細情報をおしえて`)*
 
 ---
 
-## Deployment (Cloud Run)
+## Production Deployment (Cloud Run 本番デプロイ)
+
+The production deployment consists of 3 standalone Cloud Run services:
+1. **MLIT DPF MCP Server** (`mlit-dpf-mcp`): Communicates with official MLIT data APIs via SSE.
+2. **ADK Agent Server** (`mlit-dpf-agent`): Orchestrates Gemini LLM, MLIT MCP tools, and A2UI JSON output.
+3. **React Web UI** (`client/web/react`): Frontend chat interface with A2UI maps and cards.
+
+---
 
 ### 1. Enable Required GCP APIs
 
@@ -130,46 +173,88 @@ gcloud services enable \
   artifactregistry.googleapis.com \
   secretmanager.googleapis.com \
   aiplatform.googleapis.com \
-  --project=<your-project-id>
+  cloudresourcemanager.googleapis.com \
+  --project=shogoorg-mlit-dpf
 ```
+
+---
 
 ### 2. Step 1: Deploy MLIT DPF MCP Server to Cloud Run
 
-First, deploy `mlit-dpf-mcp` as a standalone SSE service:
+Deploy `mlit-dpf-mcp` as a standalone SSE service on Cloud Run:
 
 ```bash
 cd ../mlit-dpf-mcp
 gcloud run deploy mlit-dpf-mcp \
   --source . \
-  --project <your-project-id> \
-  --region <your-region> \
-  --set-env-vars "MLIT_API_KEY=your_mlit_api_key,MLIT_BASE_URL=https://data-platform.mlit.go.jp/api/v1/" \
+  --project shogoorg-mlit-dpf \
+  --region us-west1 \
+  --set-env-vars "MLIT_API_KEY=<your-mlit-api-key>,MLIT_BASE_URL=https://data-platform.mlit.go.jp/api/v1/" \
   --allow-unauthenticated
 ```
 
-Note the service URL output (e.g. `https://mlit-dpf-mcp-xxxx.a.run.app`). The SSE endpoint will be:
-`https://mlit-dpf-mcp-xxxx.a.run.app/sse`
+Note the service URL output (e.g., `https://mlit-dpf-mcp-<hash>-<region>.a.run.app`). The SSE endpoint will be:
+`https://<your-mcp-server-endpoint>/sse`
+
+---
 
 ### 3. Step 2: Deploy ADK Agent (`mlit-dpf-agent`) to Cloud Run
 
-Deploy the agent pointing to your deployed MCP server SSE endpoint:
+Deploy the agent using `agents-cli deploy`:
 
 ```bash
 cd ../mlit-dpf-agent
 agents-cli deploy \
-  --project <your-project-id> \
-  --region <your-region> \
+  --project shogoorg-mlit-dpf \
+  --region us-west1 \
   --no-confirm-project
 ```
 
-Then update the Cloud Run service environment variable `MLIT_MCP_SERVER_URL`:
+#### Update Environment Variables & Public Access
+
+Update the Cloud Run service with the deployed MCP server URL and enable public access:
 
 ```bash
-gcloud run services update app \
-  --project <your-project-id> \
-  --region <your-region> \
-  --set-env-vars "MLIT_MCP_SERVER_URL=https://mlit-dpf-mcp-xxxx.a.run.app/sse"
+# Update MCP server URL
+gcloud run services update mlit-dpf-agent \
+  --project shogoorg-mlit-dpf \
+  --region us-west1 \
+  --update-env-vars "MLIT_MCP_SERVER_URL=https://<your-mcp-server-endpoint>/sse"
+
+# Grant public invoker access
+gcloud run services add-iam-policy-binding mlit-dpf-agent \
+  --member="allUsers" \
+  --role="roles/run.invoker" \
+  --project shogoorg-mlit-dpf \
+  --region us-west1
 ```
+
+#### Verification Endpoints
+* **Web UI (ADK Dev UI)**: `https://<your-agent-endpoint>/dev-ui/?app=app`
+* **A2A Agent Card**: `https://<your-agent-endpoint>/a2a/app/.well-known/agent-card.json`
+* **A2A RPC Endpoint**: `https://<your-agent-endpoint>/a2a/app`
+
+---
+
+### 4. Step 3: Deploy React Web UI (`client/web/react`) to Cloud Run
+
+To deploy the React web client to Cloud Run:
+
+```bash
+cd client/web/react
+
+# Deploy directly with Cloud Run source deploy
+gcloud run deploy mlit-dpf-web \
+  --source . \
+  --project shogoorg-mlit-dpf \
+  --region us-west1 \
+  --set-env-vars "VITE_A2A_SERVER_URL=https://<your-agent-endpoint>/a2a/app,VITE_GOOGLE_MAPS_API_KEY=<your-maps-api-key>" \
+  --allow-unauthenticated
+```
+
+#### Verification Endpoints
+* **React Web UI**: `https://<your-web-ui-endpoint>`
+
 
 ---
 

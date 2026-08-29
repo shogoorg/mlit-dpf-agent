@@ -5,4 +5,4 @@ project_name = "mlit-dpf-agent"
 project_id = "shogoorg-mlit-dpf"
 
 # The Google Cloud region you will use to deploy the infrastructure
-region = "us-east1"
+region = "us-west1"

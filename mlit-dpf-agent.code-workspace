@@ -5,6 +5,12 @@
 		},
 		{
 			"path": "../mlit-dpf-mcp"
+		},
+		{
+			"path": "../a2ui"
+		},
+		{
+			"path": "../a2ui-samples"
 		}
 	],
 	"settings": {}
