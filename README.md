@@ -304,54 +304,237 @@ gcloud run deploy mlit-dpf-web \
 
 ## Sample Interactions & Live Responses
 
-### 1. English Interactions (英語での対話例)
+*(Note: In the live A2UI interface, an interactive **Geospatial Information Authority of Japan (GSI) Leaflet Map** is rendered at the top with plotted pins, followed by the structured facility cards below.)*
 
-#### Place & Evacuation Shelter Search
+### 1. English Live Interaction (英語での対話例)
+
+#### Nearby Evacuation Shelter Search (周辺避難所検索)
 
 **Prompt**:
-> *"Tell me evacuation shelters near Saitama City Hall."*
+> *"Evacuation shelters near Saitama City Hall."*
 
-**Agent Response**:
-> Here are evacuation shelters and emergency locations near Saitama City Hall from the MLIT Data Platform:
->
-> * **仲町小学校 (Nakacho Elementary School)**
->   * Category: Evacuation Facility Data (`nlni_ksj-p20`)
->   * Coordinates: 35.863961, 139.640549
->   * PlateauView 3D: [View in PlateauView 3D](https://plateauview.mlit.go.jp/#/35.863961/139.640549/16/)
-> * **常盤公園 (Tokiwa Park)**
->   * Category: Evacuation Facility Data (`nlni_ksj-p20`)
->   * Coordinates: 35.862184, 139.650975
->   * PlateauView 3D: [View in PlateauView 3D](https://plateauview.mlit.go.jp/#/35.862184/139.650975/16/)
-> * **常盤小学校 (Tokiwa Elementary School)**
->   * Category: Evacuation Facility Data (`nlni_ksj-p20`)
->   * Coordinates: 35.868739, 139.643076
->   * PlateauView 3D: [View in PlateauView 3D](https://plateauview.mlit.go.jp/#/35.868739/139.643076/16/)
+**A2UI Live Response (Interactive Map + Facility Cards)**:
+> 🗺️ **[Interactive GSI Map rendered at the top with 12+ plotted shelter pins]**
+> 
+> **仲町公民館**  
+> Data ID: `e126986e-3862-4a31-b6a1-16e09f9daf5a`  
+> Facility Name: 仲町公民館  
+> Latitude: 35.86136  
+> Longitude: 139.649857  
+> Year: 2020  
+> Dataset ID: nlni_ksj-p20  
+> Catalog ID: nlni_ksj  
+> [GSI Map](https://maps.gsi.go.jp/?marker=35.86136,139.649857)  
+> [PlateauView 3D](https://plateauview.mlit.go.jp/)  
+> Source: National Land Numerical Information (MLIT Japan)  
+> 
+> **常盤公民館**  
+> Data ID: `040da675-4651-4f9d-9c45-d5afb57c9547`  
+> Facility Name: 常盤公民館  
+> Latitude: 35.8696  
+> Longitude: 139.642954  
+> Year: 2020  
+> Dataset ID: nlni_ksj-p20  
+> Catalog ID: nlni_ksj  
+> [GSI Map](https://maps.gsi.go.jp/?marker=35.8696,139.642954)  
+> [PlateauView 3D](https://plateauview.mlit.go.jp/)  
+> Source: National Land Numerical Information (MLIT Japan)  
+> 
+> **埼玉大学教育学部附属中学校**  
+> Data ID: `8e0f39b8-31b6-4c20-bdc6-b14e6f0f9983`  
+> Facility Name: 埼玉大学教育学部附属中学校  
+> Latitude: 35.8556569991  
+> Longitude: 139.643327  
+> Year: 2020  
+> Dataset ID: nlni_ksj-p20  
+> Catalog ID: nlni_ksj  
+> [GSI Map](https://maps.gsi.go.jp/?marker=35.8556569991,139.643327)  
+> [PlateauView 3D](https://plateauview.mlit.go.jp/)  
+> Source: National Land Numerical Information (MLIT Japan)  
+> 
+> **仲町小学校**  
+> Data ID: `bf46d405-d05f-42a4-8a7e-5b9aa96a110d`  
+> Facility Name: 仲町小学校  
+> Latitude: 35.863961  
+> Longitude: 139.640549  
+> Year: 2020  
+> Dataset ID: nlni_ksj-p20  
+> Catalog ID: nlni_ksj  
+> [GSI Map](https://maps.gsi.go.jp/?marker=35.863961,139.640549)  
+> [PlateauView 3D](https://plateauview.mlit.go.jp/)  
+> Source: National Land Numerical Information (MLIT Japan)  
+> 
+> **大戸公民館**  
+> Data ID: `d74a3560-97a8-407f-a2b6-d74d2c311abd`  
+> Facility Name: 大戸公民館  
+> Latitude: 35.8656438555  
+> Longitude: 139.637227828  
+> Year: 2020  
+> Dataset ID: nlni_ksj-p20  
+> Catalog ID: nlni_ksj  
+> [GSI Map](https://maps.gsi.go.jp/?marker=35.8656438555,139.637227828)  
+> [PlateauView 3D](https://plateauview.mlit.go.jp/)  
+> Source: National Land Numerical Information (MLIT Japan)  
+> 
+> *(... plotted on interactive GSI Leaflet Map with 12 shelter cards)*
+
+#### Facility Details (🏢 施設詳細情報)
+
+**Prompt**:
+> *"More details on Saitama City Hall."*
+
+**A2UI Live Response (Interactive Pinpoint Map + Detailed Metadata Card)**:
+> 🗺️ **[Interactive GSI Map centered on facility location with pinpoint zoom 16]**
+> 
+> **Saitama City Hall (さいたま市役所)**  
+> Facility Name: Saitama City Hall (さいたま市役所)  
+> Data ID: `21a45b8d-0922-4f28-bfdc-0ae57961c6b5`  
+> Latitude: 35.861601  
+> Longitude: 139.645354  
+> Prefecture: Saitama Prefecture (埼玉県)  
+> Municipality: Urawa-ku, Saitama City (さいたま市浦和区)  
+> Address: 6-4-4 Tokiwa (常盤6-4-4)  
+> Prefecture Code: 11  
+> Municipality Code: 111074  
+> Administrative District Code: 11107  
+> Administrator Code: 3  
+> Facility Major Category: 12  
+> Facility Minor Category: 12002  
+> Source Material Name: Digital Map (数値地図)  
+> Year: 2021  
+> Catalog Title: National Land Numerical Information (国土数値情報)  
+> Dataset Title: Public Facilities (公共施設)  
+> Catalog ID: nlni_ksj  
+> Dataset ID: nlni_ksj-p02  
+> Last Updated: 2021-12-14T09:38:16+09:00  
+> DPF Update Date: 2023-07-06T14:11:51.020Z  
+> Documentation URL: https://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-P02-v4_0.html  
+> Download URL: https://www.geospatial.jp/ckan/dataset/e44855f8-fcfe-43e6-b617-eb319eb51c8b/resource/9cdfc0fd-67e9-4c8d-8d16-e057ea0d3095/download/p02-06_11-g_publicfacility.geojson  
+> [GSI Map](https://maps.gsi.go.jp/?marker=35.861601,139.645354)  
+> [PlateauView 3D](https://plateauview.mlit.go.jp/) (Search with "埼玉県さいたま市浦和区常盤6-4-4")  
+> Source: National Land Numerical Information (MLIT Japan)  
 
 ---
 
-### 2. Japanese Interactions (日本語での対話例)
+### 2. Japanese Live Interaction (日本語での対話例)
 
-#### 場所・避難所検索
+*(※ 実際の A2UI 画面では、画面上部にピンがプロットされた**国土地理院インタラクティブ地図**が描画され、その下部に連動する施設カードが一覧表示されます)*
+
+#### 周辺避難所検索
 
 **プロンプト**:
-> *"さいたま市役所周辺の避難所を教えて"*
+> *"さいたま市役所近くの避難所"*
 
-**エージェントの回答**:
-> さいたま市役所（埼玉県さいたま市浦和区常盤6丁目4-4）周辺の避難所および関連施設の情報は以下の通りです。
->
-> 国土交通省データ等に登録されている公的施設・指定避難所データです。
-> * **さいたま市立仲町小学校**
->   * カテゴリ: 学校施設（指定避難所）
->   * 座標: 緯度 35.863961, 経度 139.640549
->   * PlateauView 3D: [3D表示で見る](https://plateauview.mlit.go.jp/#/35.863961/139.640549/16/)
-> * **さいたま市立常盤小学校**
->   * カテゴリ: 学校施設（指定避難所）
->   * 座標: 緯度 35.868739, 経度 139.643076
->   * PlateauView 3D: [3D表示で見る](https://plateauview.mlit.go.jp/#/35.868739/139.643076/16/)
-> * **さいたま市立高砂小学校**
->   * カテゴリ: 学校施設（指定避難所）
->   * 座標: 緯度 35.856518, 経度 139.656714
->   * PlateauView 3D: [3D表示で見る](https://plateauview.mlit.go.jp/#/35.856518/139.656714/16/)
+**A2UI ライブレスポンス（国土地理院地図 ＋ 避難所カード）**:
+> 🗺️ **【画面上部に国土地理院地図が描画され、全避難所ピンがプロットされます】**
+> 
+> **仲町公民館**  
+> データID: `e126986e-3862-4a31-b6a1-16e09f9daf5a`  
+> 施設名: 仲町公民館  
+> 緯度: 35.86136  
+> 経度: 139.649857  
+> 登録年: 2020  
+> データセットID: nlni_ksj-p20  
+> カタログID: nlni_ksj  
+> [地理院地図](https://maps.gsi.go.jp/?marker=35.86136,139.649857)  
+> [PlateauView 3D](https://plateauview.mlit.go.jp/)  
+> 出典: 国土数値情報（国土交通省）  
+> 
+> **常盤公民館**  
+> データID: `040da675-4651-4f9d-9c45-d5afb57c9547`  
+> 施設名: 常盤公民館  
+> 緯度: 35.8696  
+> 経度: 139.642954  
+> 登録年: 2020  
+> データセットID: nlni_ksj-p20  
+> カタログID: nlni_ksj  
+> [地理院地図](https://maps.gsi.go.jp/?marker=35.8696,139.642954)  
+> [PlateauView 3D](https://plateauview.mlit.go.jp/)  
+> 出典: 国土数値情報（国土交通省）  
+> 
+> **埼玉大学教育学部附属中学校**  
+> データID: `8e0f39b8-31b6-4c20-bdc6-b14e6f0f9983`  
+> 施設名: 埼玉大学教育学部附属中学校  
+> 緯度: 35.8556569991  
+> 経度: 139.643327  
+> 登録年: 2020  
+> データセットID: nlni_ksj-p20  
+> カタログID: nlni_ksj  
+> [地理院地図](https://maps.gsi.go.jp/?marker=35.8556569991,139.643327)  
+> [PlateauView 3D](https://plateauview.mlit.go.jp/)  
+> 出典: 国土数値情報（国土交通省）  
+> 
+> **本太公民館**  
+> データID: `7622fa2a-ecd6-453e-8ecb-9c8868ac8249`  
+> 施設名: 本太公民館  
+> 緯度: 35.866778  
+> 経度: 139.657825  
+> 登録年: 2020  
+> データセットID: nlni_ksj-p20  
+> カタログID: nlni_ksj  
+> [地理院地図](https://maps.gsi.go.jp/?marker=35.866778,139.657825)  
+> [PlateauView 3D](https://plateauview.mlit.go.jp/)  
+> 出典: 国土数値情報（国土交通省）  
+> 
+> **高砂小学校**  
+> データID: `90da99a1-ce16-43a5-b92f-8634d0bcc097`  
+> 施設名: 高砂小学校  
+> 緯度: 35.856518  
+> 経度: 139.656714  
+> 登録年: 2020  
+> データセットID: nlni_ksj-p20  
+> カタログID: nlni_ksj  
+> [地理院地図](https://maps.gsi.go.jp/?marker=35.856518,139.656714)  
+> [PlateauView 3D](https://plateauview.mlit.go.jp/)  
+> 出典: 国土数値情報（国土交通省）  
+> 
+> *(... 国土地理院地図および 26 箇所の全指定避難所カードとして描画)*
+
+#### 施設詳細情報
+
+**プロンプト**:
+> *"さいたま市役所をさらに詳しく"*
+
+**A2UI ライブレスポンス（国土地理院ピンポイント地図 ＋ 詳細スペックカード）**:
+> 🗺️ **【画面上部に該当施設を中心とした国土地理院地図（ズーム16）が描画されます】**
+> 
+> **さいたま市役所**  
+> データID: `21a45b8d-0922-4f28-bfdc-0ae57961c6b5`  
+> 施設名 / 名称: さいたま市役所  
+> 都道府県: 埼玉県  
+> 都道府県コード: 11  
+> 市区町村: さいたま市浦和区  
+> 市区町村コード: 111074  
+> 所在地: 埼玉県さいたま市浦和区常盤6-4-4  
+> 緯度: 35.861601  
+> 経度: 139.645354  
+> 登録年 / 年度: 2021  
+> カタログID: nlni_ksj  
+> カタログ名: 国土数値情報  
+> データセットID: nlni_ksj-p02  
+> データセット名: 公共施設  
+> 施設大分類: 12  
+> 施設小分類: 12002  
+> 管理者区分: 3  
+> 行政区域コード: 11107  
+> 原典資料名: 数値地図  
+> 座標参照系: urn:ogc:def:crs:OGC:1.3:CRS84  
+> 仕様書URL: https://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-P02-v4_0.html  
+> ダウンロードURL: https://www.geospatial.jp/ckan/dataset/e44855f8-fcfe-43e6-b617-eb319eb51c8b/resource/9cdfc0fd-67e9-4c8d-8d16-e057ea0d3095/download/p02-06_11-g_publicfacility.geojson  
+> 最終更新日時: 2021-12-14T09:38:16+09:00  
+> DPF更新日: 2023-07-06T14:11:51.020Z  
+> テーマ分類: 国土  
+> [地理院地図](https://maps.gsi.go.jp/?marker=35.861601,139.645354)  
+> [PlateauView 3D](https://plateauview.mlit.go.jp/)（「埼玉県さいたま市浦和区常盤6-4-4」で検索）  
+> 出典: 国土数値情報（国土交通省）  
+
+---
+
+## Known Limitations & Design Decisions (既知の制約事項と設計判断)
+
+* **PlateauView 3D Localization & URL Deep Linking**:
+  * **No Multi-language Support**: The official [PlateauView 3D](https://plateauview.mlit.go.jp/) platform is currently provided in Japanese only. When queries are made in English or other languages, the agent automatically supplies the exact official Japanese address/keyword in parentheses (e.g., `(Search with "埼玉県さいたま市浦和区常盤6-4-4")`) to facilitate 3D model search.
+  * **No URL Query Parameters**: Since PlateauView 3D does not currently support direct coordinate parameters via URL query strings, the agent links to the top portal while instructing users with the precise search keyword.
 
 ---
 
