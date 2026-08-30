@@ -1,0 +1,59 @@
+[
+  {
+    "version": "v0.9",
+    "createSurface": {
+      "surfaceId": "{{surface_id}}",
+      "catalogId": "a2ui://maps-agentic-ui-catalog.json"
+    }
+  },
+  {
+    "version": "v0.9",
+    "updateComponents": {
+      "surfaceId": "{{surface_id}}",
+      "components": [
+        {
+          "id": "root",
+          "component": "Column",
+          "children": ["map", "summary-card"]
+        },
+        {
+          "id": "map",
+          "component": "GoogleMap",
+          "center": {
+            "lat": "{{lat}}",
+            "lng": "{{lng}}"
+          },
+          "zoom": 15,
+          "anchorMarker": {
+            "lat": "{{lat}}",
+            "lng": "{{lng}}",
+            "label": "{{title}}"
+          }
+        },
+        {
+          "id": "summary-card",
+          "component": "Card",
+          "child": "card-content"
+        },
+        {
+          "id": "card-content",
+          "component": "Text",
+          "variant": "body",
+          "text": { "path": "/cardText" }
+        }
+      ]
+    }
+  },
+  {
+    "version": "v0.9",
+    "updateDataModel": {
+      "surfaceId": "{{surface_id}}",
+      "path": "/",
+      "value": {
+        "cardText": "{{card_text}}",
+        "lat": "{{lat}}",
+        "lng": "{{lng}}"
+      }
+    }
+  }
+]

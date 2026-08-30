@@ -14,6 +14,7 @@
  limitations under the License.
  */
 
+import './gsi_map'
 import { StrictMode, Suspense, lazy } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'

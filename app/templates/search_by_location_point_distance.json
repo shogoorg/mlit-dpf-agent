@@ -14,13 +14,7 @@
         {
           "id": "root",
           "component": "Column",
-          "children": ["summary-text", "map"]
-        },
-        {
-          "id": "summary-text",
-          "component": "Text",
-          "variant": "body",
-          "text": "{{summary}}"
+          "children": ["map", "list"]
         },
         {
           "id": "map",
@@ -30,8 +24,28 @@
             "lng": "{{center_lng}}"
           },
           "zoom": "{{zoom}}",
-          "routes": "{{routes}}",
-          "travelMode": "{{travel_mode}}"
+          "anchorMarker": "{{anchor_marker}}",
+          "markers": "{{markers}}"
+        },
+        {
+          "id": "list",
+          "component": "List",
+          "direction": "vertical",
+          "children": {
+            "componentId": "place-card",
+            "path": "/places"
+          }
+        },
+        {
+          "id": "place-card",
+          "component": "Card",
+          "child": "card-content"
+        },
+        {
+          "id": "card-content",
+          "component": "Text",
+          "variant": "body",
+          "text": { "path": "cardText" }
         }
       ]
     }
@@ -41,7 +55,9 @@
     "updateDataModel": {
       "surfaceId": "{{surface_id}}",
       "path": "/",
-      "value": {}
+      "value": {
+        "places": "{{places}}"
+      }
     }
   }
 ]

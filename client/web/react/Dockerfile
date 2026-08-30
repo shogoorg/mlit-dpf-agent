@@ -7,7 +7,7 @@ RUN npm install
 COPY . .
 
 # Explicit build environment variables
-ENV VITE_A2A_SERVER_URL="https://mlit-dpf-agent-h3ix2jg73a-uw.a.run.app/a2a/app"
+ENV VITE_A2A_SERVER_URL="https://mlit-dpf-agent-607705566012.us-west1.run.app/a2a/app"
 ENV NODE_ENV="production"
 
 RUN npm run build

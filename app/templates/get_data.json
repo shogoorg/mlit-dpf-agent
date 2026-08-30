@@ -14,36 +14,24 @@
         {
           "id": "root",
           "component": "Column",
-          "children": ["summary-text", "map", "list"]
-        },
-        {
-          "id": "summary-text",
-          "component": "Text",
-          "variant": "body",
-          "text": "{{summary}}"
+          "children": ["map", "detail-card"]
         },
         {
           "id": "map",
           "component": "GoogleMap",
           "center": {
-            "lat": "{{center_lat}}",
-            "lng": "{{center_lng}}"
+            "lat": "{{lat}}",
+            "lng": "{{lng}}"
           },
-          "zoom": "{{zoom}}",
-          "anchorMarker": "{{anchor_marker}}",
-          "markers": "{{markers}}"
-        },
-        {
-          "id": "list",
-          "component": "List",
-          "direction": "vertical",
-          "children": {
-            "componentId": "place-card",
-            "path": "/places"
+          "zoom": 16,
+          "anchorMarker": {
+            "lat": "{{lat}}",
+            "lng": "{{lng}}",
+            "label": "{{title}}"
           }
         },
         {
-          "id": "place-card",
+          "id": "detail-card",
           "component": "Card",
           "child": "card-content"
         },
@@ -51,7 +39,7 @@
           "id": "card-content",
           "component": "Text",
           "variant": "body",
-          "text": { "path": "cardText" }
+          "text": { "path": "/cardText" }
         }
       ]
     }
@@ -62,7 +50,9 @@
       "surfaceId": "{{surface_id}}",
       "path": "/",
       "value": {
-        "places": "{{places}}"
+        "cardText": "{{card_text}}",
+        "lat": "{{lat}}",
+        "lng": "{{lng}}"
       }
     }
   }
