@@ -146,29 +146,57 @@ npm run dev
 
 ---
 
-## Sample Queries
+## Interactive A2UI Experience & Sample Queries
+
+The agent delivers agent-driven dynamic UIs using the [A2UI (Agent-to-User Interface)](https://github.com/googlemaps/a2ui) specification, with UI components and catalog schemas adapted from the [A2UI Samples](https://github.com/googlemaps-samples/a2ui) repository.
 
 Try asking queries in the playground, web client, or via API:
 
 ### 1. Nearby Evacuation Shelter Search (🔍 周辺避難所検索)
-* *"Search for evacuation shelters near Saitama City Hall."*  
-  *(Japanese: `さいたま市役所周辺の避難所を検索して`)*
-  * *"Search for evacuation shelters near Fujisawa City Hall."*  
-  *(Japanese: `藤沢市役所周辺の避難所を検索して`)*
-* *"Search for evacuation shelters near Kyoto City Hall."*  
-  *(Japanese: `京都市役所周辺の避難所を検索して`)*
-* *"Search for evacuation shelters near Maizuru City Hall."*  
-  *(Japanese: `舞鶴市役所周辺の避難所を検索して`)*
+
+Ask for nearby designated emergency evacuation facilities. The agent plots multiple locations onto an interactive Geospatial Information Authority of Japan (GSI) Leaflet map and lists corresponding structured facility cards with official dataset attributes.
+
+* *"Evacuation shelters near Saitama City Hall."*  
+  *(Japanese: `さいたま市役所近くの避難所`)*
+* *"Evacuation shelters near Fujisawa City Hall."*  
+  *(Japanese: `藤沢市役所近くの避難所`)*
+* *"Evacuation shelters near Kyoto City Hall."*  
+  *(Japanese: `京都市役所近くの避難所`)*
+* *"Evacuation shelters near Maizuru City Hall."*  
+  *(Japanese: `舞鶴市役所近くの避難所`)*
+
+#### English Interface
+![Nearby Shelter Search in English](assets/search.png)
+
+#### Japanese Interface
+![Nearby Shelter Search in Japanese](assets/search_jp.png)
+
+---
 
 ### 2. Facility Details (🏢 施設詳細情報)
-* *"Tell me detailed information about Saitama City Hall."*  
-  *(Japanese: `さいたま市役所の詳細情報をおしえて`)*
-* *"Tell me detailed information about Fujisawa City Hall."*  
-  *(Japanese: `藤沢市役所の詳細情報をおしえて`)*
-* *"Tell me detailed information about Kyoto City Hall."*  
-  *(Japanese: `京都市役所の詳細情報をおしえて`)*
-* *"Tell me detailed information about Maizuru City Hall."*  
-  *(Japanese: `舞鶴市役所の詳細情報をおしえて`)*
+
+Ask for in-depth attributes of a specific public facility or landmark. The agent retrieves over 30 verified metadata properties from the MLIT Data Platform, pinpoints the location with high zoom, and provides a direct exploration link to the official PlateauView 3D urban model.
+
+* *"More details on Saitama City Hall."*  
+  *(Japanese: `さいたま市役所をさらに詳しく`)*
+* *"More details on Fujisawa City Hall."*  
+  *(Japanese: `藤沢市役所さらに詳しく`)*
+* *"More details on Kyoto City Hall."*  
+  *(Japanese: `京都市役所さらに詳しく`)*
+* *"More details on Maizuru City Hall."*  
+  *(Japanese: `舞鶴市役所さらに詳しく`)*
+
+#### English Interface
+![Facility Details in English](assets/data.png)
+
+#### Japanese Interface
+![Facility Details in Japanese](assets/data_jp.png)
+
+---
+
+> 💡 **Learn more about A2UI:**  
+> For the core protocol and Web Components library, visit the [googlemaps/a2ui](https://github.com/googlemaps/a2ui) repository.  
+> For reference design patterns and full-stack integration examples, visit [googlemaps-samples/a2ui](https://github.com/googlemaps-samples/a2ui).
 ---
 
 ## Production Deployment (Cloud Run 本番デプロイ)
