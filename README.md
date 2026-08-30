@@ -530,6 +530,14 @@ gcloud run deploy mlit-dpf-web \
 
 ---
 
+## Known Limitations & Design Decisions (既知の制約事項と設計判断)
+
+* **PlateauView 3D Localization & URL Deep Linking**:
+  * **No Multi-language Support**: The official [PlateauView 3D](https://plateauview.mlit.go.jp/) platform is currently provided in Japanese only. When queries are made in English or other languages, the agent automatically supplies the exact official Japanese address/keyword in parentheses (e.g., `(Search with "埼玉県さいたま市浦和区常盤6-4-4")`) to facilitate 3D model search.
+  * **No URL Query Parameters**: Since PlateauView 3D does not currently support direct coordinate parameters via URL query strings, the agent links to the top portal while instructing users with the precise search keyword.
+
+---
+
 ## License
 
 Apache License 2.0
