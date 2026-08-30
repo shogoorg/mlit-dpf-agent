@@ -93,8 +93,10 @@ uv run python src/server.py
 ---
 
 ### 2. Step 2: Run ADK Agent (Local)
-In this repository (`mlit-dpf-agent`), set up your `.env` and start the interactive playground:
+In this repository (`mlit-dpf-agent`), choose one of the two execution modes depending on your testing goal:
 
+#### Option A: Full A2UI Web App Server (Recommended for Map & Card UI)
+Starts the FastAPI server with A2A / A2UI endpoints mounted on port 8080:
 ```bash
 # Configure environment
 cp .env.example .env
@@ -102,16 +104,25 @@ cp .env.example .env
 # Install dependencies
 agents-cli install
 
-# Start local agent dev server
+# Start local A2A agent server
+uv run python -m app.fast_api_app
+```
+* **Local A2A RPC Endpoint**: `http://localhost:8080/a2a/app`
+* **Agent Card**: `http://localhost:8080/a2a/app/.well-known/agent-card.json`
+
+#### Option B: ADK CLI Playground (For Trace & Inspection)
+Starts the ADK interactive developer UI on port 8080:
+```bash
 agents-cli playground
 ```
 * **Local Dev UI**: `http://127.0.0.1:8080/dev-ui/?app=app`
-* **Local A2A RPC Endpoint**: `http://localhost:8080/a2a/app`
+
+> **Note**: Both options listen on port 8080. Run either Option A or Option B, not both simultaneously.
 
 ---
 
 ### 3. Step 3: Run React Web UI (Local)
-In the React frontend directory, install dependencies and launch the Vite dev server:
+*(Required when using Option A)* In the React frontend directory, install dependencies and launch the Vite dev server:
 
 ```bash
 cd client/web/react
@@ -142,17 +153,22 @@ Try asking queries in the playground, web client, or via API:
 ### 1. Nearby Evacuation Shelter Search (🔍 周辺避難所検索)
 * *"Search for evacuation shelters near Saitama City Hall."*  
   *(Japanese: `さいたま市役所周辺の避難所を検索して`)*
-* *"Find designated emergency evacuation sites in Urawa Ward, Saitama."*  
-  *(Japanese: `さいたま市浦和区の指定緊急避難場所を教えて`)*
+  * *"Search for evacuation shelters near Fujisawa City Hall."*  
+  *(Japanese: `藤沢市役所周辺の避難所を検索して`)*
+* *"Search for evacuation shelters near Kyoto City Hall."*  
+  *(Japanese: `京都市役所周辺の避難所を検索して`)*
+* *"Search for evacuation shelters near Maizuru City Hall."*  
+  *(Japanese: `舞鶴市役所周辺の避難所を検索して`)*
 
-### 2. Walking Directions (🚶 徒歩経路案内)
-* *"Give me walking directions from Saitama City Hall to Junior High School Attached to the Faculty of Education, Saitama University."*  
-  *(Japanese: `さいたま市役所から埼玉大学教育学部附属中学校への徒歩ルート（経路）を教えて`)*
-
-### 3. Facility Details (🏢 施設詳細情報)
-* *"Tell me detailed information about Junior High School Attached to the Faculty of Education, Saitama University."*  
+### 2. Facility Details (🏢 施設詳細情報)
+* *"Tell me detailed information about Saitama City Hall."*  
   *(Japanese: `さいたま市役所の詳細情報をおしえて`)*
-
+* *"Tell me detailed information about Fujisawa City Hall."*  
+  *(Japanese: `藤沢市役所の詳細情報をおしえて`)*
+* *"Tell me detailed information about Kyoto City Hall."*  
+  *(Japanese: `京都市役所の詳細情報をおしえて`)*
+* *"Tell me detailed information about Maizuru City Hall."*  
+  *(Japanese: `舞鶴市役所の詳細情報をおしえて`)*
 ---
 
 ## Production Deployment (Cloud Run 本番デプロイ)

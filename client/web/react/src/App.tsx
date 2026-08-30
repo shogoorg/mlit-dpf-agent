@@ -98,22 +98,16 @@ function App() {
   // Intercept all link clicks across light DOM and Shadow DOM (A2UI cards) to always open in a new tab
   useEffect(() => {
     const handleGlobalLinkClick = (e: MouseEvent) => {
-      const path = e.composedPath();
-      for (const el of path) {
-        if (el instanceof HTMLAnchorElement && el.href) {
-          if (el.href.startsWith('http://') || el.href.startsWith('https://')) {
-            e.preventDefault();
-            e.stopPropagation();
-            window.open(el.href, '_blank', 'noopener,noreferrer');
-            return;
-          }
-        }
+      const target = e.target as HTMLElement;
+      const link = target.closest('a');
+      if (link && link.href) {
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
       }
     };
-
-    window.addEventListener('click', handleGlobalLinkClick, true);
+    document.addEventListener('click', handleGlobalLinkClick, true);
     return () => {
-      window.removeEventListener('click', handleGlobalLinkClick, true);
+      document.removeEventListener('click', handleGlobalLinkClick, true);
     };
   }, []);
 
@@ -199,13 +193,6 @@ function App() {
                 return (
                   <div key={idx} className="user-message">
                     {item.text}
-                  </div>
-                );
-              } else if (item.type === 'action') {
-                return (
-                  <div key={idx} className="action-message">
-                    <strong>A2UI Action: {item.action}</strong>
-                    <pre>{item.text}</pre>
                   </div>
                 );
               } else if (item.type === 'text') {

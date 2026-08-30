@@ -1,0 +1,52 @@
+[
+  {
+    "version": "v0.9",
+    "createSurface": {
+      "surfaceId": "{{surface_id}}",
+      "catalogId": "a2ui://maps-agentic-ui-catalog.json"
+    }
+  },
+  {
+    "version": "v0.9",
+    "updateComponents": {
+      "surfaceId": "{{surface_id}}",
+      "components": [
+        {
+          "id": "root",
+          "component": "Column",
+          "children": ["list"]
+        },
+        {
+          "id": "list",
+          "component": "List",
+          "direction": "vertical",
+          "children": {
+            "componentId": "place-card",
+            "path": "/places"
+          }
+        },
+        {
+          "id": "place-card",
+          "component": "Card",
+          "child": "card-content"
+        },
+        {
+          "id": "card-content",
+          "component": "Text",
+          "variant": "body",
+          "text": { "path": "cardText" }
+        }
+      ]
+    }
+  },
+  {
+    "version": "v0.9",
+    "updateDataModel": {
+      "surfaceId": "{{surface_id}}",
+      "path": "/",
+      "value": {
+        "places": "{{places}}"
+      }
+    }
+  }
+]

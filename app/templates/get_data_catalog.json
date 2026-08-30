@@ -14,17 +14,30 @@
         {
           "id": "root",
           "component": "Column",
-          "children": [
-            "text-content"
-          ]
+          "children": ["catalog-card"]
         },
         {
-          "id": "text-content",
+          "id": "catalog-card",
+          "component": "Card",
+          "child": "card-content"
+        },
+        {
+          "id": "card-content",
           "component": "Text",
           "variant": "body",
-          "text": "{{text}}"
+          "text": { "path": "/cardText" }
         }
       ]
+    }
+  },
+  {
+    "version": "v0.9",
+    "updateDataModel": {
+      "surfaceId": "{{surface_id}}",
+      "path": "/",
+      "value": {
+        "cardText": "{{card_text}}"
+      }
     }
   }
 ]
