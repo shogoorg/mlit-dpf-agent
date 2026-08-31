@@ -14,6 +14,28 @@ description: Specialist skill for retrieving Japanese public open data and geosp
 
 ---
 
+## PlateauView 3-Core Prompt Strategy (Search & Exploration)
+
+The agent strictly routes user queries based on three standardized exploration prompt patterns tailored for the 4 hackathon partner municipalities (**Saitama, Fujisawa, Kyoto, Maizuru**), outputting structured Card lists:
+
+1. **`[Prefecture / Municipality]の周辺のデータセット（カテゴリー）を知りたい`**
+   - **Target**: Limited exclusively to **PLATEAU 3D City Model** datasets (`catalog_id="mlit_plateau"`).
+   - **Examples**: `＜さいたま市、藤沢市、京都市、舞鶴市＞の周辺のデータセットを知りたい` (EN: *"Show datasets around `<Saitama / Fujisawa / Kyoto / Maizuru>` City"*).
+   - **Tool**: `get_data_catalog(catalog_id="mlit_plateau")`
+   - **Output**: Card list of available 3D models for the region (e.g., Building Model `bldg`, Flood Hazard Model `fld`, etc.).
+
+2. **`[Prefecture / Municipality]の周辺の建築物を知りたい`**
+   - **Examples**: `＜さいたま市、藤沢市、京都市、舞鶴市＞の周辺の建築物を知りたい` (EN: *"Show buildings around `<Saitama / Fujisawa / Kyoto / Maizuru>` City"*).
+   - **Tool**: `search_by_location_point_distance` (or `search` for landmark name resolution)
+   - **Output**: Card list of prominent buildings, public facilities, and shelter structures located in/around the specified municipality.
+
+3. **`[Prefecture / Municipality]の周辺の住所を知りたい`**
+   - **Examples**: `＜埼玉県、神奈川県、京都府＞の周辺の住所を知りたい` (EN: *"Show covered addresses in `<Saitama / Kanagawa / Kyoto>` Prefecture"*).
+   - **Tool**: `get_data_catalog` (inspecting municipality list in dataset definitions)
+   - **Output**: Card list of official addresses and covered municipalities where dataset records are available.
+
+---
+
 ## Tool Selection Strategy (8 MCP Methods)
 
 ### A. Search Methods (検索系)

@@ -1,27 +1,21 @@
 # mlit-dpf-agent
 
-An **unofficial** geospatial AI agent that queries open datasets from Japan's [MLIT Data Platform](https://data-platform.mlit.go.jp/) using the **MLIT DPF MCP**.
-
-Built with Google ADK (Agent Development Kit), it connects to the **MLIT Data Platform** (via [mlit-dpf-mcp](https://github.com/MLIT-DATA-PLATFORM/mlit-dpf-mcp)), providing verified public records with **PlateauView 3D** visualization links.
-
-> ⚠️ **Disclaimer:** This is an unofficial community project and is not officially affiliated with or endorsed by the Ministry of Land, Infrastructure, Transport and Tourism (MLIT).
-
-Simple ReAct agent  
-Agent generated with `agents-cli` version `1.4.0`
-
----
-
 ## Overview & Architecture
+
+**`mlit-dpf-agent`** is an AI agent built with Google ADK that leverages **`mlit-dpf-mcp`** (MLIT Data Platform MCP Server) to ground LLM intelligence in official public data from Japan's Ministry of Land, Infrastructure, Transport and Tourism, seamlessly integrating with **PlateauView 3D** for geospatial exploration.
 
 ```
 [ User Query ] ⇄ [ mlit-dpf-agent (ADK / Gemini) ]
                          └── [ mlit-dpf-mcp ] ⇄ [ MLIT Data Platform API ] ➔ [ PlateauView 3D ]
 ```
 
+> ⚠️ **Disclaimer:** This is an unofficial community project and is not officially affiliated with or endorsed by the Ministry of Land, Infrastructure, Transport and Tourism (MLIT).
+
 ### Core Capabilities
-1. **Official Geospatial Records (MLIT DPF / PlateauView 3D)**: Official administrative records, designated evacuation shelters, public infrastructure, urban planning, and 3D urban models across Japan.
-2. **PlateauView 3D Visualizations**: Automatically generates direct 3D visual exploration links (`https://plateauview.mlit.go.jp/#/<lat>/<lon>/16/`).
-3. **Multi-language Support**: Seamlessly processes queries and responds in Japanese, English, and other languages.
+
+1. **Public Goods MCP (`mlit-dpf-mcp` vs Maps Grounding Lite)**: While *Maps Grounding Lite* connects agents to commercial map data, **`mlit-dpf-mcp`** connects directly to national **Public Goods**—official geospatial datasets, urban infrastructure, and disaster prevention records.
+2. **Public Goods Agent (`mlit-dpf-agent` vs Maps Agentic UI Toolkit)**: While the *Google Maps Agentic UI Toolkit* orchestrates commercial POI interactions, **`mlit-dpf-agent`** is purpose-built to navigate public administrative workflows and national open data.
+3. **Public Goods Map (PlateauView 3D vs Google Maps)**: While standard solutions visualize onto commercial *Google Maps*, **`mlit-dpf-agent`** integrates with Japan's official **PlateauView 3D** for rich, open-standard 3D urban model exploration.
 
 ---
 
@@ -146,6 +140,56 @@ npm run dev
 
 ---
 
+## PLATEAU Prompt Library (Interactive Query Templates)
+
+A standardized prompt library tailored for the 4 hackathon partner municipalities (**Saitama, Fujisawa, Kyoto, Maizuru**).
+
+### 1. 3-Core Exploration Prompts (PlateauView Navigation)
+
+| Category | Standard Prompt Template (JA) | Standard Prompt Template (EN) | MCP Tool |
+| :--- | :--- | :--- | :--- |
+| **Dataset (Category)** | `＜さいたま市、藤沢市、京都市、舞鶴市＞の周辺のデータセットを知りたい` | *"Show datasets around `<Saitama / Fujisawa / Kyoto / Maizuru>` City"* | `get_data_catalog` (`mlit_plateau`) |
+| **Building (Feature)** | `＜さいたま市、藤沢市、京都市、舞鶴市＞の周辺の建築物を知りたい` | *"Show buildings around `<Saitama / Fujisawa / Kyoto / Maizuru>` City"* | `search_by_location_point_distance` |
+| **Address (Coverage)** | `＜埼玉県、神奈川県、京都府＞の周辺の住所を知りたい` | *"Show covered addresses in `<Saitama / Kanagawa / Kyoto>` Prefecture"* | `get_data_catalog` |
+
+---
+
+### 2. 8 MCP Tool Prompt Catalog
+
+* **`search_by_location_point_distance` (Radius Proximity Search)**:
+  * `＜さいたま市役所、藤沢市役所、京都市役所、舞鶴市役所＞の周辺の避難所を教えて`
+  * *(EN: "Show evacuation shelters near `<Saitama / Fujisawa / Kyoto / Maizuru>` City Hall")*
+
+* **`search_by_location_rectangle` (Bounding Box Search)**:
+  * `＜さいたま市役所、藤沢市役所、京都市役所、舞鶴市役所＞周辺の矩形エリア内の公共施設を検索して`
+  * *(EN: "Search public facilities in bounding box around `<Saitama / Fujisawa / Kyoto / Maizuru>` City Hall")*
+
+* **`search_by_attribute` (Municipality Filter)**:
+  * `＜埼玉県さいたま市、神奈川県藤沢市、京都府京都市、京都府舞鶴市＞の公共施設一覧`
+  * *(EN: "List public facilities in `<Saitama / Fujisawa / Kyoto / Maizuru>` City")*
+
+* **`search` (Landmark Lookup)**:
+  * `＜さいたま市役所、藤沢市役所、京都市役所、舞鶴市役所＞を探して`
+  * *(EN: "Find `<Saitama / Fujisawa / Kyoto / Maizuru>` City Hall")*
+
+* **`get_data` (Full Specification Detail)**:
+  * `＜さいたま市役所、藤沢市役所、京都市役所、舞鶴市役所＞についてさらに詳しく`
+  * *(EN: "More details on `<Saitama / Fujisawa / Kyoto / Maizuru>` City Hall")*
+
+* **`get_data_summary` (Record Overview)**:
+  * `＜さいたま市役所、藤沢市役所、京都市役所、舞鶴市役所＞の概要`
+  * *(EN: "Overview of `<Saitama / Fujisawa / Kyoto / Maizuru>` City Hall")*
+
+* **`get_data_catalog` (Dataset Specification & Schema)**:
+  * `＜さいたま市、藤沢市、京都市、舞鶴市＞の3D都市モデル（PLATEAU）データセット仕様を教えて`
+  * *(EN: "Dataset specifications for 3D City Model PLATEAU in `<Saitama / Fujisawa / Kyoto / Maizuru>`")*
+
+* **`get_data_catalog_summary` (Global Catalog Listing)**:
+  * `利用可能なデータカタログ一覧を見せて`
+  * *(EN: "Show all available national data catalogs")*
+
+---
+
 ## Interactive A2UI Experience & Sample Queries
 
 The agent delivers agent-driven dynamic UIs using the [A2UI (Agent-to-User Interface)](https://github.com/googlemaps/a2ui) specification, with UI components and catalog schemas adapted from the [A2UI Samples](https://github.com/googlemaps-samples/a2ui) repository.
@@ -192,11 +236,6 @@ Ask for in-depth attributes of a specific public facility or landmark. The agent
 #### Japanese Interface
 ![Facility Details in Japanese](assets/data_jp.png)
 
----
-
-> 💡 **Learn more about A2UI:**  
-> For the core protocol and Web Components library, visit the [googlemaps/a2ui](https://github.com/googlemaps/a2ui) repository.  
-> For reference design patterns and full-stack integration examples, visit [googlemaps-samples/a2ui](https://github.com/googlemaps-samples/a2ui).
 ---
 
 ## Production Deployment (Cloud Run 本番デプロイ)
@@ -535,6 +574,12 @@ gcloud run deploy mlit-dpf-web \
 * **PlateauView 3D Localization & URL Deep Linking**:
   * **No Multi-language Support**: The official [PlateauView 3D](https://plateauview.mlit.go.jp/) platform is currently provided in Japanese only. When queries are made in English or other languages, the agent automatically supplies the exact official Japanese address/keyword in parentheses (e.g., `(Search with "埼玉県さいたま市浦和区常盤6-4-4")`) to facilitate 3D model search.
   * **No URL Query Parameters**: Since PlateauView 3D does not currently support direct coordinate parameters via URL query strings, the agent links to the top portal while instructing users with the precise search keyword.
+
+---
+
+> 💡 **Learn more about A2UI:**  
+> For the core protocol and Web Components library, visit the [googlemaps/a2ui](https://github.com/googlemaps/a2ui) repository.  
+> For reference design patterns and full-stack integration examples, visit [googlemaps-samples/a2ui](https://github.com/googlemaps-samples/a2ui).
 
 ---
 
