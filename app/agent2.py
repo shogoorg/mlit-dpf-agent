@@ -13,9 +13,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""MLIT DPF Agent with A2UI Geospatial Orchestration, 8-API Glossary, and Clean Links."""
+"""Project PLATEAU Specialized Agent with A2UI Geospatial Orchestration."""
 
+import os
+from pathlib import Path
 from dotenv import load_dotenv
+
 from google.adk.agents import Agent
 from google.adk.apps import App
 from google.adk.models import Gemini
@@ -27,18 +30,17 @@ load_dotenv()
 
 MODEL = "gemini-3.6-flash"
 
-import os
-from pathlib import Path
-
-SKILL_NAME = os.getenv("SKILL_NAME", "mlit-dpf")
+# Default to milt-dpf-plateau skill (can be overridden via SKILL_NAME env var)
+SKILL_NAME = os.getenv("SKILL_NAME", "milt-dpf-plateau")
 SKILL_PATH = Path(__file__).parent / "skills" / SKILL_NAME / "SKILL.md"
+
 SYSTEM_INSTRUCTION = SKILL_PATH.read_text(encoding="utf-8") if SKILL_PATH.exists() else (
-    "You are an expert specialist in MLIT geospatial data. "
-    "Follow the tool selection and A2UI formatting rules defined in the mlit-dpf skill."
+    "You are an expert specialist in Project PLATEAU 3D City Models. "
+    "Follow the tool selection and A2UI formatting rules defined in the plateau skill."
 )
 
 root_agent = Agent(
-    name="mlit_dpf_agent",
+    name="plateau_agent",
     model=Gemini(
         model=MODEL,
         retry_options=types.HttpRetryOptions(attempts=3),
