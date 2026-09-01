@@ -87,7 +87,17 @@ uv run python src/server.py
 ---
 
 ### 2. Step 2: Run ADK Agent (Local)
-In this repository (`mlit-dpf-agent`), choose one of the two execution modes depending on your testing goal:
+In this repository (`mlit-dpf-agent`), choose between the two specialized skill modes and select your execution environment:
+
+#### Skill Execution Modes:
+* **Pattern 1: General MLIT DPF Agent** (Default):
+  - Uses `mlit-dpf` skill for evacuation shelters, public facilities, and nationwide open data.
+  - Set `SKILL_NAME=mlit-dpf` (or omit for default).
+* **Pattern 2: Project PLATEAU 3D Agent**:
+  - Uses `milt-dpf-plateau` skill for 3D buildings, flood hazard zones, and PlateauView links.
+  - Set `SKILL_NAME=milt-dpf-plateau`.
+
+---
 
 #### Option A: Full A2UI Web App Server (Recommended for Map & Card UI)
 Starts the FastAPI server with A2A / A2UI endpoints mounted on port 8080:
@@ -98,8 +108,11 @@ cp .env.example .env
 # Install dependencies
 agents-cli install
 
-# Start local A2A agent server
-uv run python -m app.fast_api_app
+# Pattern 1: Run General MLIT DPF Agent
+SKILL_NAME=mlit-dpf uv run python -m app.fast_api_app
+
+# Pattern 2: Run Project PLATEAU 3D Agent
+SKILL_NAME=milt-dpf-plateau uv run python -m app.fast_api_app
 ```
 * **Local A2A RPC Endpoint**: `http://localhost:8080/a2a/app`
 * **Agent Card**: `http://localhost:8080/a2a/app/.well-known/agent-card.json`
@@ -107,7 +120,11 @@ uv run python -m app.fast_api_app
 #### Option B: ADK CLI Playground (For Trace & Inspection)
 Starts the ADK interactive developer UI on port 8080:
 ```bash
-agents-cli playground
+# Pattern 1: Run General MLIT DPF Agent
+SKILL_NAME=mlit-dpf agents-cli playground
+
+# Pattern 2: Run Project PLATEAU 3D Agent
+SKILL_NAME=milt-dpf-plateau agents-cli playground
 ```
 * **Local Dev UI**: `http://127.0.0.1:8080/dev-ui/?app=app`
 
@@ -140,53 +157,28 @@ npm run dev
 
 ---
 
-## PLATEAU Prompt Library (Interactive Query Templates)
+## Agent Skills & Prompt References
 
-A standardized prompt library tailored for the 4 hackathon partner municipalities (**Saitama, Fujisawa, Kyoto, Maizuru**).
+The agent's prompts, tool selection strategies, and natural language intent mappings are defined in modular skill documents:
 
-### 1. 3-Core Exploration Prompts (PlateauView Navigation)
+1. **MLIT DPF Geospatial Skill (General Public Data & Facilities)**:
+   - Skill Reference: [`app/skills/mlit-dpf/SKILL.md`](app/skills/mlit-dpf/SKILL.md)
+   - Focus: Proximity search for evacuation shelters, public facilities, and nationwide MLIT geospatial catalogs.
 
-| Category | Standard Prompt Template (JA) | Standard Prompt Template (EN) | MCP Tool |
-| :--- | :--- | :--- | :--- |
-| **Dataset (Category)** | `＜さいたま市、藤沢市、京都市、舞鶴市＞の周辺のデータセットを知りたい` | *"Show datasets around `<Saitama / Fujisawa / Kyoto / Maizuru>` City"* | `get_data_catalog` (`mlit_plateau`) |
-| **Building (Feature)** | `＜さいたま市、藤沢市、京都市、舞鶴市＞の周辺の建築物を知りたい` | *"Show buildings around `<Saitama / Fujisawa / Kyoto / Maizuru>` City"* | `search_by_location_point_distance` |
-| **Address (Coverage)** | `＜埼玉県、神奈川県、京都府＞の周辺の住所を知りたい` | *"Show covered addresses in `<Saitama / Kanagawa / Kyoto>` Prefecture"* | `get_data_catalog` |
+2. **Project PLATEAU 3D City Model Skill (3D Models & Disaster Layers)**:
+   - Skill Reference: [`app/skills/milt-dpf-plateau/SKILL.md`](app/skills/milt-dpf-plateau/SKILL.md)
+   - Focus: Natural language queries for 3D building models (LOD1/LOD2/LOD3), flood hazards, land use, and PlateauView 3D navigation.
 
----
+### 4-Core Exploration Prompt Patterns (PlateauView & DPF Navigation)
 
-### 2. 8 MCP Tool Prompt Catalog
+Tailored for the 4 hackathon partner city halls and municipalities (**Saitama, Fujisawa, Kyoto, Maizuru**):
 
-* **`search_by_location_point_distance` (Radius Proximity Search)**:
-  * `＜さいたま市役所、藤沢市役所、京都市役所、舞鶴市役所＞の周辺の避難所を教えて`
-  * *(EN: "Show evacuation shelters near `<Saitama / Fujisawa / Kyoto / Maizuru>` City Hall")*
-
-* **`search_by_location_rectangle` (Bounding Box Search)**:
-  * `＜さいたま市役所、藤沢市役所、京都市役所、舞鶴市役所＞周辺の矩形エリア内の公共施設を検索して`
-  * *(EN: "Search public facilities in bounding box around `<Saitama / Fujisawa / Kyoto / Maizuru>` City Hall")*
-
-* **`search_by_attribute` (Municipality Filter)**:
-  * `＜埼玉県さいたま市、神奈川県藤沢市、京都府京都市、京都府舞鶴市＞の公共施設一覧`
-  * *(EN: "List public facilities in `<Saitama / Fujisawa / Kyoto / Maizuru>` City")*
-
-* **`search` (Landmark Lookup)**:
-  * `＜さいたま市役所、藤沢市役所、京都市役所、舞鶴市役所＞を探して`
-  * *(EN: "Find `<Saitama / Fujisawa / Kyoto / Maizuru>` City Hall")*
-
-* **`get_data` (Full Specification Detail)**:
-  * `＜さいたま市役所、藤沢市役所、京都市役所、舞鶴市役所＞についてさらに詳しく`
-  * *(EN: "More details on `<Saitama / Fujisawa / Kyoto / Maizuru>` City Hall")*
-
-* **`get_data_summary` (Record Overview)**:
-  * `＜さいたま市役所、藤沢市役所、京都市役所、舞鶴市役所＞の概要`
-  * *(EN: "Overview of `<Saitama / Fujisawa / Kyoto / Maizuru>` City Hall")*
-
-* **`get_data_catalog` (Dataset Specification & Schema)**:
-  * `＜さいたま市、藤沢市、京都市、舞鶴市＞の3D都市モデル（PLATEAU）データセット仕様を教えて`
-  * *(EN: "Dataset specifications for 3D City Model PLATEAU in `<Saitama / Fujisawa / Kyoto / Maizuru>`")*
-
-* **`get_data_catalog_summary` (Global Catalog Listing)**:
-  * `利用可能なデータカタログ一覧を見せて`
-  * *(EN: "Show all available national data catalogs")*
+| # | Navigation Pattern | Standard Query Template (JA) | Standard Query Template (EN) | Output Scope |
+| :---: | :--- | :--- | :--- | :--- |
+| **1** | **Municipality Datasets** | `＜さいたま市、藤沢市、京都市、舞鶴市＞のデータセットをおしえて` | *"Show datasets for `<Saitama / Fujisawa / Kyoto / Maizuru>` City"* | **All 12 thematic datasets** across the municipality |
+| **2** | **Nearby Datasets** | `＜さいたま市役所、藤沢市役所、京都市役所、舞鶴市役所＞の周辺のデータセット（カテゴリー）を知りたい` | *"Show datasets and categories around `<Saitama / Fujisawa / Kyoto / Maizuru>` City Hall"* | **All 12 thematic datasets** around City Hall |
+| **3** | **Nearby Buildings** | `＜さいたま市役所、藤沢市役所、京都市役所、舞鶴市役所＞の周辺の建築物を知りたい` | *"Show buildings around `<Saitama / Fujisawa / Kyoto / Maizuru>` City Hall"* | **Top 5 concrete buildings** ordered by proximity |
+| **4** | **Nearby Addresses** | `＜さいたま市役所、藤沢市役所、京都市役所、舞鶴市役所＞の周辺の住所を知りたい` | *"Show covered addresses around `<Saitama / Fujisawa / Kyoto / Maizuru>` City Hall"* | **Town/Chome-level areas** ordered by proximity |
 
 ---
 
@@ -295,14 +287,20 @@ agents-cli deploy \
 
 #### Update Environment Variables & Public Access
 
-Update the Cloud Run service with the deployed MCP server URL and enable public access:
+Update the Cloud Run service with the deployed MCP server URL, set the active skill, and enable public access:
 
 ```bash
-# Update MCP server URL
+# Pattern 1: Set General MLIT DPF Skill on Cloud Run
 gcloud run services update mlit-dpf-agent \
   --project shogoorg-mlit-dpf \
   --region us-west1 \
-  --update-env-vars "MLIT_MCP_SERVER_URL=https://<your-mcp-server-endpoint>/sse"
+  --update-env-vars "MLIT_MCP_SERVER_URL=https://<your-mcp-server-endpoint>/sse,SKILL_NAME=mlit-dpf"
+
+# Pattern 2: Switch to Project PLATEAU 3D Skill on Cloud Run
+gcloud run services update mlit-dpf-agent \
+  --project shogoorg-mlit-dpf \
+  --region us-west1 \
+  --update-env-vars "MLIT_MCP_SERVER_URL=https://<your-mcp-server-endpoint>/sse,SKILL_NAME=milt-dpf-plateau"
 
 # Grant public invoker access
 gcloud run services add-iam-policy-binding mlit-dpf-agent \

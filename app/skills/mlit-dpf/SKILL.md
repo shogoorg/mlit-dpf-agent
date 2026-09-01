@@ -14,70 +14,117 @@ description: Specialist skill for retrieving Japanese public open data and geosp
 
 ---
 
-## PlateauView 3-Core Prompt Strategy (Search & Exploration)
+## 2. 8 MCP Tool Prompt Catalog (Prompt Templates & Strategies)
 
-The agent strictly routes user queries based on three standardized exploration prompt patterns tailored for the 4 hackathon partner municipalities (**Saitama, Fujisawa, Kyoto, Maizuru**), outputting structured Card lists:
+The agent strictly routes user queries into corresponding MLIT DPF MCP tools using standardized prompt templates tailored for the 4 hackathon partner city halls (**Saitama, Fujisawa, Kyoto, Maizuru**):
 
-1. **`[Prefecture / Municipality]の周辺のデータセット（カテゴリー）を知りたい`**
-   - **Target**: Limited exclusively to **PLATEAU 3D City Model** datasets (`catalog_id="mlit_plateau"`).
-   - **Examples**: `＜さいたま市、藤沢市、京都市、舞鶴市＞の周辺のデータセットを知りたい` (EN: *"Show datasets around `<Saitama / Fujisawa / Kyoto / Maizuru>` City"*).
-   - **Tool**: `get_data_catalog(catalog_id="mlit_plateau")`
-   - **Output**: Card list of available 3D models for the region (e.g., Building Model `bldg`, Flood Hazard Model `fld`, etc.).
+### 4-Core Exploration Prompt Patterns (Core Navigation)
+1. **自治体データセット**: `＜さいたま市、藤沢市、京都市、舞鶴市＞のデータセットをおしえて`  
+   *(EN: "Show datasets for `<Saitama / Fujisawa / Kyoto / Maizuru>` City")*
+   - *Output*: **All available thematic layers** (公共施設, 避難所, 医療施設, 学校等).
 
-2. **`[Prefecture / Municipality]の周辺の建築物を知りたい`**
-   - **Examples**: `＜さいたま市、藤沢市、京都市、舞鶴市＞の周辺の建築物を知りたい` (EN: *"Show buildings around `<Saitama / Fujisawa / Kyoto / Maizuru>` City"*).
-   - **Tool**: `search_by_location_point_distance` (or `search` for landmark name resolution)
-   - **Output**: Card list of prominent buildings, public facilities, and shelter structures located in/around the specified municipality.
+2. **周辺データセット**: `＜さいたま市役所、藤沢市役所、京都市役所、舞鶴市役所＞の周辺のデータセット（カテゴリー）を知りたい`  
+   *(EN: "Show datasets and categories around `<Saitama / Fujisawa / Kyoto / Maizuru>` City Hall")*
+   - *Output*: **All available thematic layers** around the target city hall.
 
-3. **`[Prefecture / Municipality]の周辺の住所を知りたい`**
-   - **Examples**: `＜埼玉県、神奈川県、京都府＞の周辺の住所を知りたい` (EN: *"Show covered addresses in `<Saitama / Kanagawa / Kyoto>` Prefecture"*).
-   - **Tool**: `get_data_catalog` (inspecting municipality list in dataset definitions)
-   - **Output**: Card list of official addresses and covered municipalities where dataset records are available.
+3. **周辺建築物（公共施設・構造物 - Top 5）**: `＜さいたま市役所、藤沢市役所、京都市役所、舞鶴市役所＞の周辺の建築物を知りたい`  
+   *(EN: "Show buildings and facilities around `<Saitama / Fujisawa / Kyoto / Maizuru>` City Hall")*
+   - *Output*: **Top 5 specific facilities** (本庁舎, 消防署, 小学校等) ordered by **proximity from City Hall**.
+
+4. **周辺住所（町丁目・カバレッジ）**: `＜さいたま市役所、藤沢市役所、京都市役所、舞鶴市役所＞の周辺の住所を知りたい`  
+   *(EN: "Show covered addresses around `<Saitama / Fujisawa / Kyoto / Maizuru>` City Hall")*
+   - *Output*: **Town/Chome-level areas (町丁目・大字)** (常盤, 仲町, 高砂等) ordered by proximity.
 
 ---
-
-## Tool Selection Strategy (8 MCP Methods)
 
 ### A. Search Methods (検索系)
-1. **`search_by_location_point_distance`**:
-   - **Purpose**: Search data intersecting a circle defined by center coordinates and radius in meters.
-   - **Parameters**: `location_lat` (float), `location_lon` (float), `location_distance` (meters integer, e.g. 1000~2000), `term` (string, e.g. "避難場所", "小学校", "病院").
+1. **`search_by_location_point_distance` (Radius Proximity Search)**
+   - **Target**: Public facilities, evacuation shelters, and geospatial assets within radius of a point.
+   - **Prompt Template (JA)**: `＜さいたま市役所、藤沢市役所、京都市役所、舞鶴市役所＞の周辺の避難所を教えて` / `[地名/駅]近くの公共施設`
+   - **Prompt Template (EN)**: *"Show evacuation shelters near `<Saitama / Fujisawa / Kyoto / Maizuru>` City Hall"* / *"Public facilities near [Location]"*
+   - **Parameters**: `location_lat` (float), `location_lon` (float), `location_distance` (integer, e.g. 1000~2000), `term` (e.g. "避難場所", "小学校", "病院").
    - **When to Use**: "Nearby / Proximity" queries (e.g. 「〇〇の周辺」「〇〇の近く」「〇〇付近」).
-   - **Multi-Location Rule**: If multiple origins are given (e.g. 「さいたま市役所と舞鶴市役所の近く」), execute this tool once per origin.
-2. **`search_by_location_rectangle`**:
-   - **Purpose**: Search data intersecting a bounding box rectangle.
-   - **Parameters**: `location_rectangle_top_left_lat`, `location_rectangle_top_left_lon`, `location_rectangle_bottom_right_lat`, `location_rectangle_bottom_right_lon`, `term` (optional string).
+
+2. **`search_by_location_rectangle` (Bounding Box Search)**
+   - **Target**: Public facilities and regional features intersecting a bounding box rectangle.
+   - **Prompt Template (JA)**: `＜さいたま市役所、藤沢市役所、京都市役所、舞鶴市役所＞周辺の矩形エリア内の公共施設を検索して`
+   - **Prompt Template (EN)**: *"Search public facilities in bounding box around `<Saitama / Fujisawa / Kyoto / Maizuru>` City Hall"*
+   - **Parameters**: `location_rectangle_top_left_lat`, `location_rectangle_top_left_lon`, `location_rectangle_bottom_right_lat`, `location_rectangle_bottom_right_lon`, `term`.
    - **When to Use**: Bounding box queries for map viewport areas or rectangular regional zones.
-3. **`search_by_attribute`**:
-   - **Purpose**: Filter data by specific metadata attributes (catalog name, dataset ID, prefecture code, city code).
-   - **When to Use**: Municipality-wide listings or dataset-specific filtering (e.g. `nlni_ksj-p20`).
-4. **`search`**:
-   - **Purpose**: Full-text keyword search across dataset records (`phrase_match=False` for partial matching).
-   - **When to Use**: Landmark ID discovery (e.g. looking up "さいたま市役所" to get its coordinates and dataset/data IDs) or general keyword searches.
+
+3. **`search_by_attribute` (Municipality & Attribute Filter)**
+   - **Target**: Filter datasets by administrative code, municipality name, or metadata attributes.
+   - **Parameters**: `dataset_id` (e.g. `nlni_ksj-p20`), `prefecture_code`, `city_code`, `keyword`.
+   - **When to Use**: Internal attribute filtering for specific municipality and administrative datasets.
+
+4. **`search` (Full-Text & Landmark Lookup)**
+   - **Target**: Find landmark coordinates or discover dataset records via keywords.
+   - **Prompt Template (JA)**: `＜さいたま市役所、藤沢市役所、京都市役所、舞鶴市役所＞を探して`
+   - **Prompt Template (EN)**: *"Find `<Saitama / Fujisawa / Kyoto / Maizuru>` City Hall"*
+   - **Parameters**: `term` (e.g. "さいたま市役所", "京都市役所", `phrase_match=False`).
+   - **When to Use**: Landmark geocoding and name resolution.
 
 ### B. Data & Catalog Retrieval Methods (詳細・カタログ取得系)
-5. **`get_data`**:
-   - **Purpose**: Retrieve 100% full attribute specifications for a specific `dataset_id` and `data_id`.
-   - **When to Use**: Deep detail queries (e.g. 「〇〇の詳細情報」「〇〇のスペック」) after identifying IDs via `search`.
-6. **`get_data_summary`**:
-   - **Purpose**: Lightweight retrieval of basic fields (ID, title, coordinates).
+5. **`get_data` (Full Attribute Specification)**
+   - **Target**: Retrieve 100% full attribute specifications for a specific record.
+   - **Prompt Template (JA)**: `＜さいたま市役所、藤沢市役所、京都市役所、舞鶴市役所＞についてさらに詳しく`
+   - **Prompt Template (EN)**: *"More details on `<Saitama / Fujisawa / Kyoto / Maizuru>` City Hall"*
+   - **Parameters**: `dataset_id`, `data_id`.
+   - **When to Use**: Deep detail inquiries regarding a single facility or dataset record.
+
+6. **`get_data_summary` (Record Overview Summary)**
+   - **Target**: Lightweight retrieval of basic fields (ID, title, coordinates).
+   - **Prompt Template (JA)**: `＜さいたま市役所、藤沢市役所、京都市役所、舞鶴市役所＞の概要`
+   - **Prompt Template (EN)**: *"Overview of `<Saitama / Fujisawa / Kyoto / Maizuru>` City Hall"*
+   - **Parameters**: `dataset_id`, `data_id`.
    - **When to Use**: Quick overview queries.
-7. **`get_data_catalog`**:
-   - **Purpose**: Retrieve detailed schema and definitions of a catalog or dataset.
-   - **When to Use**: Inquiries regarding dataset specifications (e.g. 「〇〇データセットの仕様」).
-8. **`get_data_catalog_summary`**:
-   - **Purpose**: Retrieve summary listings of available data catalogs/datasets.
-   - **When to Use**: Inquiries regarding available dataset lists.
+
+7. **`get_data_catalog` (Dataset Specification & Municipality Datasets)**
+   - **Target**: Retrieve detailed schema, covered municipalities, and definitions of a catalog for a specific municipality.
+   - **Prompt Template (JA)**:
+     - `＜さいたま市、藤沢市、京都市、舞鶴市＞のデータセットをおしえて`
+     - `＜さいたま市役所、藤沢市役所、京都市役所、舞鶴市役所＞の周辺のデータセット（カテゴリー）を知りたい`
+     - `＜さいたま市役所、藤沢市役所、京都市役所、舞鶴市役所＞の周辺の住所を知りたい`
+   - **Prompt Template (EN)**:
+     - *"Show datasets for `<Saitama / Fujisawa / Kyoto / Maizuru>` City"*
+     - *"Show datasets around `<Saitama / Fujisawa / Kyoto / Maizuru>` City Hall"*
+     - *"Show covered addresses around `<Saitama / Fujisawa / Kyoto / Maizuru>` City Hall"*
+   - **Parameters**: `catalog_id` (e.g. `nlni_ksj`, `mlit_plateau`), `dataset_id`.
+   - **When to Use**: Inquiries regarding catalog/dataset definitions and covered area lists.
+
+8. **`get_data_catalog_summary` (All Available Catalogs Listing - Global Scope)**
+   - **Target**: Retrieve summary listings of available national data catalogs across the platform.
+   - **Prompt Template (JA)**:
+     - `すべてのデータセットをおしえて`
+     - `利用可能なデータカタログ一覧を見せて`
+     - `どんなデータセットが公開されている？`
+   - **Prompt Template (EN)**:
+     - *"Show all datasets"*
+     - *"Show all available national data catalogs"*
+     - *"What datasets are available?"*
+   - **Parameters**: None.
+   - **When to Use**: Inquiries regarding available dataset lists and system-wide coverage.
 
 ---
 
-## Execution & Efficiency Policy
+## 3. Tool Selection & Resolution Strategy
+- **All Models Display Rule (Mandatory for Datasets/Categories)**:
+  - When inquiries ask for datasets/categories, output individual cards for all available thematic layers without omitting any layer.
+- **Top 5 Nearest Records Rule (Mandatory for Nearby Facilities/Buildings)**:
+  - When users ask about nearby facilities or buildings (e.g. 「さいたま市役所の周辺の建築物を知りたい」), output **up to 5 specific facility cards (Top 5)** ordered by **distance ascending (nearest to origin first)**.
+- **Chome/Oaza Address Resolution (Mandatory for Nearby Addresses)**:
+  - When users ask about nearby addresses, enumerate detailed town/chome-level areas (町丁目・大字レベル, e.g. 浦和区常盤, 仲町, 高砂) rather than just broad municipality names.
+- **Multi-Location Rule**: If multiple origins are given (e.g. 「さいたま市役所と舞鶴市役所の近く」), execute search tools once per origin.
+
+---
+
+## 4. Execution & Efficiency Policy
 - **Fast Mode for Lists**: When a search method returns a list, do NOT call `get_data` in individual loops. Generate the A2UI output directly from the search result list.
 - **Single-Step & No Loops**: Do not retry in loops with mutated keywords if 0 records are found. State clearly that no official records were found.
 
 ---
 
-## A2UI Output & Card Formatting Rules
+## 5. A2UI Output & Card Formatting Rules
 - **Pure A2UI Output**: Output ONLY the single `<a2ui-json>[ createSurface, updateComponents, updateDataModel ]</a2ui-json>` block. Never output conversational text or summaries outside the JSON.
 - **Surface & Catalog**: Always use `surfaceId: "mlit-search-surface"` and `catalogId: "a2ui://maps-agentic-ui-catalog.json"`.
 - **Standard Component Architecture**:
