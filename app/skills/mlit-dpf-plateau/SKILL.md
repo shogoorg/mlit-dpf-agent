@@ -179,16 +179,13 @@ Tailored for the 4 hackathon partner city halls (**Saitama, Fujisawa, Kyoto, Mai
   - When users ask about nearby buildings (e.g. 「さいたま市役所の周辺の建築物を知りたい」), output **up to 5 specific building cards (Top 5)** ordered by **distance ascending (nearest first)** with concrete facility names (本庁舎, 消防署, 小学校, 公民館等).
 - **Chome/Oaza Address Resolution (Mandatory for Nearby Addresses)**:
   - When users ask about nearby addresses (e.g. 「さいたま市役所の周辺の住所を知りたい」), enumerate **detailed town/chome-level areas (町丁目・大字レベル, e.g. 浦和区常盤1〜10丁目, 仲町, 高砂, 北浦和)** rather than just municipality-level names.
-- **PlateauView Search & Filter Mental Model**:
-  - **3 Search Concepts**:
-    - *Datasets* (データセット): Map to `get_data_catalog` / thematic layers.
-    - *Buildings* (建築物 / 建物 / 施設): Map to `search_by_location_point_distance` / `search(term="建築物")`.
-    - *Addresses* (住所 / 町丁目): Map to `normalize_codes` ➔ `get_data` (extracting `NLNI:shozaichi`).
-  - **2 Filter Concepts**:
-    - *Prefecture & Municipality* (都道府県・市区町村): Map to `normalize_codes` / `search_by_attribute`.
-    - *Category* (カテゴリー / テーマ分類): Map to the 12 thematic dataset layers below (`bldg`, `tran`, `fld`, `urf`, etc.).
+- **PlateauView Search & Filter Mental Model (Bidirectional Suggestions)**:
+  - **Suggestion Engine Mechanism**: Entering keywords into the PlateauView search bar displays matching autocomplete suggestions from which users select:
+    1. **Prefecture / Municipality Entry Point**: Typing `都道府県 市区町村` (e.g. `埼玉県 さいたま市浦和区`) displays all available *Datasets*, *Buildings/Public Facilities*, and *Addresses* in that area.
+    2. **Dataset Entry Point**: Typing `データセット名` (e.g. `建築物モデル`, `洪水浸水想定区域モデル`) displays all nationwide *Prefectures / Municipalities* and *Building Addresses* supporting that layer.
+    3. **Targeted Entry (Both Known)**: Typing `データセット名 都道府県 市区町村` (e.g. `建築物モデル 埼玉県 さいたま市浦和区`) pinpoints the exact dataset for that locality in one step.
   - **Navigation Flexibility (Shortcuts & Drilldowns)**:
-    - Support natural user exploration: guide step-by-step drilldowns when broad (Prefecture ➔ Municipality ➔ Category), but immediately execute direct shortcuts when users jump straight to a specific municipality, facility, or hazard layer.
+    - Guide step-by-step drilldowns when inquiries are broad, but immediately execute direct shortcuts when users specify a specific municipality, facility, or hazard layer.
 - **Natural Language Resolution**: When natural language mentions buildings ("建物", "ビル", "街並み"), hazard risks ("水害", "浸水", "ハザード"), urban zoning ("用途地域", "都市計画"), or vegetation ("街路樹", "緑地"), automatically translate to the respective thematic keywords.
 - **Landmark Geocoding**: For landmark/station queries (e.g. 「新宿駅周辺」, "around Saitama City Hall"), resolve coordinates and execute `search_by_location_point_distance(term="建築物")`.
 - **Municipality Scoping**: For city-level queries (e.g. 「さいたま市」, "Saitama City"), execute `search_by_attribute(attribute_name="DPF:catalog_id", attribute_value="mlit_plateau", term="建築物")`.
@@ -221,21 +218,33 @@ Tailored for the 4 hackathon partner city halls (**Saitama, Fujisawa, Kyoto, Mai
   - Always start with bold title `**<Model / Facility Name>**`.
   - Display **100% of ALL key-value items and attributes** returned by the API without omitting or summarizing any fields.
   - Translate raw API keys using the **Glossary Table** below based on the query language.
-- **Fixed Map Links**:
+- **Fixed Map Links & PlateauView Search Keyword Suggestions**:
+  - Because PlateauView cannot jump to arbitrary coordinates via deep-link parameters, **always append a space-delimited search suggestion keyword** to the PlateauView link so users can paste it directly into PlateauView's search bar to trigger autocomplete suggestions.
+  - **Resolution Level Hierarchy**:
+    1. **Both Dataset & Location Identified (Most Specific / Preferred)**:
+       - Format: `[PlateauView 3D](https://plateauview.mlit.go.jp/)（検索キーワード: `<DatasetName> <Prefecture> <Municipality>`）`
+       - Example: `[PlateauView 3D](https://plateauview.mlit.go.jp/)（検索キーワード: `建築物モデル 埼玉県 さいたま市浦和区`）`
+    2. **Location Only Identified**:
+       - Format: `[PlateauView 3D](https://plateauview.mlit.go.jp/)（検索キーワード: `<Prefecture> <Municipality>`）`
+       - Example: `[PlateauView 3D](https://plateauview.mlit.go.jp/)（検索キーワード: `埼玉県 さいたま市浦和区`）` or `埼玉県`
+    3. **Dataset Only Identified**:
+       - Format: `[PlateauView 3D](https://plateauview.mlit.go.jp/)（検索キーワード: `<DatasetName>`）`
+       - Example: `[PlateauView 3D](https://plateauview.mlit.go.jp/)（検索キーワード: `建築物モデル`）`
   - For Japanese queries (List & Details):
     ```markdown
     [地理院地図](https://maps.gsi.go.jp/?marker=<lat>,<lng>)
-    [PlateauView 3D](https://plateauview.mlit.go.jp/)
+    [PlateauView 3D](https://plateauview.mlit.go.jp/)（検索キーワード: `<Keyword>`）
     *出典: Project PLATEAU / 国土交通データプラットフォーム*
     ```
   - For English queries (List & Details):
     ```markdown
     [GSI Map](https://maps.gsi.go.jp/?marker=<lat>,<lng>)
-    [PlateauView 3D](https://plateauview.mlit.go.jp/)
+    [PlateauView 3D](https://plateauview.mlit.go.jp/) (PlateauView search: `<Keyword in Japanese for exact UI matching>`)
     *Source: Project PLATEAU / MLIT Japan*
     ```
   - For catalog metadata (`get_data_catalog*`):
     ```markdown
+    [PlateauView 3D](https://plateauview.mlit.go.jp/)（検索キーワード: `建築物モデル`）
     *出典: Project PLATEAU / 国土交通データプラットフォーム*
     ```
 - **NO Emojis**: Never use emoji icons in UI or cards.
