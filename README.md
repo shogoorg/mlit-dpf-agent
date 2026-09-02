@@ -87,15 +87,7 @@ uv run python src/server.py
 ---
 
 ### 2. Step 2: Run ADK Agent (Local)
-In this repository (`mlit-dpf-agent`), choose between the two specialized skill modes and select your execution environment:
-
-#### Skill Execution Modes:
-* **Pattern 1: General MLIT DPF Agent** (Default):
-  - Uses `mlit-dpf` skill for evacuation shelters, public facilities, and nationwide open data.
-  - Set `SKILL_NAME=mlit-dpf` (or omit for default).
-* **Pattern 2: Project PLATEAU 3D Agent**:
-  - Uses `milt-dpf-plateau` skill for 3D buildings, flood hazard zones, and PlateauView links.
-  - Set `SKILL_NAME=milt-dpf-plateau`.
+In this repository (`mlit-dpf-agent`), launch the Project PLATEAU 3D Agent using either option below:
 
 ---
 
@@ -108,11 +100,8 @@ cp .env.example .env
 # Install dependencies
 agents-cli install
 
-# Pattern 1: Run General MLIT DPF Agent
-SKILL_NAME=mlit-dpf uv run python -m app.fast_api_app
-
-# Pattern 2: Run Project PLATEAU 3D Agent
-SKILL_NAME=milt-dpf-plateau uv run python -m app.fast_api_app
+# Run Project PLATEAU 3D Agent
+uv run python -m app.fast_api_app
 ```
 * **Local A2A RPC Endpoint**: `http://localhost:8080/a2a/app`
 * **Agent Card**: `http://localhost:8080/a2a/app/.well-known/agent-card.json`
@@ -120,11 +109,7 @@ SKILL_NAME=milt-dpf-plateau uv run python -m app.fast_api_app
 #### Option B: ADK CLI Playground (For Trace & Inspection)
 Starts the ADK interactive developer UI on port 8080:
 ```bash
-# Pattern 1: Run General MLIT DPF Agent
-SKILL_NAME=mlit-dpf agents-cli playground
-
-# Pattern 2: Run Project PLATEAU 3D Agent
-SKILL_NAME=milt-dpf-plateau agents-cli playground
+agents-cli playground
 ```
 * **Local Dev UI**: `http://127.0.0.1:8080/dev-ui/?app=app`
 
@@ -157,17 +142,13 @@ npm run dev
 
 ---
 
-## Agent Skills & Prompt References
+## Agent Skill & Prompt Reference
 
-The agent's prompts, tool selection strategies, and natural language intent mappings are defined in modular skill documents:
+The agent's prompts, tool selection strategies, and natural language intent mappings are defined in the Project PLATEAU skill document:
 
-1. **MLIT DPF Geospatial Skill (General Public Data & Facilities)**:
-   - Skill Reference: [`app/skills/mlit-dpf/SKILL.md`](app/skills/mlit-dpf/SKILL.md)
-   - Focus: Proximity search for evacuation shelters, public facilities, and nationwide MLIT geospatial catalogs.
-
-2. **Project PLATEAU 3D City Model Skill (3D Models & Disaster Layers)**:
-   - Skill Reference: [`app/skills/milt-dpf-plateau/SKILL.md`](app/skills/milt-dpf-plateau/SKILL.md)
-   - Focus: Natural language queries for 3D building models (LOD1/LOD2/LOD3), flood hazards, land use, and PlateauView 3D navigation.
+* **Project PLATEAU 3D City Model Skill**:
+  - Skill Reference: [`app/skills/mlit-dpf-plateau/SKILL.md`](app/skills/mlit-dpf-plateau/SKILL.md)
+  - Focus: Natural language queries for 3D building models (LOD1/LOD2/LOD3), flood hazards, land use, and PlateauView 3D navigation.
 
 ### 4-Core Exploration Prompt Patterns (PlateauView & DPF Navigation)
 
@@ -290,17 +271,11 @@ agents-cli deploy \
 Update the Cloud Run service with the deployed MCP server URL, set the active skill, and enable public access:
 
 ```bash
-# Pattern 1: Set General MLIT DPF Skill on Cloud Run
+# Configure MCP Server URL on Cloud Run
 gcloud run services update mlit-dpf-agent \
   --project shogoorg-mlit-dpf \
   --region us-west1 \
-  --update-env-vars "MLIT_MCP_SERVER_URL=https://<your-mcp-server-endpoint>/sse,SKILL_NAME=mlit-dpf"
-
-# Pattern 2: Switch to Project PLATEAU 3D Skill on Cloud Run
-gcloud run services update mlit-dpf-agent \
-  --project shogoorg-mlit-dpf \
-  --region us-west1 \
-  --update-env-vars "MLIT_MCP_SERVER_URL=https://<your-mcp-server-endpoint>/sse,SKILL_NAME=milt-dpf-plateau"
+  --update-env-vars "MLIT_MCP_SERVER_URL=https://<your-mcp-server-endpoint>/sse"
 
 # Grant public invoker access
 gcloud run services add-iam-policy-binding mlit-dpf-agent \
