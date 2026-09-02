@@ -30,15 +30,15 @@ MODEL = "gemini-3.6-flash"
 import os
 from pathlib import Path
 
-SKILL_NAME = os.getenv("SKILL_NAME", "mlit-dpf")
+SKILL_NAME = os.getenv("SKILL_NAME", "mlit-dpf-plateau")
 SKILL_PATH = Path(__file__).parent / "skills" / SKILL_NAME / "SKILL.md"
 SYSTEM_INSTRUCTION = SKILL_PATH.read_text(encoding="utf-8") if SKILL_PATH.exists() else (
-    "You are an expert specialist in MLIT geospatial data. "
-    "Follow the tool selection and A2UI formatting rules defined in the mlit-dpf skill."
+    "You are an expert specialist in Project PLATEAU 3D City Models. "
+    "Follow the tool selection and A2UI formatting rules defined in the plateau skill."
 )
 
 root_agent = Agent(
-    name="mlit_dpf_agent",
+    name="plateau_agent",
     model=Gemini(
         model=MODEL,
         retry_options=types.HttpRetryOptions(attempts=3),
