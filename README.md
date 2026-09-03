@@ -407,7 +407,8 @@ The agent delivers agent-driven dynamic UIs using the [A2UI (Agent-to-User Inter
 > * **Spatial Constraints & Risks**: Micro-topographical gradients from the Urawa diluvial terrace toward local lowlands present localized ponding risks along narrow residential access corridors during severe inland water inundation.
 > * **3D Spatial Simulation**: Overlaying LOD2 Building Models with Arakawa flood inundation depth layers in PlateauView enables precision 3D spatial simulation for secondary shelter capacity, flood wall barrier evaluation, and emergency route bottleneck optimization.
 
-![Deep-Dive Spatial Intelligence (English)](assets/satellite_map.png)
+![Satellite Map View  (English)](assets/satellite_map.png)
+![Vector Map View (English)](assets/white_map.png)
 
 ---
 
@@ -436,14 +437,5 @@ The agent delivers agent-driven dynamic UIs using the [A2UI (Agent-to-User Inter
 > * **空間的制約・リスク**: 荒川・芝川水系に近接する浸水想定区域と微地形の凹凸が重なるエリアであり、大雨時の道路冠水による避難ルートの途絶リスクや、高密度住宅街における歩行者ボトルネックが空間的制約として存在します。
 > * **3D空間活用・シミュレーション**: PlateauView上で「建築物モデル（LOD2）」と「洪水浸水想定区域モデル」を3D重畳表示することで、浸水深に応じたリアルタイム垂直避難シミュレーションや、道路冠水リスクを回避する最適な防災動線計画の策定が可能となります。
 
-![Deep-Dive Spatial Intelligence (Japanese)](assets/satellite_map_jp.png)
-
----
-
-### 2. 3D Spatial Intelligence with PlateauView & Hazard Overlay (Vector Map View)
-
-* **English Query Experience**:
-![Vector Map View (English)](assets/white_map.png)
-
-* **Japanese Query Experience**:
+![Satellite Map View (Japanese)](assets/satellite_map_jp.png)
 ![Vector Map View (Japanese)](assets/white_map_jp.png)
