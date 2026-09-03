@@ -91,15 +91,28 @@ export class RobustA2UIClient {
     let responseParts: Part[] = [];
 
     if (result.kind === 'task') {
-      if (result.status.message?.parts && result.status.message.parts.length > 0) {
+      if (result.artifacts && result.artifacts.length > 0) {
+        for (const art of result.artifacts) {
+          if (art.parts && art.parts.length > 0) {
+            responseParts.push(...art.parts);
+          }
+        }
+      }
+      if (responseParts.length === 0 && result.status?.message?.parts && result.status.message.parts.length > 0) {
         responseParts = result.status.message.parts;
-      } else if (result.history && result.history.length > 0) {
-        // Find the last agent message in history
+      }
+      if (responseParts.length === 0 && result.history && result.history.length > 0) {
+        // Find the last agent message in history with text or A2UI content
         for (let i = result.history.length - 1; i >= 0; i--) {
           const msg = result.history[i];
           if (msg.role === 'agent' && msg.parts && msg.parts.length > 0) {
-            responseParts = msg.parts;
-            break;
+            const hasTextOrA2UI = msg.parts.some(
+              (p) => (p.kind === 'text' && p.text) || (p.kind === 'data' && (p.metadata?.mimeType === A2UI_MIME_TYPE || (p.data as any)?.createSurface))
+            );
+            if (hasTextOrA2UI) {
+              responseParts = msg.parts;
+              break;
+            }
           }
         }
       }

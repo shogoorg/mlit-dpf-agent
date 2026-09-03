@@ -11,7 +11,38 @@
 
 > ⚠️ **Disclaimer:** This is an unofficial community project and is not officially affiliated with or endorsed by the Ministry of Land, Infrastructure, Transport and Tourism (MLIT).
 
-### Core Capabilities
+### Mission Statement
+> *"Manually finding, formatting, and combining geospatial data takes hours of work. Our mission is to eliminate that busywork entirely. Just use natural language to ask for the data you're looking for, and watch the agent guide you directly to the required 3D layers on PlateauView—turning manual research into instant spatial insights."*
+
+---
+
+### The 3 Core Pillars of Value
+
+```
+        ┌─────────────────────────────────────────────────────────┐
+        │            Project PLATEAU × MLIT DPF Agent             │
+        └─────────────────────────────────────────────────────────┘
+                     │                       │                       │
+        ┌────────────▼────────────┐ ┌────────▼────────┐ ┌────────────▼────────────┐
+        │     1. Multilingual     │ │  2. Factuality  │ │      3. Reasoning       │
+        │ (Global Inclusive Access│ │(Grounded Truth) │ │(Spatial & Intent Logic) │
+        └─────────────────────────┘ └─────────────────┘ └─────────────────────────┘
+```
+
+1. **Multilingual (Global & Inclusive Access)**:
+   - Breaks linguistic barriers for international residents, inbound visitors, and global urban researchers.
+   - Users can query in **English, Japanese, Chinese, French, Spanish**, etc., and the agent translates intents into precise continuous Japanese search keywords for PlateauView 3D.
+
+2. **Factuality (Authoritative Grounding in Public Goods)**:
+   - **Zero-hallucination** spatial intelligence strictly grounded in sovereign **Digital Public Infrastructure (DPI)** from MLIT DPF & Project PLATEAU via MCP.
+   - Delivers official statutory hazard zones, GSI map coordinates, and official LOD1/LOD2 metadata backed by national open government standards (CC BY 4.0).
+
+3. **Reasoning (High-Order Spatial Reasoning)**:
+   - Transforms ambiguous, high-level user objectives (e.g., *"I want to create a disaster prevention map for Saitama City Hall"*) into concrete thematic layer combinations (`fld`, `htd`, `tsu`, `lsld`), physical structures, and administrative coverage.
+
+---
+
+### Public Goods vs Commercial Stacks
 
 1. **Public Goods MCP (`mlit-dpf-mcp` vs Maps Grounding Lite)**: While *Maps Grounding Lite* connects agents to commercial map data, **`mlit-dpf-mcp`** connects directly to national **Public Goods**—official geospatial datasets, urban infrastructure, and disaster prevention records.
 2. **Public Goods Agent (`mlit-dpf-agent` vs Maps Agentic UI Toolkit)**: While the *Google Maps Agentic UI Toolkit* orchestrates commercial POI interactions, **`mlit-dpf-agent`** is purpose-built to navigate public administrative workflows and national open data.
@@ -142,72 +173,226 @@ npm run dev
 
 ---
 
-## Agent Skill & Prompt Reference
+## Core Concept: Intelligent PlateauView Search Assistant (3 Core Entities)
 
-The agent's prompts, tool selection strategies, and natural language intent mappings are defined in the Project PLATEAU skill document:
+The fundamental mission of **`mlit-dpf-agent`** is to serve as an intelligent search assistant that translates natural conversational inquiries into exact query inputs for the **PlateauView Search Box**.
 
-* **Project PLATEAU 3D City Model Skill**:
-  - Skill Reference: [`app/skills/mlit-dpf-plateau/SKILL.md`](app/skills/mlit-dpf-plateau/SKILL.md)
-  - Focus: Natural language queries for 3D building models (LOD1/LOD2/LOD3), flood hazards, land use, and PlateauView 3D navigation.
+> 💡 **The 3 Invariant Pillars of Actionable Spatial Exploration:**
+> In geospatial intelligence (GIS / MLIT DPF / Project PLATEAU), every meaningful user inquiry strictly resolves across 3 non-fungible foundational axes:
+> 1. **What (Dataset / Category)**: The thematic layer (e.g. 3D building models, flood risk, zoning districts).
+> 2. **Which (Building / Structure)**: The physical structure/facility (e.g. City Hall, fire stations, schools).
+> 3. **Where (Address / Coverage)**: The geographic administrative hierarchy (Prefecture, Municipality, Town/Chome).
+> Answers that blur or confuse these 3 dimensions lack actionable utility. `mlit-dpf-agent` strictly grounds every response in this 3-pillar foundation.
 
-### 4-Core Exploration Prompt Patterns (PlateauView & DPF Navigation)
+```
+┌─────────────────────────────────────────────────────────────┐
+│ 👤 User Natural Language                                    │
+│ "I want to create a hazard map", "Buildings near City Hall" │
+└──────────────────────────────┬──────────────────────────────┘
+                               │
+                               ▼
+┌─────────────────────────────────────────────────────────────┐
+│ 🤖 mlit-dpf-agent (ADK / Gemini 3.6 Flash)                  │
+│ Resolves intent across MLIT DPF APIs and generates the      │
+│ exact PlateauView keywords across the 3 Fundamental Entities │
+└──────────────────────────────┬──────────────────────────────┘
+                               │ 2-Step Copy & Paste
+                               ▼
+┌─────────────────────────────────────────────────────────────┐
+│ 🔍 PlateauView Search Box (Accepts 3 Core Entity Types)     │
+│                                                             │
+│  ① Dataset / Category: `建築物モデル`, `洪水浸水想定区域モデル`   │
+│  ② Building / Facility: `さいたま市役所本庁舎`                 │
+│  ③ Address (Levels 1〜3): `埼玉県さいたま市浦和区常盤`         │
+│                                                             │
+│  Combined Shortcut: `建築物モデル 埼玉県さいたま市浦和区`      │
+└─────────────────────────────────────────────────────────────┘
+```
 
-Tailored for the 4 hackathon partner city halls and municipalities (**Saitama, Fujisawa, Kyoto, Maizuru**):
+### The 3 Fundamental Spatial Entities
 
-| # | Navigation Pattern | Standard Query Template (JA) | Standard Query Template (EN) | Output Scope |
-| :---: | :--- | :--- | :--- | :--- |
-| **1** | **Municipality Datasets** | `＜さいたま市、藤沢市、京都市、舞鶴市＞のデータセットをおしえて` | *"Show datasets for `<Saitama / Fujisawa / Kyoto / Maizuru>` City"* | **All 12 thematic datasets** across the municipality |
-| **2** | **Nearby Datasets** | `＜さいたま市役所、藤沢市役所、京都市役所、舞鶴市役所＞の周辺のデータセット（カテゴリー）を知りたい` | *"Show datasets and categories around `<Saitama / Fujisawa / Kyoto / Maizuru>` City Hall"* | **All 12 thematic datasets** around City Hall |
-| **3** | **Nearby Buildings** | `＜さいたま市役所、藤沢市役所、京都市役所、舞鶴市役所＞の周辺の建築物を知りたい` | *"Show buildings around `<Saitama / Fujisawa / Kyoto / Maizuru>` City Hall"* | **Top 5 concrete buildings** ordered by proximity |
-| **4** | **Nearby Addresses** | `＜さいたま市役所、藤沢市役所、京都市役所、舞鶴市役所＞の周辺の住所を知りたい` | *"Show covered addresses around `<Saitama / Fujisawa / Kyoto / Maizuru>` City Hall"* | **Town/Chome-level areas** ordered by proximity |
+1. **データセット (Dataset / Category / 12 Thematic Layers) [HIGHEST PRIORITY]**:
+   - **Scope**: All 12 national thematic datasets (建築物 `bldg`, 道路 `tran`, 都市設備 `frn`, 植生 `veg`, 土地利用 `luse`, 数値地形 `dem`, 汎用 `gen`, 洪水浸水 `fld`, 内水 `htd`, 高潮/津波 `tsu`/`tnm`, 土砂災害 `lsld`, 都市計画 `urf`).
+   - **Query Keywords**: `データセット`, `カテゴリー`, `テーマ`, `カタログ`, `何がある`, `ハザードマップ`.
+   - **Action**: Outputs all 12 thematic dataset cards for the municipality.
+
+2. **建築物 (Building / Facility / Physical Structures)**:
+   - **Scope**: Concrete physical facilities and structures (本庁舎, 消防署, 避難所, 病院, 学校, 個別ビル).
+   - **Query Keywords**: `建築物`, `建物`, `施設`, `役所`, `避難所`, `学校`, `ビル`.
+   - **Action**: Outputs Top 5 nearest building cards with names and LOD specifications.
+
+3. **住所 (Address / Administrative GADM Levels 1〜3)**:
+   - **Scope**: Standard Japanese administrative hierarchy:
+     - **LEVEL 1**: 都道府県 (Prefecture, e.g. 埼玉県, 東京都) → JIS Master
+     - **LEVEL 1 + 2**: 市区町村 (Municipality, e.g. 埼玉県さいたま市浦和区) → JIS Master
+     - **LEVEL 1 + 2 + 3**: 住所・町丁目 (Full Town/Chome Address, e.g. 埼玉県さいたま市浦和区常盤) → MLIT Coverage
+   - **Query Keywords**: `住所`, `エリア`, `町名`, `丁目`, `大字`, `どこまで`.
+   - **Action**: Outputs covered town/chome area listings.
 
 ---
 
-## Interactive A2UI Experience & Sample Queries
+## MCP Toolset & Sample Query Reference (全18ツールのプロンプト例)
+
+The agent integrates all 18 tools provided by `mlit-dpf-mcp` across 3 primary categories. Below are standard query templates for interactive testing:
+
+### Category A. Search & Discovery (検索系 - 地図＋一覧カード表示)
+
+| # | MCP Tool | Standard Query (Japanese) | Standard Query (English) | Expected Behavior |
+| :-: | :--- | :--- | :--- | :--- |
+| 1 | `search` | `さいたま市浦和区の建築物` | *"Buildings in Urawa-ku, Saitama City"* | Keyword lookup for multiple concrete buildings |
+| 2 | `search_by_location_point_distance` | `さいたま市役所から500m以内にある建築物` | *"Buildings within 500m of Saitama City Hall"* | Radius proximity search (Top 5 nearest buildings) |
+| 3 | `search_by_location_rectangle` | `緯度35.85〜35.87、経度139.64〜139.66の範囲にある建築物` | *"Buildings in bounding box lat 35.85-35.87, lon 139.64-139.66"* | Bounding box spatial search |
+| 4 | `search_by_attribute` | `さいたま市（自治体コード: 11100）の建築物データセット` | *"Building datasets for Saitama City (Code: 11100)"* | Exact attribute filter by municipality/dataset |
+
+### Category B. Get & Data Retrieval (詳細・データ取得系 - カード表示)
+
+| # | MCP Tool | Standard Query (Japanese) | Standard Query (English) | Expected Behavior |
+| :-: | :--- | :--- | :--- | :--- |
+| 5 | `get_data` | `さいたま市役所をさらに詳しく` | *"More details on Saitama City Hall"* | 100% full attribute specifications & 3D links |
+| 6 | `get_data_summary` | `さいたま市役所の概要` | *"Overview of Saitama City Hall"* | Lightweight title and record summary |
+| 7 | `get_data_catalog` | `Project PLATEAU（mlit_plateau）カタログをさらに詳しく` | *"More details on Project PLATEAU (mlit_plateau) catalog"* | Schema, covered cities, and thematic datasets |
+| 8 | `get_data_catalog_summary` | `利用可能なカタログ一覧` | *"Available data catalogs"* | Overview listing of all platform catalogs |
+| 9 | `get_file_download_urls` | `さいたま市役所の3Dモデルダウンロード` | *"Download 3D model files for Saitama City Hall"* | Direct CityGML / 3D Tiles download URLs |
+| 10 | `get_zipfile_download_url` | `さいたま市役所の3Dモデル一括ZIPダウンロード` | *"ZIP download of all 3D model files for Saitama City Hall"* | Bundled ZIP archive download URL |
+| 11 | `get_thumbnail_urls` | `さいたま市役所のプレビュー画像` | *"Preview thumbnail images for Saitama City Hall"* | Visual preview thumbnail URLs |
+| 12 | `get_all_data` | `さいたま市浦和区の公共施設データ全件` | *"All public facility records in Urawa-ku, Saitama City"* | Bulk batch extraction across region |
+| 13 | `get_count_data` | `埼玉県内のPLATEAUデータ件数集計` | *"Count aggregation of PLATEAU data records in Saitama Prefecture"* | Statistical count aggregation |
+| 14 | `get_mesh` | `地域メッシュコード533945の都市計画データ` | *"Urban planning mesh data for regional mesh code 533945"* | Regional mesh grid data extraction |
+
+### Category C. Master & Utility (マスター & ユーティリティ系 - カード表示)
+
+| # | MCP Tool | Standard Query (Japanese) | Standard Query (English) | Expected Behavior |
+| :-: | :--- | :--- | :--- | :--- |
+| 15 | `normalize_codes` | `さいたま市の自治体コード` | *"JIS municipality code for Saitama City"* | Normalizes region names to 5-digit JIS codes |
+| 16 | `get_prefecture_data` | `全国の都道府県コード一覧` | *"Master list of all 47 Japanese prefecture codes"* | 47 prefecture codes & names master |
+| 17 | `get_municipality_data` | `埼玉県（コード: 11）の市区町村一覧` | *"List of municipalities in Saitama Prefecture (Code: 11)"* | Municipality codes for target prefecture |
+| 18 | `get_suggest` | `さいたま` | *"Saitama"* | Autocomplete keyword suggestions & counts |
+
+---
+
+## Interactive A2UI Experience & Benchmark Prompts
 
 The agent delivers agent-driven dynamic UIs using the [A2UI (Agent-to-User Interface)](https://github.com/googlemaps/a2ui) specification, with UI components and catalog schemas adapted from the [A2UI Samples](https://github.com/googlemaps-samples/a2ui) repository.
 
-Try asking queries in the playground, web client, or via API:
+### 1. Search系（複数対象・範囲検索）
 
-### 1. Nearby Evacuation Shelter Search (🔍 周辺避難所検索)
+1. **検索 (Search)**
+   * 「**＜さいたま市役所、藤沢市役所、京都市役所、舞鶴市役所＞周辺**の**＜建築物、住所＞**」
+   * *(English: "Buildings and addresses around <Saitama City Hall, Fujisawa City Hall, Kyoto City Hall, Maizuru City Hall>")*
 
-Ask for nearby designated emergency evacuation facilities. The agent plots multiple locations onto an interactive Geospatial Information Authority of Japan (GSI) Leaflet map and lists corresponding structured facility cards with official dataset attributes.
+2. **位置矩形による検索 (Search by Location Rectangle)**
+   * ①「**＜さいたま市役所、藤沢市役所、京都市役所、舞鶴市役所＞から＜浦和駅、藤沢駅、京都駅、東舞鶴駅＞にかけてのエリア**の**＜建築物、住所＞**」
+   * *(English: "Buildings and addresses in the area spanning from <Saitama City Hall, Fujisawa City Hall, Kyoto City Hall, Maizuru City Hall> to <Urawa Station, Fujisawa Station, Kyoto Station, Higashi-Maizuru Station>")*
+   * ②（緯度経度指定時）「**＜さいたま市役所、藤沢市役所、京都市役所、舞鶴市役所＞周辺**の緯度経度範囲＜**北緯35.85〜35.87、東経139.64〜139.66**＞の**＜建築物、住所＞**」
+   * *(English: "Buildings and addresses within coordinate bounding box <Lat 35.85-35.87, Lon 139.64-139.66> around <Saitama City Hall, Fujisawa City Hall, Kyoto City Hall, Maizuru City Hall>")*
 
-* *"Evacuation shelters near Saitama City Hall."*  
-  *(Japanese: `さいたま市役所近くの避難所`)*
-* *"Evacuation shelters near Fujisawa City Hall."*  
-  *(Japanese: `藤沢市役所近くの避難所`)*
-* *"Evacuation shelters near Kyoto City Hall."*  
-  *(Japanese: `京都市役所近くの避難所`)*
-* *"Evacuation shelters near Maizuru City Hall."*  
-  *(Japanese: `舞鶴市役所近くの避難所`)*
+3. **位置地点と距離による検索 (Search by Location Point Distance)**
+   * 「**＜さいたま市役所、藤沢市役所、京都市役所、舞鶴市役所＞周辺**から半径＜**1km以内**＞の**＜建築物、住所＞**」
+   * *(English: "Buildings and addresses within <1km radius> around <Saitama City Hall, Fujisawa City Hall, Kyoto City Hall, Maizuru City Hall>")*
 
-#### English Interface
-![Nearby Shelter Search in English](assets/search.png)
-
-#### Japanese Interface
-![Nearby Shelter Search in Japanese](assets/search_jp.png)
+4. **属性による検索 (Search by Attribute)**
+   * ①「**＜さいたま市浦和区、藤沢市、京都市中京区、舞鶴市＞**の**＜建築物、住所＞**」
+   * *(English: "Buildings and addresses in <Urawa Ward (Saitama), Fujisawa City, Nakagyo Ward (Kyoto), Maizuru City>")*
+   * ②（施設種別指定時）「**＜さいたま市、藤沢市、京都市、舞鶴市＞**の＜**公共施設（庁舎、学校、避難施設）**＞の**建築物**」
+   * *(English: "<Public facilities (city halls, schools, evacuation shelters)> in <Saitama City, Fujisawa City, Kyoto City, Maizuru City>")*
 
 ---
 
-### 2. Facility Details (🏢 施設詳細情報)
+### 2. Get系（単一対象・詳細取得）
 
-Ask for in-depth attributes of a specific public facility or landmark. The agent retrieves over 30 verified metadata properties from the MLIT Data Platform, pinpoints the location with high zoom, and provides a direct exploration link to the official PlateauView 3D urban model.
+5. **データ取得 (Get Data)**
+   * 「**＜さいたま市役所、藤沢市役所、京都市役所、舞鶴市役所＞**の**＜建築物、住所＞ さらに詳しく**」
+   * *(English: "<buildings, addresses> of <Saitama City Hall, Fujisawa City Hall, Kyoto City Hall, Maizuru City Hall> Learn more")*
 
-* *"More details on Saitama City Hall."*  
-  *(Japanese: `さいたま市役所をさらに詳しく`)*
-* *"More details on Fujisawa City Hall."*  
-  *(Japanese: `藤沢市役所さらに詳しく`)*
-* *"More details on Kyoto City Hall."*  
-  *(Japanese: `京都市役所さらに詳しく`)*
-* *"More details on Maizuru City Hall."*  
-  *(Japanese: `舞鶴市役所さらに詳しく`)*
+6. **データサマリー取得 (Get Data Summary)**
+   * 「**＜さいたま市役所、藤沢市役所、京都市役所、舞鶴市役所＞**の**＜建築物、住所＞の基本情報 さらに詳しく**」
+   * *(English: "Basic information on <buildings, addresses> of <Saitama City Hall, Fujisawa City Hall, Kyoto City Hall, Maizuru City Hall> Learn more")*
 
-#### English Interface
-![Facility Details in English](assets/data.png)
+7. **データカタログ取得 (Get Data Catalog)**
+   * 「**＜さいたま市、藤沢市、京都市、舞鶴市＞**の**データセット（カテゴリー） さらに詳しく**」
+   * *(English: "Datasets (categories) of <Saitama City, Fujisawa City, Kyoto City, Maizuru City> Learn more")*
 
-#### Japanese Interface
-![Facility Details in Japanese](assets/data_jp.png)
+8. **データカタログサマリー取得 (Get Data Catalog Summary)**
+   * 「**＜さいたま市、藤沢市、京都市、舞鶴市＞**の**データセット（カテゴリー）のサマリー さらに詳しく**」
+   * *(English: "Summary of datasets (categories) of <Saitama City, Fujisawa City, Kyoto City, Maizuru City> Learn more")*
+
+9. **ファイルダウンロードURL取得 (Get File Download URLs)**
+   * 「**＜さいたま市役所、藤沢市役所、京都市役所、舞鶴市役所＞**の**＜建築物、住所＞のダウンロードURL さらに詳しく**」
+   * *(English: "Download URLs for <buildings, addresses> of <Saitama City Hall, Fujisawa City Hall, Kyoto City Hall, Maizuru City Hall> Learn more")*
+
+10. **ZIPファイルダウンロードURL取得 (Get Zipfile Download URL)**
+    * 「**＜さいたま市役所、藤沢市役所、京都市役所、舞鶴市役所＞**の**＜建築物、住所＞のZIPダウンロードURL さらに詳しく**」
+    * *(English: "ZIP download URL for <buildings, addresses> of <Saitama City Hall, Fujisawa City Hall, Kyoto City Hall, Maizuru City Hall> Learn more")*
+
+11. **サムネイルURL取得 (Get Thumbnail URLs)**
+    * 「**＜さいたま市役所、藤沢市役所、京都市役所、舞鶴市役所＞**の**建築物のサムネイルURL さらに詳しく**」
+    * *(English: "Thumbnail URLs for buildings of <Saitama City Hall, Fujisawa City Hall, Kyoto City Hall, Maizuru City Hall> Learn more")*
+
+12. **全データ取得 (Get All Data)**
+    * 「**＜さいたま市、藤沢市、京都市、舞鶴市＞**の**＜建築物、住所＞の全件データ さらに詳しく**」
+    * *(English: "All data records for <buildings, addresses> of <Saitama City, Fujisawa City, Kyoto City, Maizuru City> Learn more")*
+
+13. **カウントデータ取得 (Get Count Data)**
+    * 「**＜さいたま市、藤沢市、京都市、舞鶴市＞**の**＜建築物、住所＞の登録件数 さらに詳しく**」
+    * *(English: "Record counts of <buildings, addresses> in <Saitama City, Fujisawa City, Kyoto City, Maizuru City> Learn more")*
+
+14. **サジェスト取得 (Get Suggest)**
+    * 「『**＜さいたま市役所、藤沢市役所、京都市役所、舞鶴市役所＞**』の**＜建築物、住所＞のサジェスト候補 さらに詳しく**」
+    * *(English: "Search suggestions for <buildings, addresses> of '<Saitama City Hall, Fujisawa City Hall, Kyoto City Hall, Maizuru City Hall>' Learn more")*
+
+15. **都道府県データ取得 (Get Prefecture Data)**
+    * 「**＜埼玉県、神奈川県、京都府＞**の**都道府県情報 さらに詳しく**」
+    * *(English: "Prefecture information for <Saitama, Kanagawa, Kyoto> Learn more")*
+
+16. **市区町村データ取得 (Get Municipality Data)**
+    * 「**＜さいたま市、藤沢市、京都市、舞鶴市＞**の**市区町村情報 さらに詳しく**」
+    * *(English: "Municipality information for <Saitama City, Fujisawa City, Kyoto City, Maizuru City> Learn more")*
+
+17. **メッシュ取得 (Get Mesh)**
+    * ①「**＜さいたま市役所、藤沢市役所、京都市役所、舞鶴市役所＞がある＜1kmメッシュ（地域区画）＞**の**＜建築物、住所＞ さらに詳しく**」
+    * *(English: "<buildings, addresses> in the <1km regional mesh grid> of <Saitama City Hall, Fujisawa City Hall, Kyoto City Hall, Maizuru City Hall> Learn more")*
+    * ②（メッシュコード指定時）「地域メッシュコード＜**53394523**＞内の**＜建築物、住所＞ さらに詳しく**」
+    * *(English: "<buildings, addresses> within regional mesh code <53394523> Learn more")*
+
+---
+
+### 3. 正規化 (Normalization)
+
+18. **コード正規化 (Normalize Codes)**
+    * 「**＜埼玉県さいたま市、神奈川県藤沢市、京都府京都市、京都府舞鶴市＞**の**都道府県名と市区町村名 正規化**」
+    * *(English: "Normalize prefecture and municipality names of <Saitama City (Saitama), Fujisawa City (Kanagawa), Kyoto City (Kyoto), Maizuru City (Kyoto)>")*
+
+---
+
+### 4. 統合系（自律エージェント・探索＆深掘り）
+
+* **抽象バージョン (Abstract Baseline)**:
+  * 「**＜さいたま市役所、藤沢市役所、京都市役所、舞鶴市役所＞周辺**の**＜データセット、建築物、住所＞ さらに詳しく**」
+  * *(English: "<datasets, buildings, addresses> around <Saitama City Hall, Fujisawa City Hall, Kyoto City Hall, Maizuru City Hall> Learn more")*
+
+* **具体バージョン (Concrete Scenario: 洪水データ・避難所・住所)**:
+  * 「**＜さいたま市役所、藤沢市役所、京都市役所、舞鶴市役所＞周辺**の**＜洪水データ、避難所、住所＞ さらに詳しく**」
+  * *(English: "<flood data, evacuation shelters, addresses> around <Saitama City Hall, Fujisawa City Hall, Kyoto City Hall, Maizuru City Hall> Learn more")*
+
+---
+
+### UI Experience Screenshots
+
+#### 1. 3D Spatial Intelligence with PlateauView & Hazard Overlay (Satellite View)
+
+* **English Query Experience**:
+![Deep-Dive Spatial Intelligence (English)](assets/satellite_map.png)
+
+* **Japanese Query Experience**:
+![Deep-Dive Spatial Intelligence (Japanese)](assets/satellite_map_jp.png)
+
+#### 2. 3D Spatial Intelligence with PlateauView & Hazard Overlay (Vector Map View)
+
+* **English Query Experience**:
+![Vector Map View (English)](assets/white_map.png)
+
+* **Japanese Query Experience**:
+![Vector Map View (Japanese)](assets/white_map_jp.png)
 
 ---
 
@@ -312,233 +497,6 @@ gcloud run deploy mlit-dpf-web \
 * **React Web UI**: `https://<your-web-ui-endpoint>`
 
 
----
-
-## Sample Interactions & Live Responses
-
-*(Note: In the live A2UI interface, an interactive **Geospatial Information Authority of Japan (GSI) Leaflet Map** is rendered at the top with plotted pins, followed by the structured facility cards below.)*
-
-### 1. English Live Interaction (英語での対話例)
-
-#### Nearby Evacuation Shelter Search (周辺避難所検索)
-
-**Prompt**:
-> *"Evacuation shelters near Saitama City Hall."*
-
-**A2UI Live Response (Interactive Map + Facility Cards)**:
-> 🗺️ **[Interactive GSI Map rendered at the top with 12+ plotted shelter pins]**
-> 
-> **仲町公民館**  
-> Data ID: `e126986e-3862-4a31-b6a1-16e09f9daf5a`  
-> Facility Name: 仲町公民館  
-> Latitude: 35.86136  
-> Longitude: 139.649857  
-> Year: 2020  
-> Dataset ID: nlni_ksj-p20  
-> Catalog ID: nlni_ksj  
-> [GSI Map](https://maps.gsi.go.jp/?marker=35.86136,139.649857)  
-> [PlateauView 3D](https://plateauview.mlit.go.jp/)  
-> Source: National Land Numerical Information (MLIT Japan)  
-> 
-> **常盤公民館**  
-> Data ID: `040da675-4651-4f9d-9c45-d5afb57c9547`  
-> Facility Name: 常盤公民館  
-> Latitude: 35.8696  
-> Longitude: 139.642954  
-> Year: 2020  
-> Dataset ID: nlni_ksj-p20  
-> Catalog ID: nlni_ksj  
-> [GSI Map](https://maps.gsi.go.jp/?marker=35.8696,139.642954)  
-> [PlateauView 3D](https://plateauview.mlit.go.jp/)  
-> Source: National Land Numerical Information (MLIT Japan)  
-> 
-> **埼玉大学教育学部附属中学校**  
-> Data ID: `8e0f39b8-31b6-4c20-bdc6-b14e6f0f9983`  
-> Facility Name: 埼玉大学教育学部附属中学校  
-> Latitude: 35.8556569991  
-> Longitude: 139.643327  
-> Year: 2020  
-> Dataset ID: nlni_ksj-p20  
-> Catalog ID: nlni_ksj  
-> [GSI Map](https://maps.gsi.go.jp/?marker=35.8556569991,139.643327)  
-> [PlateauView 3D](https://plateauview.mlit.go.jp/)  
-> Source: National Land Numerical Information (MLIT Japan)  
-> 
-> **仲町小学校**  
-> Data ID: `bf46d405-d05f-42a4-8a7e-5b9aa96a110d`  
-> Facility Name: 仲町小学校  
-> Latitude: 35.863961  
-> Longitude: 139.640549  
-> Year: 2020  
-> Dataset ID: nlni_ksj-p20  
-> Catalog ID: nlni_ksj  
-> [GSI Map](https://maps.gsi.go.jp/?marker=35.863961,139.640549)  
-> [PlateauView 3D](https://plateauview.mlit.go.jp/)  
-> Source: National Land Numerical Information (MLIT Japan)  
-> 
-> **大戸公民館**  
-> Data ID: `d74a3560-97a8-407f-a2b6-d74d2c311abd`  
-> Facility Name: 大戸公民館  
-> Latitude: 35.8656438555  
-> Longitude: 139.637227828  
-> Year: 2020  
-> Dataset ID: nlni_ksj-p20  
-> Catalog ID: nlni_ksj  
-> [GSI Map](https://maps.gsi.go.jp/?marker=35.8656438555,139.637227828)  
-> [PlateauView 3D](https://plateauview.mlit.go.jp/)  
-> Source: National Land Numerical Information (MLIT Japan)  
-> 
-> *(... plotted on interactive GSI Leaflet Map with 12 shelter cards)*
-
-#### Facility Details (🏢 施設詳細情報)
-
-**Prompt**:
-> *"More details on Saitama City Hall."*
-
-**A2UI Live Response (Interactive Pinpoint Map + Detailed Metadata Card)**:
-> 🗺️ **[Interactive GSI Map centered on facility location with pinpoint zoom 16]**
-> 
-> **Saitama City Hall (さいたま市役所)**  
-> Facility Name: Saitama City Hall (さいたま市役所)  
-> Data ID: `21a45b8d-0922-4f28-bfdc-0ae57961c6b5`  
-> Latitude: 35.861601  
-> Longitude: 139.645354  
-> Prefecture: Saitama Prefecture (埼玉県)  
-> Municipality: Urawa-ku, Saitama City (さいたま市浦和区)  
-> Address: 6-4-4 Tokiwa (常盤6-4-4)  
-> Prefecture Code: 11  
-> Municipality Code: 111074  
-> Administrative District Code: 11107  
-> Administrator Code: 3  
-> Facility Major Category: 12  
-> Facility Minor Category: 12002  
-> Source Material Name: Digital Map (数値地図)  
-> Year: 2021  
-> Catalog Title: National Land Numerical Information (国土数値情報)  
-> Dataset Title: Public Facilities (公共施設)  
-> Catalog ID: nlni_ksj  
-> Dataset ID: nlni_ksj-p02  
-> Last Updated: 2021-12-14T09:38:16+09:00  
-> DPF Update Date: 2023-07-06T14:11:51.020Z  
-> Documentation URL: https://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-P02-v4_0.html  
-> Download URL: https://www.geospatial.jp/ckan/dataset/e44855f8-fcfe-43e6-b617-eb319eb51c8b/resource/9cdfc0fd-67e9-4c8d-8d16-e057ea0d3095/download/p02-06_11-g_publicfacility.geojson  
-> [GSI Map](https://maps.gsi.go.jp/?marker=35.861601,139.645354)  
-> [PlateauView 3D](https://plateauview.mlit.go.jp/) (Search with "埼玉県さいたま市浦和区常盤6-4-4")  
-> Source: National Land Numerical Information (MLIT Japan)  
-
----
-
-### 2. Japanese Live Interaction (日本語での対話例)
-
-*(※ 実際の A2UI 画面では、画面上部にピンがプロットされた**国土地理院インタラクティブ地図**が描画され、その下部に連動する施設カードが一覧表示されます)*
-
-#### 周辺避難所検索
-
-**プロンプト**:
-> *"さいたま市役所近くの避難所"*
-
-**A2UI ライブレスポンス（国土地理院地図 ＋ 避難所カード）**:
-> 🗺️ **【画面上部に国土地理院地図が描画され、全避難所ピンがプロットされます】**
-> 
-> **仲町公民館**  
-> データID: `e126986e-3862-4a31-b6a1-16e09f9daf5a`  
-> 施設名: 仲町公民館  
-> 緯度: 35.86136  
-> 経度: 139.649857  
-> 登録年: 2020  
-> データセットID: nlni_ksj-p20  
-> カタログID: nlni_ksj  
-> [地理院地図](https://maps.gsi.go.jp/?marker=35.86136,139.649857)  
-> [PlateauView 3D](https://plateauview.mlit.go.jp/)  
-> 出典: 国土数値情報（国土交通省）  
-> 
-> **常盤公民館**  
-> データID: `040da675-4651-4f9d-9c45-d5afb57c9547`  
-> 施設名: 常盤公民館  
-> 緯度: 35.8696  
-> 経度: 139.642954  
-> 登録年: 2020  
-> データセットID: nlni_ksj-p20  
-> カタログID: nlni_ksj  
-> [地理院地図](https://maps.gsi.go.jp/?marker=35.8696,139.642954)  
-> [PlateauView 3D](https://plateauview.mlit.go.jp/)  
-> 出典: 国土数値情報（国土交通省）  
-> 
-> **埼玉大学教育学部附属中学校**  
-> データID: `8e0f39b8-31b6-4c20-bdc6-b14e6f0f9983`  
-> 施設名: 埼玉大学教育学部附属中学校  
-> 緯度: 35.8556569991  
-> 経度: 139.643327  
-> 登録年: 2020  
-> データセットID: nlni_ksj-p20  
-> カタログID: nlni_ksj  
-> [地理院地図](https://maps.gsi.go.jp/?marker=35.8556569991,139.643327)  
-> [PlateauView 3D](https://plateauview.mlit.go.jp/)  
-> 出典: 国土数値情報（国土交通省）  
-> 
-> **本太公民館**  
-> データID: `7622fa2a-ecd6-453e-8ecb-9c8868ac8249`  
-> 施設名: 本太公民館  
-> 緯度: 35.866778  
-> 経度: 139.657825  
-> 登録年: 2020  
-> データセットID: nlni_ksj-p20  
-> カタログID: nlni_ksj  
-> [地理院地図](https://maps.gsi.go.jp/?marker=35.866778,139.657825)  
-> [PlateauView 3D](https://plateauview.mlit.go.jp/)  
-> 出典: 国土数値情報（国土交通省）  
-> 
-> **高砂小学校**  
-> データID: `90da99a1-ce16-43a5-b92f-8634d0bcc097`  
-> 施設名: 高砂小学校  
-> 緯度: 35.856518  
-> 経度: 139.656714  
-> 登録年: 2020  
-> データセットID: nlni_ksj-p20  
-> カタログID: nlni_ksj  
-> [地理院地図](https://maps.gsi.go.jp/?marker=35.856518,139.656714)  
-> [PlateauView 3D](https://plateauview.mlit.go.jp/)  
-> 出典: 国土数値情報（国土交通省）  
-> 
-> *(... 国土地理院地図および 26 箇所の全指定避難所カードとして描画)*
-
-#### 施設詳細情報
-
-**プロンプト**:
-> *"さいたま市役所をさらに詳しく"*
-
-**A2UI ライブレスポンス（国土地理院ピンポイント地図 ＋ 詳細スペックカード）**:
-> 🗺️ **【画面上部に該当施設を中心とした国土地理院地図（ズーム16）が描画されます】**
-> 
-> **さいたま市役所**  
-> データID: `21a45b8d-0922-4f28-bfdc-0ae57961c6b5`  
-> 施設名 / 名称: さいたま市役所  
-> 都道府県: 埼玉県  
-> 都道府県コード: 11  
-> 市区町村: さいたま市浦和区  
-> 市区町村コード: 111074  
-> 所在地: 埼玉県さいたま市浦和区常盤6-4-4  
-> 緯度: 35.861601  
-> 経度: 139.645354  
-> 登録年 / 年度: 2021  
-> カタログID: nlni_ksj  
-> カタログ名: 国土数値情報  
-> データセットID: nlni_ksj-p02  
-> データセット名: 公共施設  
-> 施設大分類: 12  
-> 施設小分類: 12002  
-> 管理者区分: 3  
-> 行政区域コード: 11107  
-> 原典資料名: 数値地図  
-> 座標参照系: urn:ogc:def:crs:OGC:1.3:CRS84  
-> 仕様書URL: https://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-P02-v4_0.html  
-> ダウンロードURL: https://www.geospatial.jp/ckan/dataset/e44855f8-fcfe-43e6-b617-eb319eb51c8b/resource/9cdfc0fd-67e9-4c8d-8d16-e057ea0d3095/download/p02-06_11-g_publicfacility.geojson  
-> 最終更新日時: 2021-12-14T09:38:16+09:00  
-> DPF更新日: 2023-07-06T14:11:51.020Z  
-> テーマ分類: 国土  
-> [地理院地図](https://maps.gsi.go.jp/?marker=35.861601,139.645354)  
-> [PlateauView 3D](https://plateauview.mlit.go.jp/)（「埼玉県さいたま市浦和区常盤6-4-4」で検索）  
-> 出典: 国土数値情報（国土交通省）  
 
 ---
 
