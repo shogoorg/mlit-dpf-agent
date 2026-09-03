@@ -51,11 +51,12 @@ mlit-dpf-agent/
 │   ├── agent.py               # Main agent logic & orchestration
 │   ├── mlit_agent.py          # MLIT DPF specialized agent (SSE MCP client)
 │   ├── fast_api_app.py        # FastAPI Backend server
+│   ├── skills/                # Project PLATEAU 3D A2UI Skill & schemas
 │   └── app_utils/             # App utilities and helpers
-├── skills/                    # Agent Skills (MLIT DPF)
-│   ├── README.md              # Skills catalog
-│   └── mlit-data-plathome/    # MLIT DPF MCP skill
+├── client/web/react/          # React Web UI (A2A Client + Cesium 3D + A2UI Cards)
+├── assets/                    # Screenshots & media assets
 ├── tests/                     # Unit, integration, and E2E tests
+├── LICENSE.md                 # Apache 2.0 License
 ├── GEMINI.md                  # AI-assisted development guide
 └── pyproject.toml             # Project dependencies
 ```
@@ -272,7 +273,7 @@ gcloud run deploy mlit-dpf-web \
 
 The agent delivers agent-driven dynamic UIs using the [A2UI (Agent-to-User Interface)](https://github.com/googlemaps/a2ui) specification, with UI components and catalog schemas adapted from the [A2UI Samples](https://github.com/googlemaps-samples/a2ui) repository.
 
-### 1. Search系（複数対象・範囲検索）
+### 1. Search & Discovery (複数対象・範囲検索)
 
 1. **Search (検索)**
    * *"Buildings and addresses around <Saitama City Hall, Fujisawa City Hall, Kyoto City Hall, Maizuru City Hall>"*
@@ -296,7 +297,7 @@ The agent delivers agent-driven dynamic UIs using the [A2UI (Agent-to-User Inter
 
 ---
 
-### 2. Get系（詳細・データ取得系）
+### 2. Get & Data Retrieval (詳細・データ取得系)
 
 5. **Get Data (データ取得)**
    * *"<buildings, addresses> of <Saitama City Hall, Fujisawa City Hall, Kyoto City Hall, Maizuru City Hall> Learn more"*
@@ -358,7 +359,7 @@ The agent delivers agent-driven dynamic UIs using the [A2UI (Agent-to-User Inter
 
 ---
 
-### 3. 統合系（自律エージェント・探索＆深掘り）
+### 3. Integrated Autonomous Exploration (統合系 - 探索＆深掘り)
 
 * **Abstract Baseline (抽象バージョン)**:
   * *"<datasets, buildings, addresses> around <Saitama City Hall, Fujisawa City Hall, Kyoto City Hall, Maizuru City Hall> Learn more"*
