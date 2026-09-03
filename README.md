@@ -35,6 +35,14 @@
 
 ---
 
+## Known Limitations & Design Decisions (既知の制約事項と設計判断)
+
+* **PlateauView 3D Localization & URL Deep Linking**:
+  * **No Multi-language Support**: The official [PlateauView 3D](https://plateauview.mlit.go.jp/) platform is currently provided in Japanese only. When queries are made in English or other languages, the agent automatically supplies the exact official Japanese address/keyword in parentheses (e.g., `(Search with "埼玉県さいたま市浦和区常盤6-4-4")`) to facilitate 3D model search.
+  * **No URL Query Parameters**: Since PlateauView 3D does not currently support direct coordinate parameters via URL query strings, the agent links to the top portal while instructing users with the precise search keyword.
+
+---
+
 ## Project Structure
 
 ```
@@ -359,14 +367,6 @@ The agent delivers agent-driven dynamic UIs using the [A2UI (Agent-to-User Inter
 * **具体バージョン (Concrete Scenario: 洪水データ・避難所・住所)**:
   * 「**＜さいたま市役所、藤沢市役所、京都市役所、舞鶴市役所＞周辺**の**＜洪水データ、避難所、住所＞ さらに詳しく**」
   * *(English: "<flood data, evacuation shelters, addresses> around <Saitama City Hall, Fujisawa City Hall, Kyoto City Hall, Maizuru City Hall> Learn more")*
-
----
-
-## Known Limitations & Design Decisions (既知の制約事項と設計判断)
-
-* **PlateauView 3D Localization & URL Deep Linking**:
-  * **No Multi-language Support**: The official [PlateauView 3D](https://plateauview.mlit.go.jp/) platform is currently provided in Japanese only. When queries are made in English or other languages, the agent automatically supplies the exact official Japanese address/keyword in parentheses (e.g., `(Search with "埼玉県さいたま市浦和区常盤6-4-4")`) to facilitate 3D model search.
-  * **No URL Query Parameters**: Since PlateauView 3D does not currently support direct coordinate parameters via URL query strings, the agent links to the top portal while instructing users with the precise search keyword.
 
 ---
 
