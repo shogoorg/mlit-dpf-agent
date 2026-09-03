@@ -50,6 +50,64 @@
 
 ---
 
+## Core Concept: Intelligent PlateauView Search Assistant (3 Core Entities)
+
+The fundamental mission of **`mlit-dpf-agent`** is to serve as an intelligent search assistant that translates natural conversational inquiries into exact query inputs for the **PlateauView Search Box**.
+
+> 💡 **The 3 Invariant Pillars of Actionable Spatial Exploration:**
+> In geospatial intelligence (GIS / MLIT DPF / Project PLATEAU), every meaningful user inquiry strictly resolves across 3 non-fungible foundational axes:
+> 1. **What (Dataset / Category)**: The thematic layer (e.g. 3D building models, flood risk, zoning districts).
+> 2. **Which (Building / Structure)**: The physical structure/facility (e.g. City Hall, fire stations, schools).
+> 3. **Where (Address / Coverage)**: The geographic administrative hierarchy (Prefecture, Municipality, Town/Chome).
+> Answers that blur or confuse these 3 dimensions lack actionable utility. `mlit-dpf-agent` strictly grounds every response in this 3-pillar foundation.
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│ 👤 User Natural Language                                    │
+│ "I want to create a hazard map", "Buildings near City Hall" │
+└──────────────────────────────┬──────────────────────────────┘
+                               │
+                               ▼
+┌─────────────────────────────────────────────────────────────┐
+│ 🤖 mlit-dpf-agent (ADK / Gemini 3.6 Flash)                  │
+│ Resolves intent across MLIT DPF APIs and generates the      │
+│ exact PlateauView keywords across the 3 Fundamental Entities │
+└──────────────────────────────┬──────────────────────────────┘
+                               │ 2-Step Copy & Paste
+                               ▼
+┌─────────────────────────────────────────────────────────────┐
+│ 🔍 PlateauView Search Box (Accepts 3 Core Entity Types)     │
+│                                                             │
+│  ① Dataset / Category: `建築物モデル`, `洪水浸水想定区域モデル`   │
+│  ② Building / Facility: `さいたま市役所本庁舎`                 │
+│  ③ Address (Levels 1〜3): `埼玉県さいたま市浦和区常盤`         │
+│                                                             │
+│  Combined Shortcut: `建築物モデル 埼玉県さいたま市浦和区`      │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### The 3 Fundamental Spatial Entities
+
+1. **データセット (Dataset / Category / 12 Thematic Layers) [HIGHEST PRIORITY]**:
+   - **Scope**: All 12 national thematic datasets (建築物 `bldg`, 道路 `tran`, 都市設備 `frn`, 植生 `veg`, 土地利用 `luse`, 数値地形 `dem`, 汎用 `gen`, 洪水浸水 `fld`, 内水 `htd`, 高潮/津波 `tsu`/`tnm`, 土砂災害 `lsld`, 都市計画 `urf`).
+   - **Query Keywords**: `データセット`, `カテゴリー`, `テーマ`, `カタログ`, `何がある`, `ハザードマップ`.
+   - **Action**: Outputs all 12 thematic dataset cards for the municipality.
+
+2. **建築物 (Building / Facility / Physical Structures)**:
+   - **Scope**: Concrete physical facilities and structures (本庁舎, 消防署, 避難所, 病院, 学校, 個別ビル).
+   - **Query Keywords**: `建築物`, `建物`, `施設`, `役所`, `避難所`, `学校`, `ビル`.
+   - **Action**: Outputs Top 5 nearest building cards with names and LOD specifications.
+
+3. **住所 (Address / Administrative GADM Levels 1〜3)**:
+   - **Scope**: Standard Japanese administrative hierarchy:
+     - **LEVEL 1**: 都道府県 (Prefecture, e.g. 埼玉県, 東京都) → JIS Master
+     - **LEVEL 1 + 2**: 市区町村 (Municipality, e.g. 埼玉県さいたま市浦和区) → JIS Master
+     - **LEVEL 1 + 2 + 3**: 住所・町丁目 (Full Town/Chome Address, e.g. 埼玉県さいたま市浦和区常盤) → MLIT Coverage
+   - **Query Keywords**: `住所`, `エリア`, `町名`, `丁目`, `大字`, `どこまで`.
+   - **Action**: Outputs covered town/chome area listings.
+
+---
+
 ## Project Structure
 
 ```
@@ -272,64 +330,6 @@ gcloud run deploy mlit-dpf-web \
 | `agents-cli lint` | Run code quality checks |
 | `agents-cli eval` | Run agent evaluation datasets and grade traces |
 | `agents-cli deploy` | Deploy agent to Cloud Run |
-
----
-
-## Core Concept: Intelligent PlateauView Search Assistant (3 Core Entities)
-
-The fundamental mission of **`mlit-dpf-agent`** is to serve as an intelligent search assistant that translates natural conversational inquiries into exact query inputs for the **PlateauView Search Box**.
-
-> 💡 **The 3 Invariant Pillars of Actionable Spatial Exploration:**
-> In geospatial intelligence (GIS / MLIT DPF / Project PLATEAU), every meaningful user inquiry strictly resolves across 3 non-fungible foundational axes:
-> 1. **What (Dataset / Category)**: The thematic layer (e.g. 3D building models, flood risk, zoning districts).
-> 2. **Which (Building / Structure)**: The physical structure/facility (e.g. City Hall, fire stations, schools).
-> 3. **Where (Address / Coverage)**: The geographic administrative hierarchy (Prefecture, Municipality, Town/Chome).
-> Answers that blur or confuse these 3 dimensions lack actionable utility. `mlit-dpf-agent` strictly grounds every response in this 3-pillar foundation.
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│ 👤 User Natural Language                                    │
-│ "I want to create a hazard map", "Buildings near City Hall" │
-└──────────────────────────────┬──────────────────────────────┘
-                               │
-                               ▼
-┌─────────────────────────────────────────────────────────────┐
-│ 🤖 mlit-dpf-agent (ADK / Gemini 3.6 Flash)                  │
-│ Resolves intent across MLIT DPF APIs and generates the      │
-│ exact PlateauView keywords across the 3 Fundamental Entities │
-└──────────────────────────────┬──────────────────────────────┘
-                               │ 2-Step Copy & Paste
-                               ▼
-┌─────────────────────────────────────────────────────────────┐
-│ 🔍 PlateauView Search Box (Accepts 3 Core Entity Types)     │
-│                                                             │
-│  ① Dataset / Category: `建築物モデル`, `洪水浸水想定区域モデル`   │
-│  ② Building / Facility: `さいたま市役所本庁舎`                 │
-│  ③ Address (Levels 1〜3): `埼玉県さいたま市浦和区常盤`         │
-│                                                             │
-│  Combined Shortcut: `建築物モデル 埼玉県さいたま市浦和区`      │
-└─────────────────────────────────────────────────────────────┘
-```
-
-### The 3 Fundamental Spatial Entities
-
-1. **データセット (Dataset / Category / 12 Thematic Layers) [HIGHEST PRIORITY]**:
-   - **Scope**: All 12 national thematic datasets (建築物 `bldg`, 道路 `tran`, 都市設備 `frn`, 植生 `veg`, 土地利用 `luse`, 数値地形 `dem`, 汎用 `gen`, 洪水浸水 `fld`, 内水 `htd`, 高潮/津波 `tsu`/`tnm`, 土砂災害 `lsld`, 都市計画 `urf`).
-   - **Query Keywords**: `データセット`, `カテゴリー`, `テーマ`, `カタログ`, `何がある`, `ハザードマップ`.
-   - **Action**: Outputs all 12 thematic dataset cards for the municipality.
-
-2. **建築物 (Building / Facility / Physical Structures)**:
-   - **Scope**: Concrete physical facilities and structures (本庁舎, 消防署, 避難所, 病院, 学校, 個別ビル).
-   - **Query Keywords**: `建築物`, `建物`, `施設`, `役所`, `避難所`, `学校`, `ビル`.
-   - **Action**: Outputs Top 5 nearest building cards with names and LOD specifications.
-
-3. **住所 (Address / Administrative GADM Levels 1〜3)**:
-   - **Scope**: Standard Japanese administrative hierarchy:
-     - **LEVEL 1**: 都道府県 (Prefecture, e.g. 埼玉県, 東京都) → JIS Master
-     - **LEVEL 1 + 2**: 市区町村 (Municipality, e.g. 埼玉県さいたま市浦和区) → JIS Master
-     - **LEVEL 1 + 2 + 3**: 住所・町丁目 (Full Town/Chome Address, e.g. 埼玉県さいたま市浦和区常盤) → MLIT Coverage
-   - **Query Keywords**: `住所`, `エリア`, `町名`, `丁目`, `大字`, `どこまで`.
-   - **Action**: Outputs covered town/chome area listings.
 
 ---
 
