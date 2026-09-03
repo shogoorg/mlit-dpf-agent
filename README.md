@@ -446,9 +446,3 @@ The agent delivers agent-driven dynamic UIs using the [A2UI (Agent-to-User Inter
 
 * **Japanese Query Experience**:
 ![Vector Map View (Japanese)](assets/white_map_jp.png)
-
----
-
-## License
-
-This project is licensed under the Apache License 2.0 - see the [LICENSE.md](LICENSE.md) file for details.
