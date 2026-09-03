@@ -34,27 +34,29 @@ md.renderer.rules.link_open = function (tokens: any[], idx: number, options: any
 const customDarkThemeStyleSheet = new CSSStyleSheet();
 customDarkThemeStyleSheet.replaceSync(`
 :root {
-  --a2ui-column-gap: 12px;
+  --a2ui-column-gap: 8px;
 
   /* Card Dark Theme Overrides */
   --a2ui-card-background: #18181b;
-  --a2ui-card-border: 1px solid #27272a;
-  --a2ui-card-border-radius: 16px;
-  --a2ui-card-padding: 12px 16px;
-  --a2ui-card-box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  --a2ui-card-border: 1px solid #2e2f33;
+  --a2ui-card-border-radius: 12px;
+  --a2ui-card-padding: 10px 14px;
+  --a2ui-card-box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
 
   /* Link & Text Overrides */
-  --a2ui-text-color: #f4f4f5;
-  --a2ui-text-a-color: #38bdf8;
+  --a2ui-text-color: #e4e4e7;
+  --a2ui-text-font-size: 13px;
+  --a2ui-text-line-height: 1.45;
+  --a2ui-text-a-color: #8ab4f8;
   --a2ui-text-a-font-weight: 500;
-  --a2ui-text-a-text-decoration: underline;
+  --a2ui-text-a-text-decoration: none;
 
   /* Material Tokens */
   --md-sys-color-surface: #18181b;
   --md-sys-color-on-surface: #f4f4f5;
   --md-sys-color-on-surface-variant: #a1a1aa;
-  --md-sys-color-outline: #27272a;
-  --md-sys-color-primary: #38bdf8;
+  --md-sys-color-outline: #2e2f33;
+  --md-sys-color-primary: #8ab4f8;
 }
 `);
 
@@ -206,7 +208,10 @@ function App() {
               } else if (item.type === 'surface') {
                 // Render an A2UI Surface containing multiple UI components
                 const surface = rendererRef.current.getSurface(item.surfaceId);
-                if (!surface) return null;
+                if (!surface) {
+                  console.warn('Surface not found for id:', item.surfaceId);
+                  return null;
+                }
                 return (
                   <div key={item.surfaceId} className="surface-message">
                     {/* @ts-ignore */}
