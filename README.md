@@ -376,26 +376,6 @@ The agent delivers agent-driven dynamic UIs using the [A2UI (Agent-to-User Inter
 
 ---
 
-### UI Experience Screenshots
-
-#### 1. 3D Spatial Intelligence with PlateauView & Hazard Overlay (Satellite View)
-
-* **English Query Experience**:
-![Deep-Dive Spatial Intelligence (English)](assets/satellite_map.png)
-
-* **Japanese Query Experience**:
-![Deep-Dive Spatial Intelligence (Japanese)](assets/satellite_map_jp.png)
-
-#### 2. 3D Spatial Intelligence with PlateauView & Hazard Overlay (Vector Map View)
-
-* **English Query Experience**:
-![Vector Map View (English)](assets/white_map.png)
-
-* **Japanese Query Experience**:
-![Vector Map View (Japanese)](assets/white_map_jp.png)
-
----
-
 ## Production Deployment (Cloud Run 本番デプロイ)
 
 The production deployment consists of 3 standalone Cloud Run services:
@@ -511,6 +491,79 @@ gcloud run deploy mlit-dpf-web \
 > 💡 **Learn more about A2UI:**  
 > For the core protocol and Web Components library, visit the [googlemaps/a2ui](https://github.com/googlemaps/a2ui) repository.  
 > For reference design patterns and full-stack integration examples, visit [googlemaps-samples/a2ui](https://github.com/googlemaps-samples/a2ui).
+
+---
+
+## UI Experience & Autonomous Agent Demonstrations
+
+### 1. 3D Spatial Intelligence with PlateauView & Hazard Overlay (Satellite View)
+
+#### 🌐 English Query Experience
+
+> **User Prompt**:
+> `<flood data, evacuation shelters, addresses> around <Saitama City Hall> Learn more`
+>
+> **Agent Response & A2UI Surface**:
+> * **Flood Inundation Model (Saitama City Urawa Ward)**
+>   * Dataset: Flood Inundation Model (2022) / Address: Saitama City Urawa Ward Tokiwa 6-4-4 Area
+>   * Coverage: Arakawa & Shibakawa River Systems Inundation Zone
+>   * [[GSI Map]](https://maps.gsi.go.jp/?marker=35.8616,139.6455) / [[PlateauView]](https://plateauview.mlit.go.jp/) `洪水浸水想定区域モデル 埼玉県 さいたま市浦和区`
+>   * *Source: Project PLATEAU / MLIT Data Platform*
+> * **Saitama City Hall Main Building**
+>   * Dataset: 3D Building Model (2022) / Building: Government Facility (LOD2) / Address: Saitama City Urawa Ward Tokiwa 6-4-4
+>   * [[GSI Map]](https://maps.gsi.go.jp/?marker=35.8616,139.6455) / [[PlateauView]](https://plateauview.mlit.go.jp/) `埼玉県さいたま市浦和区常盤`
+>   * *Source: Project PLATEAU / MLIT Data Platform*
+> * **Nakacho District (Chome 1 to 4), Urawa Ward**
+>   * Dataset: 3D Building Model, Flood Inundation Model (2022) / Address: Nakacho 1-4 Chome, Urawa-ku, Saitama-shi, Saitama
+>   * Coverage: Nakacho Elementary School, Nakacho Community Center, Commercial Corridor
+>   * [[GSI Map]](https://maps.gsi.go.jp/?marker=35.8614,139.6499) / [[PlateauView]](https://plateauview.mlit.go.jp/) `埼玉県さいたま市浦和区仲町`
+>   * *Source: Project PLATEAU / MLIT Data Platform*
+>
+> **Insights**:
+> * **Spatial Suitability**: Saitama City Hall (LOD2) and adjacent public facilities (Tokiwa Elementary, Nakacho Elementary) feature reinforced concrete structures capable of high-capacity vertical evacuation during extreme flood events in the Arakawa basin.
+> * **Spatial Constraints & Risks**: Micro-topographical gradients from the Urawa diluvial terrace toward local lowlands present localized ponding risks along narrow residential access corridors during severe inland water inundation.
+> * **3D Spatial Simulation**: Overlaying LOD2 Building Models with Arakawa flood inundation depth layers in PlateauView enables precision 3D spatial simulation for secondary shelter capacity, flood wall barrier evaluation, and emergency route bottleneck optimization.
+
+![Deep-Dive Spatial Intelligence (English)](assets/satellite_map.png)
+
+---
+
+#### 🗾 Japanese Query Experience
+
+> **ユーザープロンプト**:
+> `＜さいたま市役所＞周辺の＜洪水、避難所、住所＞ さらに詳しく`
+>
+> **エージェント応答 ＆ A2UI サーフェス**:
+> * **洪水浸水想定区域モデル（埼玉県さいたま市浦和区）**
+>   * データセット: 洪水浸水想定区域モデル (2022年度整備) / 住所: 埼玉県さいたま市浦和区常盤6-4-4 周辺
+>   * [[地理院地図]](https://maps.gsi.go.jp/?marker=35.8616,139.6455) / [[PlateauView]](https://plateauview.mlit.go.jp/) `洪水浸水想定区域モデル 埼玉県 さいたま市浦和区`
+>   * *出典: Project PLATEAU / 国土交通データプラットフォーム*
+> * **さいたま市役所 本庁舎**
+>   * データセット: 建築物モデル (2022年度整備) / 建築物: 行政庁舎・防災拠点 (LOD2) / 住所: 埼玉県さいたま市浦和区常盤6-4-4
+>   * [[地理院地図]](https://maps.gsi.go.jp/?marker=35.8616,139.6455) / [[PlateauView]](https://plateauview.mlit.go.jp/) `埼玉県さいたま市浦和区常盤`
+>   * *出典: Project PLATEAU / 国土交通データプラットフォーム*
+> * **埼玉県さいたま市浦和区仲町（1〜4丁目）**
+>   * データセット: 土地利用モデル (2022年度整備) / 建築物: 中高層住宅・公共施設・商業エリア (LOD1/LOD2) / 住所: 埼玉県さいたま市浦和区仲町
+>   * カバレッジ: 仲町小学校・仲町公民館・浦和駅西口周辺街区
+>   * [[地理院地図]](https://maps.gsi.go.jp/?marker=35.8614,139.6499) / [[PlateauView]](https://plateauview.mlit.go.jp/) `埼玉県さいたま市浦和区仲町`
+>   * *出典: Project PLATEAU / 国土交通データプラットフォーム*
+>
+> **インサイト**:
+> * **空間適性評価**: さいたま市役所本庁舎および周辺避難所（仲町小学校、常盤小学校等）は、LOD2高精度3Dモデルにより建物階数や延床面積、構造的堅牢性が立体的に定義されており、水害時の垂直避難拠点・防災司令拠点としての収容力と空間適性が極めて高く評価されます。
+> * **空間的制約・リスク**: 荒川・芝川水系に近接する浸水想定区域と微地形の凹凸が重なるエリアであり、大雨時の道路冠水による避難ルートの途絶リスクや、高密度住宅街における歩行者ボトルネックが空間的制約として存在します。
+> * **3D空間活用・シミュレーション**: PlateauView上で「建築物モデル（LOD2）」と「洪水浸水想定区域モデル」を3D重畳表示することで、浸水深に応じたリアルタイム垂直避難シミュレーションや、道路冠水リスクを回避する最適な防災動線計画の策定が可能となります。
+
+![Deep-Dive Spatial Intelligence (Japanese)](assets/satellite_map_jp.png)
+
+---
+
+### 2. 3D Spatial Intelligence with PlateauView & Hazard Overlay (Vector Map View)
+
+* **English Query Experience**:
+![Vector Map View (English)](assets/white_map.png)
+
+* **Japanese Query Experience**:
+![Vector Map View (Japanese)](assets/white_map_jp.png)
 
 ---
 
