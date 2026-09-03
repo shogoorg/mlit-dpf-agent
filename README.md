@@ -26,10 +26,12 @@
 
 ## Core Capabilities (主要機能)
 
-1. **Category A. Search & Discovery (検索系 - 地図＋一覧カード表示)**:
-   - Executes multi-entity spatial exploration across **Datasets** (`bldg`, `fld`, `urf`), **Buildings** (LOD2 facilities, shelters), and **Addresses** via radius, bounding box, keyword, and attribute filters with dynamic map rendering.
-2. **Category B. Get & Data Retrieval (詳細・データ取得系 - カード表示)**:
-   - Retrieves full facility specifications, metadata summaries, direct 3D model downloads (CityGML / 3D Tiles), ZIP archives, thumbnail previews, and administrative master codes for deep-dive investigation.
+1. **Search系 (複数対象・範囲検索 / Multi-Entity Spatial Search)**:
+   - Executes multi-entity spatial exploration across **Datasets** (`bldg`, `fld`, `urf`), **Buildings** (LOD2 facilities, shelters), and **Addresses** via radius proximity, bounding boxes, keywords, and attribute filters with dynamic map & card rendering.
+2. **Get系 (詳細・データ取得系 / Deep-Dive Data Retrieval)**:
+   - Retrieves full facility specifications, metadata summaries, direct 3D model downloads (CityGML / 3D Tiles), ZIP archives, thumbnail previews, mesh units, and administrative code normalizations.
+3. **統合系 (自律エージェント・探索＆深掘り / Autonomous Synthesis & Reasoning)**:
+   - Autonomously orchestrates the entire spatial exploration pipeline—progressing from macro datasets down to micro facility specs—and generates OGC-compliant 3D spatial intelligence insights (Spatial Suitability, Constraints & Risks, 3D Simulation).
 
 ---
 
