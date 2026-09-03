@@ -1,110 +1,35 @@
 # mlit-dpf-agent
 
-## Overview & Architecture
+## Overview
 
-**`mlit-dpf-agent`** is an AI agent built with Google ADK that leverages **`mlit-dpf-mcp`** (MLIT Data Platform MCP Server) to ground LLM intelligence in official public data from Japan's Ministry of Land, Infrastructure, Transport and Tourism, seamlessly integrating with **PlateauView 3D** for geospatial exploration.
+**`mlit-dpf-agent`** is an AI-native spatial intelligence agent built with **Google ADK** (Agent Development Kit), **A2A**, and **A2UI**, integrating **`mlit-dpf-mcp`** to ground Gemini in official public data from Japan's Ministry of Land, Infrastructure, Transport and Tourism (MLIT) and **Project PLATEAU 3D**.
 
 ```
 [ User Query ] ⇄ [ mlit-dpf-agent (ADK / Gemini) ]
-                         └── [ mlit-dpf-mcp ] ⇄ [ MLIT Data Platform API ] ➔ [ PlateauView 3D ]
+                         └── [ mlit-dpf-mcp ] ⇄ [ MLIT DPF API ] ➔ [ PlateauView 3D ]
 ```
 
 > ⚠️ **Disclaimer:** This is an unofficial community project and is not officially affiliated with or endorsed by the Ministry of Land, Infrastructure, Transport and Tourism (MLIT).
 
-### Mission Statement
-> *"Manually finding, formatting, and combining geospatial data takes hours of work. Our mission is to eliminate that busywork entirely. Just use natural language to ask for the data you're looking for, and watch the agent guide you directly to the required 3D layers on PlateauView—turning manual research into instant spatial insights."*
-
 ---
 
-### The 3 Core Pillars of Value
-
-```
-        ┌─────────────────────────────────────────────────────────┐
-        │            Project PLATEAU × MLIT DPF Agent             │
-        └─────────────────────────────────────────────────────────┘
-                     │                       │                       │
-        ┌────────────▼────────────┐ ┌────────▼────────┐ ┌────────────▼────────────┐
-        │     1. Multilingual     │ │  2. Factuality  │ │      3. Reasoning       │
-        │ (Global Inclusive Access│ │(Grounded Truth) │ │(Spatial & Intent Logic) │
-        └─────────────────────────┘ └─────────────────┘ └─────────────────────────┘
-```
+## Key Features: The 3 Core Pillars of Value
 
 1. **Multilingual (Global & Inclusive Access)**:
-   - Breaks linguistic barriers for international residents, inbound visitors, and global urban researchers.
-   - Users can query in **English, Japanese, Chinese, French, Spanish**, etc., and the agent translates intents into precise continuous Japanese search keywords for PlateauView 3D.
-
-2. **Factuality (Authoritative Grounding in Public Goods)**:
-   - **Zero-hallucination** spatial intelligence strictly grounded in sovereign **Digital Public Infrastructure (DPI)** from MLIT DPF & Project PLATEAU via MCP.
-   - Delivers official statutory hazard zones, GSI map coordinates, and official LOD1/LOD2 metadata backed by national open government standards (CC BY 4.0).
-
-3. **Reasoning (High-Order Spatial Reasoning)**:
-   - Transforms ambiguous, high-level user objectives (e.g., *"I want to create a disaster prevention map for Saitama City Hall"*) into concrete thematic layer combinations (`fld`, `htd`, `tsu`, `lsld`), physical structures, and administrative coverage.
+   - Breaks linguistic barriers by automatically detecting input languages (English, Japanese, etc.) and dynamically generating bilingual A2UI cards and OGC spatial insights.
+2. **Factuality (Authoritative Public Grounding)**:
+   - Zero-hallucination spatial intelligence strictly grounded in sovereign open government data from MLIT DPF & Project PLATEAU (LOD1/LOD2 3D models, statutory hazard zones, GSI maps).
+3. **Reasoning (Spatial & Intent Logic)**:
+   - High-order spatial reasoning that transforms natural conversational objectives into multi-layered spatial analysis and actionable 3D digital twin simulations.
 
 ---
 
-### Public Goods vs Commercial Stacks
+## Core Capabilities (主要機能)
 
-1. **Public Goods MCP (`mlit-dpf-mcp` vs Maps Grounding Lite)**: While *Maps Grounding Lite* connects agents to commercial map data, **`mlit-dpf-mcp`** connects directly to national **Public Goods**—official geospatial datasets, urban infrastructure, and disaster prevention records.
-2. **Public Goods Agent (`mlit-dpf-agent` vs Maps Agentic UI Toolkit)**: While the *Google Maps Agentic UI Toolkit* orchestrates commercial POI interactions, **`mlit-dpf-agent`** is purpose-built to navigate public administrative workflows and national open data.
-3. **Public Goods Map (PlateauView 3D vs Google Maps)**: While standard solutions visualize onto commercial *Google Maps*, **`mlit-dpf-agent`** integrates with Japan's official **PlateauView 3D** for rich, open-standard 3D urban model exploration.
-
----
-
-## Core Concept: Intelligent PlateauView Search Assistant (3 Core Entities)
-
-The fundamental mission of **`mlit-dpf-agent`** is to serve as an intelligent search assistant that translates natural conversational inquiries into exact query inputs for the **PlateauView Search Box**.
-
-> 💡 **The 3 Invariant Pillars of Actionable Spatial Exploration:**
-> In geospatial intelligence (GIS / MLIT DPF / Project PLATEAU), every meaningful user inquiry strictly resolves across 3 non-fungible foundational axes:
-> 1. **What (Dataset / Category)**: The thematic layer (e.g. 3D building models, flood risk, zoning districts).
-> 2. **Which (Building / Structure)**: The physical structure/facility (e.g. City Hall, fire stations, schools).
-> 3. **Where (Address / Coverage)**: The geographic administrative hierarchy (Prefecture, Municipality, Town/Chome).
-> Answers that blur or confuse these 3 dimensions lack actionable utility. `mlit-dpf-agent` strictly grounds every response in this 3-pillar foundation.
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│ 👤 User Natural Language                                    │
-│ "I want to create a hazard map", "Buildings near City Hall" │
-└──────────────────────────────┬──────────────────────────────┘
-                               │
-                               ▼
-┌─────────────────────────────────────────────────────────────┐
-│ 🤖 mlit-dpf-agent (ADK / Gemini 3.6 Flash)                  │
-│ Resolves intent across MLIT DPF APIs and generates the      │
-│ exact PlateauView keywords across the 3 Fundamental Entities │
-└──────────────────────────────┬──────────────────────────────┘
-                               │ 2-Step Copy & Paste
-                               ▼
-┌─────────────────────────────────────────────────────────────┐
-│ 🔍 PlateauView Search Box (Accepts 3 Core Entity Types)     │
-│                                                             │
-│  ① Dataset / Category: `建築物モデル`, `洪水浸水想定区域モデル`   │
-│  ② Building / Facility: `さいたま市役所本庁舎`                 │
-│  ③ Address (Levels 1〜3): `埼玉県さいたま市浦和区常盤`         │
-│                                                             │
-│  Combined Shortcut: `建築物モデル 埼玉県さいたま市浦和区`      │
-└─────────────────────────────────────────────────────────────┘
-```
-
-### The 3 Fundamental Spatial Entities
-
-1. **データセット (Dataset / Category / 12 Thematic Layers) [HIGHEST PRIORITY]**:
-   - **Scope**: All 12 national thematic datasets (建築物 `bldg`, 道路 `tran`, 都市設備 `frn`, 植生 `veg`, 土地利用 `luse`, 数値地形 `dem`, 汎用 `gen`, 洪水浸水 `fld`, 内水 `htd`, 高潮/津波 `tsu`/`tnm`, 土砂災害 `lsld`, 都市計画 `urf`).
-   - **Query Keywords**: `データセット`, `カテゴリー`, `テーマ`, `カタログ`, `何がある`, `ハザードマップ`.
-   - **Action**: Outputs all 12 thematic dataset cards for the municipality.
-
-2. **建築物 (Building / Facility / Physical Structures)**:
-   - **Scope**: Concrete physical facilities and structures (本庁舎, 消防署, 避難所, 病院, 学校, 個別ビル).
-   - **Query Keywords**: `建築物`, `建物`, `施設`, `役所`, `避難所`, `学校`, `ビル`.
-   - **Action**: Outputs Top 5 nearest building cards with names and LOD specifications.
-
-3. **住所 (Address / Administrative GADM Levels 1〜3)**:
-   - **Scope**: Standard Japanese administrative hierarchy:
-     - **LEVEL 1**: 都道府県 (Prefecture, e.g. 埼玉県, 東京都) → JIS Master
-     - **LEVEL 1 + 2**: 市区町村 (Municipality, e.g. 埼玉県さいたま市浦和区) → JIS Master
-     - **LEVEL 1 + 2 + 3**: 住所・町丁目 (Full Town/Chome Address, e.g. 埼玉県さいたま市浦和区常盤) → MLIT Coverage
-   - **Query Keywords**: `住所`, `エリア`, `町名`, `丁目`, `大字`, `どこまで`.
-   - **Action**: Outputs covered town/chome area listings.
+1. **Category A. Search & Discovery (検索系 - 地図＋一覧カード表示)**:
+   - Executes multi-entity spatial exploration across **Datasets** (`bldg`, `fld`, `urf`), **Buildings** (LOD2 facilities, shelters), and **Addresses** via radius, bounding box, keyword, and attribute filters with dynamic map rendering.
+2. **Category B. Get & Data Retrieval (詳細・データ取得系 - カード表示)**:
+   - Retrieves full facility specifications, metadata summaries, direct 3D model downloads (CityGML / 3D Tiles), ZIP archives, thumbnail previews, and administrative master codes for deep-dive investigation.
 
 ---
 
@@ -335,7 +260,7 @@ gcloud run deploy mlit-dpf-web \
 
 ## MCP Toolset & Sample Query Reference (全18ツールのプロンプト例)
 
-The agent integrates all 18 tools provided by `mlit-dpf-mcp` across 3 primary categories. Below are standard query templates for interactive testing:
+The agent integrates all 18 tools provided by `mlit-dpf-mcp` across 2 primary categories. Below are standard query templates for interactive testing:
 
 ### Category A. Search & Discovery (検索系 - 地図＋一覧カード表示)
 
@@ -360,11 +285,6 @@ The agent integrates all 18 tools provided by `mlit-dpf-mcp` across 3 primary ca
 | 12 | `get_all_data` | `さいたま市浦和区の公共施設データ全件` | *"All public facility records in Urawa-ku, Saitama City"* | Bulk batch extraction across region |
 | 13 | `get_count_data` | `埼玉県内のPLATEAUデータ件数集計` | *"Count aggregation of PLATEAU data records in Saitama Prefecture"* | Statistical count aggregation |
 | 14 | `get_mesh` | `地域メッシュコード533945の都市計画データ` | *"Urban planning mesh data for regional mesh code 533945"* | Regional mesh grid data extraction |
-
-### Category C. Master & Utility (マスター & ユーティリティ系 - カード表示)
-
-| # | MCP Tool | Standard Query (Japanese) | Standard Query (English) | Expected Behavior |
-| :-: | :--- | :--- | :--- | :--- |
 | 15 | `normalize_codes` | `さいたま市の自治体コード` | *"JIS municipality code for Saitama City"* | Normalizes region names to 5-digit JIS codes |
 | 16 | `get_prefecture_data` | `全国の都道府県コード一覧` | *"Master list of all 47 Japanese prefecture codes"* | 47 prefecture codes & names master |
 | 17 | `get_municipality_data` | `埼玉県（コード: 11）の市区町村一覧` | *"List of municipalities in Saitama Prefecture (Code: 11)"* | Municipality codes for target prefecture |
