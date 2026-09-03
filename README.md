@@ -258,40 +258,6 @@ gcloud run deploy mlit-dpf-web \
 
 ---
 
-## MCP Toolset & Sample Query Reference (全18ツールのプロンプト例)
-
-The agent integrates all 18 tools provided by `mlit-dpf-mcp` across 2 primary categories. Below are standard query templates for interactive testing:
-
-### Category A. Search & Discovery (検索系 - 地図＋一覧カード表示)
-
-| # | MCP Tool | Standard Query (Japanese) | Standard Query (English) | Expected Behavior |
-| :-: | :--- | :--- | :--- | :--- |
-| 1 | `search` | `さいたま市浦和区の建築物` | *"Buildings in Urawa-ku, Saitama City"* | Keyword lookup for multiple concrete buildings |
-| 2 | `search_by_location_point_distance` | `さいたま市役所から500m以内にある建築物` | *"Buildings within 500m of Saitama City Hall"* | Radius proximity search (Top 5 nearest buildings) |
-| 3 | `search_by_location_rectangle` | `緯度35.85〜35.87、経度139.64〜139.66の範囲にある建築物` | *"Buildings in bounding box lat 35.85-35.87, lon 139.64-139.66"* | Bounding box spatial search |
-| 4 | `search_by_attribute` | `さいたま市（自治体コード: 11100）の建築物データセット` | *"Building datasets for Saitama City (Code: 11100)"* | Exact attribute filter by municipality/dataset |
-
-### Category B. Get & Data Retrieval (詳細・データ取得系 - カード表示)
-
-| # | MCP Tool | Standard Query (Japanese) | Standard Query (English) | Expected Behavior |
-| :-: | :--- | :--- | :--- | :--- |
-| 5 | `get_data` | `さいたま市役所をさらに詳しく` | *"More details on Saitama City Hall"* | 100% full attribute specifications & 3D links |
-| 6 | `get_data_summary` | `さいたま市役所の概要` | *"Overview of Saitama City Hall"* | Lightweight title and record summary |
-| 7 | `get_data_catalog` | `Project PLATEAU（mlit_plateau）カタログをさらに詳しく` | *"More details on Project PLATEAU (mlit_plateau) catalog"* | Schema, covered cities, and thematic datasets |
-| 8 | `get_data_catalog_summary` | `利用可能なカタログ一覧` | *"Available data catalogs"* | Overview listing of all platform catalogs |
-| 9 | `get_file_download_urls` | `さいたま市役所の3Dモデルダウンロード` | *"Download 3D model files for Saitama City Hall"* | Direct CityGML / 3D Tiles download URLs |
-| 10 | `get_zipfile_download_url` | `さいたま市役所の3Dモデル一括ZIPダウンロード` | *"ZIP download of all 3D model files for Saitama City Hall"* | Bundled ZIP archive download URL |
-| 11 | `get_thumbnail_urls` | `さいたま市役所のプレビュー画像` | *"Preview thumbnail images for Saitama City Hall"* | Visual preview thumbnail URLs |
-| 12 | `get_all_data` | `さいたま市浦和区の公共施設データ全件` | *"All public facility records in Urawa-ku, Saitama City"* | Bulk batch extraction across region |
-| 13 | `get_count_data` | `埼玉県内のPLATEAUデータ件数集計` | *"Count aggregation of PLATEAU data records in Saitama Prefecture"* | Statistical count aggregation |
-| 14 | `get_mesh` | `地域メッシュコード533945の都市計画データ` | *"Urban planning mesh data for regional mesh code 533945"* | Regional mesh grid data extraction |
-| 15 | `normalize_codes` | `さいたま市の自治体コード` | *"JIS municipality code for Saitama City"* | Normalizes region names to 5-digit JIS codes |
-| 16 | `get_prefecture_data` | `全国の都道府県コード一覧` | *"Master list of all 47 Japanese prefecture codes"* | 47 prefecture codes & names master |
-| 17 | `get_municipality_data` | `埼玉県（コード: 11）の市区町村一覧` | *"List of municipalities in Saitama Prefecture (Code: 11)"* | Municipality codes for target prefecture |
-| 18 | `get_suggest` | `さいたま` | *"Saitama"* | Autocomplete keyword suggestions & counts |
-
----
-
 ## Interactive A2UI Experience & Benchmark Prompts
 
 The agent delivers agent-driven dynamic UIs using the [A2UI (Agent-to-User Interface)](https://github.com/googlemaps/a2ui) specification, with UI components and catalog schemas adapted from the [A2UI Samples](https://github.com/googlemaps-samples/a2ui) repository.
@@ -320,7 +286,7 @@ The agent delivers agent-driven dynamic UIs using the [A2UI (Agent-to-User Inter
 
 ---
 
-### 2. Get系（単一対象・詳細取得）
+### 2. Get系（詳細・データ取得系）
 
 5. **データ取得 (Get Data)**
    * 「**＜さいたま市役所、藤沢市役所、京都市役所、舞鶴市役所＞**の**＜建築物、住所＞ さらに詳しく**」
