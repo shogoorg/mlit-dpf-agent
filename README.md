@@ -376,17 +376,13 @@ The agent delivers agent-driven dynamic UIs using the [A2UI (Agent-to-User Inter
     * ②（メッシュコード指定時）「地域メッシュコード＜**53394523**＞内の**＜建築物、住所＞ さらに詳しく**」
     * *(English: "<buildings, addresses> within regional mesh code <53394523> Learn more")*
 
----
-
-### 3. 正規化 (Normalization)
-
 18. **コード正規化 (Normalize Codes)**
     * 「**＜埼玉県さいたま市、神奈川県藤沢市、京都府京都市、京都府舞鶴市＞**の**都道府県名と市区町村名 正規化**」
     * *(English: "Normalize prefecture and municipality names of <Saitama City (Saitama), Fujisawa City (Kanagawa), Kyoto City (Kyoto), Maizuru City (Kyoto)>")*
 
 ---
 
-### 4. 統合系（自律エージェント・探索＆深掘り）
+### 3. 統合系（自律エージェント・探索＆深掘り）
 
 * **抽象バージョン (Abstract Baseline)**:
   * 「**＜さいたま市役所、藤沢市役所、京都市役所、舞鶴市役所＞周辺**の**＜データセット、建築物、住所＞ さらに詳しく**」
