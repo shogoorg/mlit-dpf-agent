@@ -2,7 +2,9 @@
 
 ## Overview
 
-**`mlit-dpf-agent`** is an AI-native spatial intelligence agent built with **Google ADK** (Agent Development Kit), **A2A**, and **A2UI**, integrating **`mlit-dpf-mcp`** to ground Gemini in official public data from Japan's Ministry of Land, Infrastructure, Transport and Tourism (MLIT) and **Project PLATEAU 3D**.
+**`mlit-dpf-agent`** is a conversational AI chat service built with **Google ADK** (Agent Development Kit), **A2A**, and **A2UI**, integrating **`mlit-dpf-mcp`** to ground Gemini in sovereign public data from Japan's Ministry of Land, Infrastructure, Transport and Tourism (MLIT) and **Project PLATEAU 3D**.
+
+Users can ask questions in natural language to receive authoritative answers, highlight datasets, buildings, and addresses on interactive maps, and execute 3D urban exploration and simulations in **PlateauView 3D**.
 
 ```
 [ User Query ] ⇄ [ mlit-dpf-agent (ADK / Gemini) ]
