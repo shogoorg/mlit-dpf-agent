@@ -160,6 +160,108 @@ npm run dev
 
 ---
 
+## Production Deployment (Cloud Run 本番デプロイ)
+
+The production deployment consists of 3 standalone Cloud Run services:
+1. **MLIT DPF MCP Server** (`mlit-dpf-mcp`): Communicates with official MLIT data APIs via SSE.
+2. **ADK Agent Server** (`mlit-dpf-agent`): Orchestrates Gemini LLM, MLIT MCP tools, and A2UI JSON output.
+3. **React Web UI** (`client/web/react`): Frontend chat interface with A2UI maps and cards.
+
+---
+
+### 1. Enable Required GCP APIs
+
+```bash
+gcloud services enable \
+  run.googleapis.com \
+  cloudbuild.googleapis.com \
+  artifactregistry.googleapis.com \
+  secretmanager.googleapis.com \
+  aiplatform.googleapis.com \
+  cloudresourcemanager.googleapis.com \
+  --project=shogoorg-mlit-dpf
+```
+
+---
+
+### 2. Step 1: Deploy MLIT DPF MCP Server to Cloud Run
+
+Deploy `mlit-dpf-mcp` as a standalone SSE service on Cloud Run:
+
+```bash
+cd ../mlit-dpf-mcp
+gcloud run deploy mlit-dpf-mcp \
+  --source . \
+  --project shogoorg-mlit-dpf \
+  --region us-west1 \
+  --set-env-vars "MLIT_API_KEY=<your-mlit-api-key>,MLIT_BASE_URL=https://data-platform.mlit.go.jp/api/v1/" \
+  --allow-unauthenticated
+```
+
+Note the service URL output (e.g., `https://mlit-dpf-mcp-<hash>-<region>.a.run.app`). The SSE endpoint will be:
+`https://<your-mcp-server-endpoint>/sse`
+
+---
+
+### 3. Step 2: Deploy ADK Agent (`mlit-dpf-agent`) to Cloud Run
+
+Deploy the agent using `agents-cli deploy`:
+
+```bash
+cd ../mlit-dpf-agent
+agents-cli deploy \
+  --project shogoorg-mlit-dpf \
+  --region us-west1 \
+  --no-confirm-project
+```
+
+#### Update Environment Variables & Public Access
+
+Update the Cloud Run service with the deployed MCP server URL, set the active skill, and enable public access:
+
+```bash
+# Configure MCP Server URL on Cloud Run
+gcloud run services update mlit-dpf-agent \
+  --project shogoorg-mlit-dpf \
+  --region us-west1 \
+  --update-env-vars "MLIT_MCP_SERVER_URL=https://<your-mcp-server-endpoint>/sse"
+
+# Grant public invoker access
+gcloud run services add-iam-policy-binding mlit-dpf-agent \
+  --member="allUsers" \
+  --role="roles/run.invoker" \
+  --project shogoorg-mlit-dpf \
+  --region us-west1
+```
+
+#### Verification Endpoints
+* **Web UI (ADK Dev UI)**: `https://<your-agent-endpoint>/dev-ui/?app=app`
+* **A2A Agent Card**: `https://<your-agent-endpoint>/a2a/app/.well-known/agent-card.json`
+* **A2A RPC Endpoint**: `https://<your-agent-endpoint>/a2a/app`
+
+---
+
+### 4. Step 3: Deploy React Web UI (`client/web/react`) to Cloud Run
+
+To deploy the React web client to Cloud Run:
+
+```bash
+cd client/web/react
+
+# Deploy directly with Cloud Run source deploy
+gcloud run deploy mlit-dpf-web \
+  --source . \
+  --project shogoorg-mlit-dpf \
+  --region us-west1 \
+  --set-env-vars "VITE_A2A_SERVER_URL=https://<your-agent-endpoint>/a2a/app,VITE_GOOGLE_MAPS_API_KEY=<your-maps-api-key>" \
+  --allow-unauthenticated
+```
+
+#### Verification Endpoints
+* **React Web UI**: `https://<your-web-ui-endpoint>`
+
+---
+
 ## Commands
 
 | Command | Description |
@@ -373,110 +475,6 @@ The agent delivers agent-driven dynamic UIs using the [A2UI (Agent-to-User Inter
 * **具体バージョン (Concrete Scenario: 洪水データ・避難所・住所)**:
   * 「**＜さいたま市役所、藤沢市役所、京都市役所、舞鶴市役所＞周辺**の**＜洪水データ、避難所、住所＞ さらに詳しく**」
   * *(English: "<flood data, evacuation shelters, addresses> around <Saitama City Hall, Fujisawa City Hall, Kyoto City Hall, Maizuru City Hall> Learn more")*
-
----
-
-## Production Deployment (Cloud Run 本番デプロイ)
-
-The production deployment consists of 3 standalone Cloud Run services:
-1. **MLIT DPF MCP Server** (`mlit-dpf-mcp`): Communicates with official MLIT data APIs via SSE.
-2. **ADK Agent Server** (`mlit-dpf-agent`): Orchestrates Gemini LLM, MLIT MCP tools, and A2UI JSON output.
-3. **React Web UI** (`client/web/react`): Frontend chat interface with A2UI maps and cards.
-
----
-
-### 1. Enable Required GCP APIs
-
-```bash
-gcloud services enable \
-  run.googleapis.com \
-  cloudbuild.googleapis.com \
-  artifactregistry.googleapis.com \
-  secretmanager.googleapis.com \
-  aiplatform.googleapis.com \
-  cloudresourcemanager.googleapis.com \
-  --project=shogoorg-mlit-dpf
-```
-
----
-
-### 2. Step 1: Deploy MLIT DPF MCP Server to Cloud Run
-
-Deploy `mlit-dpf-mcp` as a standalone SSE service on Cloud Run:
-
-```bash
-cd ../mlit-dpf-mcp
-gcloud run deploy mlit-dpf-mcp \
-  --source . \
-  --project shogoorg-mlit-dpf \
-  --region us-west1 \
-  --set-env-vars "MLIT_API_KEY=<your-mlit-api-key>,MLIT_BASE_URL=https://data-platform.mlit.go.jp/api/v1/" \
-  --allow-unauthenticated
-```
-
-Note the service URL output (e.g., `https://mlit-dpf-mcp-<hash>-<region>.a.run.app`). The SSE endpoint will be:
-`https://<your-mcp-server-endpoint>/sse`
-
----
-
-### 3. Step 2: Deploy ADK Agent (`mlit-dpf-agent`) to Cloud Run
-
-Deploy the agent using `agents-cli deploy`:
-
-```bash
-cd ../mlit-dpf-agent
-agents-cli deploy \
-  --project shogoorg-mlit-dpf \
-  --region us-west1 \
-  --no-confirm-project
-```
-
-#### Update Environment Variables & Public Access
-
-Update the Cloud Run service with the deployed MCP server URL, set the active skill, and enable public access:
-
-```bash
-# Configure MCP Server URL on Cloud Run
-gcloud run services update mlit-dpf-agent \
-  --project shogoorg-mlit-dpf \
-  --region us-west1 \
-  --update-env-vars "MLIT_MCP_SERVER_URL=https://<your-mcp-server-endpoint>/sse"
-
-# Grant public invoker access
-gcloud run services add-iam-policy-binding mlit-dpf-agent \
-  --member="allUsers" \
-  --role="roles/run.invoker" \
-  --project shogoorg-mlit-dpf \
-  --region us-west1
-```
-
-#### Verification Endpoints
-* **Web UI (ADK Dev UI)**: `https://<your-agent-endpoint>/dev-ui/?app=app`
-* **A2A Agent Card**: `https://<your-agent-endpoint>/a2a/app/.well-known/agent-card.json`
-* **A2A RPC Endpoint**: `https://<your-agent-endpoint>/a2a/app`
-
----
-
-### 4. Step 3: Deploy React Web UI (`client/web/react`) to Cloud Run
-
-To deploy the React web client to Cloud Run:
-
-```bash
-cd client/web/react
-
-# Deploy directly with Cloud Run source deploy
-gcloud run deploy mlit-dpf-web \
-  --source . \
-  --project shogoorg-mlit-dpf \
-  --region us-west1 \
-  --set-env-vars "VITE_A2A_SERVER_URL=https://<your-agent-endpoint>/a2a/app,VITE_GOOGLE_MAPS_API_KEY=<your-maps-api-key>" \
-  --allow-unauthenticated
-```
-
-#### Verification Endpoints
-* **React Web UI**: `https://<your-web-ui-endpoint>`
-
-
 
 ---
 
