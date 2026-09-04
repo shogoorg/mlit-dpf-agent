@@ -61,6 +61,60 @@ customDarkThemeStyleSheet.replaceSync(`
 `);
 
 /**
+ * Determines the benchmark geospatial analysis methods from docs/get-started.md
+ * based on the user's prompt.
+ */
+function getAnalysisMethods(prompt: string): string[] {
+  const methods: string[] = [];
+
+  if (/矩形|bounding|lat.*lon|北緯|東経|〜.*〜|エリア|spanning|coordinate/i.test(prompt)) {
+    methods.push('Search by Location Rectangle');
+  } else if (/半径|km|以内|distance|radius/i.test(prompt)) {
+    methods.push('Search by Location Point Distance');
+  } else if (/庁舎|学校|避難|施設|属性|attribute|public/i.test(prompt)) {
+    methods.push('Search by Attribute');
+  } else if (/カタログ|カテゴリー|データセット|catalog|dataset/i.test(prompt)) {
+    methods.push('Get Data Catalog');
+    if (/サマリー|概要|summary/i.test(prompt)) {
+      methods.push('Get Data Catalog Summary');
+    }
+  } else if (/zip|ダウンロード|url|download/i.test(prompt)) {
+    methods.push('Get File Download URLs');
+    if (/zip/i.test(prompt)) methods.push('Get Zipfile Download URL');
+  } else if (/サムネイル|thumbnail|画像/i.test(prompt)) {
+    methods.push('Get Thumbnail URLs');
+  } else if (/全件|all data/i.test(prompt)) {
+    methods.push('Get All Data');
+  } else if (/件数|count|登録件数/i.test(prompt)) {
+    methods.push('Get Count Data');
+  } else if (/サジェスト|候補|suggest/i.test(prompt)) {
+    methods.push('Get Suggest');
+  } else if (/メッシュ|mesh|5339/i.test(prompt)) {
+    methods.push('Get Mesh');
+  } else if (/正規化|normalize|コード/i.test(prompt)) {
+    methods.push('Normalize Codes');
+  } else if (/都道府県|prefecture/i.test(prompt)) {
+    methods.push('Get Prefecture Data');
+  } else if (/市区町村|municipality|city/i.test(prompt)) {
+    methods.push('Get Municipality Data');
+  } else if (/浸水|洪水|ハザード|避難所|周辺|詳しく|explore|integrated/i.test(prompt)) {
+    methods.push('Integrated Autonomous Exploration');
+  } else {
+    methods.push('Search');
+  }
+
+  // Secondary data retrieval / summary methods
+  if (!methods.includes('Get Data') && !methods.includes('Get Data Catalog')) {
+    methods.push('Get Data');
+  }
+  if (/サマリー|概要|summary/i.test(prompt) && !methods.includes('Get Data Catalog Summary')) {
+    methods.push('Get Data Summary');
+  }
+
+  return methods;
+}
+
+/**
  * Main Application component that demonstrates A2UI integration in a React environment.
  * It manages a chat interface with a timeline of text messages and A2UI interactive surfaces.
  */
@@ -70,6 +124,7 @@ function App() {
   const [timeline, setTimeline] = useState<TimelineItem[]>([]);
   const [input, setInput] = useState('');
   const [isRequesting, setIsRequesting] = useState(false);
+  const [activeMethods, setActiveMethods] = useState<string[]>([]);
 
   // RobustA2UIClient handles communication with the A2A agent
   const serverUrl =
@@ -85,7 +140,7 @@ function App() {
   };
   useEffect(() => {
     scrollToBottom();
-  }, [timeline]);
+  }, [timeline, activeMethods]);
 
   useEffect(() => {
     document.adoptedStyleSheets = [
@@ -97,14 +152,18 @@ function App() {
     ];
   }, []);
 
-  // Intercept all link clicks across light DOM and Shadow DOM (A2UI cards) to always open in a new tab
+  // Intercept all link clicks across light DOM and Shadow DOM (A2UI cards) to always open in a new tab/window
   useEffect(() => {
     const handleGlobalLinkClick = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      const link = target.closest('a');
-      if (link && link.href) {
-        link.target = '_blank';
-        link.rel = 'noopener noreferrer';
+      const path = e.composedPath();
+      for (const el of path) {
+        if (el instanceof HTMLAnchorElement && el.href) {
+          el.target = '_blank';
+          el.rel = 'noopener noreferrer';
+          el.setAttribute('target', '_blank');
+          el.setAttribute('rel', 'noopener noreferrer');
+          break;
+        }
       }
     };
     document.addEventListener('click', handleGlobalLinkClick, true);
@@ -123,6 +182,18 @@ function App() {
     const messageText = input.trim();
     setInput('');
     setIsRequesting(true);
+
+    const targetMethods = getAnalysisMethods(messageText);
+    setActiveMethods([targetMethods[0]]);
+
+    // Progressive method display animation
+    const intervalTimers: ReturnType<typeof setTimeout>[] = [];
+    targetMethods.slice(1).forEach((method, idx) => {
+      const timer = setTimeout(() => {
+        setActiveMethods((prev) => [...prev, method]);
+      }, (idx + 1) * 700);
+      intervalTimers.push(timer);
+    });
 
     // 1. Add the user's message to the local renderer's timeline
     rendererRef.current.addUserMessage(messageText);
@@ -147,8 +218,18 @@ function App() {
       ]);
       setTimeline([...rendererRef.current.timeline]);
     } finally {
+      intervalTimers.forEach(clearTimeout);
       setIsRequesting(false);
+      setActiveMethods([]);
     }
+  };
+
+  const handleNewChat = () => {
+    rendererRef.current = new A2UIRenderer();
+    clientRef.current = new RobustA2UIClient(serverUrl);
+    setTimeline([]);
+    setInput('');
+    setActiveMethods([]);
   };
 
   return (
@@ -159,7 +240,7 @@ function App() {
           <button
             className="toggle-chat-btn"
             onClick={() => setIsChatOpen(true)}>
-            Open Chat
+            Ask PLATEAU
           </button>
         )}
         <iframe
@@ -173,13 +254,21 @@ function App() {
       {/* --- Side Chat Panel --- */}
       <aside className={`chat-panel ${isChatOpen ? 'open' : 'closed'}`}>
         <div className="chat-header">
-          <h2>Chat</h2>
-
-          <button
-            className="close-chat-btn"
-            onClick={() => setIsChatOpen(false)}>
-            ×
-          </button>
+          <h2>Ask PLATEAU</h2>
+          <div className="chat-header-actions">
+            <button
+              className="new-chat-btn"
+              title="チャットを新規作成"
+              onClick={handleNewChat}
+              disabled={isRequesting}>
+              + New Chat
+            </button>
+            <button
+              className="close-chat-btn"
+              onClick={() => setIsChatOpen(false)}>
+              ×
+            </button>
+          </div>
         </div>
 
         {/* --- Message Timeline --- */}
@@ -223,7 +312,19 @@ function App() {
               }
               return null;
             })}
-            {isRequesting && <div className="loading-spinner">Thinking...</div>}
+            {isRequesting && (
+              <div className="loading-spinner">
+                {activeMethods.map((method, idx) => {
+                  const isLast = idx === activeMethods.length - 1;
+                  return (
+                    <div key={idx}>
+                      {method}
+                      <span className={isLast ? 'loading-dots' : ''}>...</span>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
             <div ref={messagesEndRef} />
           </maui-providers>
         </div>
